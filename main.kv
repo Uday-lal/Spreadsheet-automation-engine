@@ -1,0 +1,138 @@
+# --------------------------------------------------------->
+# Copyrights (c) to UR's tech.ltd. All rights reserved
+# Author: Uday lal
+# company: UR's tech.ltd
+# --------------------------------------------------------->
+
+#:kivy 2.0.0
+#:import get_color_from_hex kivy.utils.get_color_from_hex
+
+
+<HomeScreen>:
+    id: home_screen
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDToolbar:
+            title: "Propoint"
+            md_bg_color: rail.md_bg_color
+            left_action_items: [["menu", lambda x: home_screen.rail_open()]]
+
+        MDBoxLayout:
+
+            MDNavigationRail:
+                id: rail
+                md_bg_color: get_color_from_hex("#9962d1")
+                color_normal: get_color_from_hex("#ecd9ff")
+                color_active: None
+                use_hover_behavior: True
+                hover_bg: 0, 0, 0, .2
+                use_resizeable: True
+
+                MDNavigationRailItem:
+                    icon: "home"
+                    text: "Home"
+
+                    on_release:
+                        app.root.screen_transition_home()
+
+                MDNavigationRailItem:
+                    icon: "application-settings"
+                    text: "Setting"
+
+                    on_release:
+                        app.root.screen_transition_setting()
+
+                MDNavigationRailItem:
+                    icon: "teach"
+                    text: "Tutorial"
+
+                    on_release:
+                        app.root.screen_transition_tutorial()
+
+<SettingScreen>:
+    id: setting_screen
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDToolbar:
+            title: "Propoint"
+            md_bg_color: rail.md_bg_color
+            left_action_items: [["menu", lambda x: setting_screen.rail_open()]]
+
+        MDBoxLayout:
+
+            MDNavigationRail:
+                id: rail
+                md_bg_color: get_color_from_hex("#9962d1")
+                color_normal: get_color_from_hex("#ecd9ff")
+                color_active: None
+                use_hover_behavior: True
+                hover_bg: 0, 0, 0, .2
+                use_resizeable: True
+
+                MDNavigationRailItem:
+                    icon: "home"
+                    text: "Home"
+
+                    on_release:
+                        app.root.screen_transition_home()
+
+                MDNavigationRailItem:
+                    icon: "application-settings"
+                    text: "Setting"
+
+                    on_release:
+                        app.root.screen_transition_setting()
+
+                MDNavigationRailItem:
+                    icon: "teach"
+                    text: "Tutorial"
+
+                    on_release:
+                        app.root.screen_transition_tutorial()
+
+<TutorialScreen>:
+    id: tutorial_screen
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDToolbar:
+            title: "Propoint"
+            md_bg_color: rail.md_bg_color
+            left_action_items: [["menu", lambda x: tutorial_screen.rail_open()]]
+
+        MDBoxLayout:
+
+            MDNavigationRail:
+                id: rail
+                md_bg_color: get_color_from_hex("#9962d1")
+                color_normal: get_color_from_hex("#ecd9ff")
+                color_active: None
+                use_hover_behavior: True
+                hover_bg: 0, 0, 0, .2
+                use_resizeable: True
+
+                MDNavigationRailItem:
+                    icon: "home"
+                    text: "Home"
+
+                    on_release:
+                        app.root.screen_transition_home()
+
+                MDNavigationRailItem:
+                    icon: "application-settings"
+                    text: "Setting"
+
+                    on_release:
+                        app.root.screen_transition_setting()
+
+                MDNavigationRailItem:
+                    icon: "teach"
+                    text: "Tutorial"
+
+                    on_release:
+                        app.root.screen_transition_tutorial()

@@ -1,0 +1,11 @@
+# venv
+/venv
+
+# __pycache__
+/__pycache__
+
+# Thrid party package -> (kivymd)
+/kivymd
+
+# .idea
+/.idea
