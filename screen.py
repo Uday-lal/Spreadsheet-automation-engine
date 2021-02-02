@@ -42,8 +42,7 @@ class Base(Screen):
                 filename = file_manager.name
                 self.open_workbook(filename)
 
-    @staticmethod
-    def open_workbook(filename):
+    def open_workbook(self, filename):
         """
         Get data from the workbook
         :param filename: path to the excel file
@@ -51,7 +50,16 @@ class Base(Screen):
         """
         automate = Automate(filename)
         workbook_data = automate.get_workbook_data()
+        self.screen_transition_editor()
         return workbook_data
+
+    def screen_transition_editor(self):
+        """
+        Defining the screen transition towards the editor screen
+        :return: None
+        """
+        self.manager.transition.direction = "right"
+        self.manager.current = "editor_screen"
 
 
 class HomeScreen(Base):
@@ -66,5 +74,5 @@ class TutorialScreen(Base):
     pass
 
 
-class EditorScreen(Screen):
+class EditorScreen(Base):
     pass
