@@ -13,6 +13,10 @@ from manager import Manger
 
 class Propoint(MDApp):
     def build(self):
+        """
+        Strat building the app
+        :return: Root widget
+        """
         Builder.load_file("main.kv")
         root = Manger()
         return root

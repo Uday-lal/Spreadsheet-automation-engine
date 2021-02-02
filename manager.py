@@ -24,11 +24,19 @@ class Manger(ScreenManager):
         self.add_widget(self.editor_screen)
 
     def screen_transition_home(self):
+        """
+        Define screen transition home
+        :return: None
+        """
         if self.current_screen.name != "home_screen":
             self.transition.direction = "down"
             self.current = "home_screen"
 
     def screen_transition_setting(self):
+        """
+        Define screen transition setting
+        :return: None
+        """
         if self.current_screen != "setting_screen":
             if self.current_screen.name == "home_screen":
                 self.transition.direction = "up"
@@ -38,11 +46,19 @@ class Manger(ScreenManager):
                 self.current = "setting_screen"
 
     def screen_transition_tutorial(self):
-        if self.current_screen.name != "editor_screen":
+        """
+        Define screen transition tutorial
+        :return: None
+        """
+        if self.current_screen.name != "tutorial_screen":
             self.transition.direction = "up"
             self.current = "tutorial_screen"
 
     def empty_home_screen(self):
+        """
+        Define home screen if user history is empty
+        :return: None
+        """
         anchor_layout = AnchorLayout()
         image = Image(source="assets/images/empty.png", size_hint_x=None,
                       size_hint_y=None, width=300, height=300)

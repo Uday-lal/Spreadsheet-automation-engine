@@ -18,12 +18,21 @@ class Base(Screen):
     }
 
     def rail_open(self):
+        """
+        Conterole the state of the MDNavigationRail
+        :return: None
+        """
         if self.ids.rail.rail_state == "open":
             self.ids.rail.rail_state = "close"
         else:
             self.ids.rail.rail_state = "open"
 
     def open_file_manager(self, instance):
+        """
+        Open the file manager
+        :param instance: Determine where the click click on the (MDFloatingActionButtonSpeedDial)
+        :return: None
+        """
         if instance.icon == "assets/images/add.png":
             tk_root = Tk()
             tk_root.eval(f"tk::PlaceWindow {tk_root.winfo_toplevel()} center")
@@ -35,9 +44,14 @@ class Base(Screen):
 
     @staticmethod
     def open_workbook(filename):
+        """
+        Get data from the workbook
+        :param filename: path to the excel file
+        :return: dict
+        """
         automate = Automate(filename)
         workbook_data = automate.get_workbook_data()
-        print(workbook_data)
+        return workbook_data
 
 
 class HomeScreen(Base):
