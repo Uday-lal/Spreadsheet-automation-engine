@@ -1,6 +1,6 @@
 """
 --------------------------------------------------------->
-Copyrights (c) to UR's tech.ltd. All rights reserved
+Copyrights (c) to UR's tech.ltd 2021. All rights reserved
 Author: Uday lal
 company: UR's tech.ltd
 --------------------------------------------------------->
@@ -9,6 +9,9 @@ from kivy.uix.screenmanager import ScreenManager
 from screen import *
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.image import Image
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.boxlayout import BoxLayout
+from kivymd.uix.label import MDLabel
 
 
 class Manger(ScreenManager):
@@ -64,3 +67,31 @@ class Manger(ScreenManager):
                       size_hint_y=None, width=300, height=300)
         anchor_layout.add_widget(image)
         self.home_screen.add_widget(anchor_layout)
+
+    def render_wb_data(self, render_data):
+        """
+        Define the way to render the wb data
+        :return: None
+        """
+        grid_layout = GridLayout()
+        box_layout = BoxLayout()
+        label = MDLabel()
+        labels = []
+        sheets = render_data["sheets"]
+
+        for sheet in sheets:
+            render_data_copy = render_data.copy()
+            del render_data_copy[sheet]["max_col"]
+            del render_data_copy[sheet]["max_row"]
+            current_sheet = render_data_copy[sheet]
+            for col in current_sheet:
+                current_col = current_sheet[col]
+                for data in current_col:
+                    label.text = str(data)
+                    label.font_name = "assets/fonts/Heebo-Regular.ttf"
+                    labels.append(label)
+
+        box_layout.add_widget(labels[0])
+
+        grid_layout.add_widget(box_layout)
+        self.editor_screen.add_widget(grid_layout)

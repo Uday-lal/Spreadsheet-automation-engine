@@ -1,6 +1,6 @@
 """
 --------------------------------------------------------->
-Copyrights (c) to UR's tech.ltd. All rights reserved
+Copyrights (c) to UR's tech.ltd 2021. All rights reserved
 Author: Uday lal
 company: UR's tech.ltd
 --------------------------------------------------------->
@@ -34,17 +34,19 @@ class Automate:
             max_cols = current_sheet.max_column
             max_rows = current_sheet.max_row
             cols_data = []
-            cols = {}
+            rows = {}
 
-            for col in range(1, max_cols):
-                for row in range(1, max_rows):
+            for row in range(1, max_rows+1):
+                for col in range(1, max_cols+1):
                     cell_data = current_sheet.cell(row, col).value
                     cols_data.append(cell_data)
 
                 cols_data_copy = cols_data.copy()
-                cols["col"+str(col)] = cols_data_copy
+                rows["row"+str(row)] = cols_data_copy
+                rows["max_col"] = max_cols
+                rows["max_row"] = max_rows
                 cols_data.clear()
 
-            wb_data[sheet] = cols
+            wb_data[sheet] = rows
 
         return wb_data

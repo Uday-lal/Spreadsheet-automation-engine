@@ -1,6 +1,6 @@
 """
 --------------------------------------------------------->
-Copyrights (c) to UR's tech.ltd. All rights reserved
+Copyrights (c) to UR's tech.ltd 2021. All rights reserved
 Author: Uday lal
 company: UR's tech.ltd
 --------------------------------------------------------->
@@ -19,7 +19,7 @@ class Base(Screen):
 
     def rail_open(self):
         """
-        Conterole the state of the MDNavigationRail
+        Control the state of the MDNavigationRail
         :return: None
         """
         if self.ids.rail.rail_state == "open":
@@ -51,6 +51,7 @@ class Base(Screen):
         automate = Automate(filename)
         workbook_data = automate.get_workbook_data()
         self.screen_transition_editor()
+        self.manager.render_wb_data(render_data=workbook_data)
         return workbook_data
 
     def screen_transition_editor(self):
@@ -58,7 +59,7 @@ class Base(Screen):
         Defining the screen transition towards the editor screen
         :return: None
         """
-        self.manager.transition.direction = "right"
+        self.manager.transition.direction = "left"
         self.manager.current = "editor_screen"
 
 
@@ -75,4 +76,10 @@ class TutorialScreen(Base):
 
 
 class EditorScreen(Base):
-    pass
+    def back_to_home(self):
+        """
+        Define back to home screen functionality
+        :return: None
+        """
+        self.manager.transition.direction = "right"
+        self.manager.current = "home_screen"
