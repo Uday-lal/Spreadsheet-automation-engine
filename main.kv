@@ -109,6 +109,12 @@
                     on_release:
                         app.root.screen_transition_tutorial()
 
+    MDFloatingActionButtonSpeedDial:
+        data: setting_screen.flat_icon_button_data
+        root_button_anim: True
+        hint_animation: True
+        callback: setting_screen.open_file_manager
+
 <TutorialScreen>:
     id: tutorial_screen
 
@@ -151,3 +157,9 @@
 
                     on_release:
                         app.root.screen_transition_tutorial()
+
+    MDFloatingActionButtonSpeedDial:
+        data: tutorial_screen.flat_icon_button_data
+        root_button_anim: True
+        hint_animation: True
+        callback: tutorial_screen.open_file_manager
