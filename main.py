@@ -14,8 +14,8 @@ from manager import Manger
 class Propoint(MDApp):
     def build(self):
         Builder.load_file("main.kv")
-        manager = Manger()
-        return manager
+        root = Manger()
+        return root
 
 
 if __name__ == "__main__":

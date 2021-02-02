@@ -51,6 +51,21 @@
                     on_release:
                         app.root.screen_transition_tutorial()
 
+    MDFloatingActionButtonSpeedDial:
+        data: home_screen.flat_icon_button_data
+        root_button_anim: True
+        hint_animation: True
+        callback: home_screen.open_file_manager
+
+
+    AnchorLayout:
+        Image:
+            source: "assets/images/empty.png"
+            size_hint_x: None
+            size_hint_y: None
+            width: 300
+            height: 300
+
 <SettingScreen>:
     id: setting_screen
 

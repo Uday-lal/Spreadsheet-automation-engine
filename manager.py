@@ -7,15 +7,21 @@ company: UR's tech.ltd
 """
 from kivy.uix.screenmanager import ScreenManager
 from screen import *
+from kivy.uix.anchorlayout import AnchorLayout
+from kivy.uix.image import Image
 
 
 class Manger(ScreenManager):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.add_widget(HomeScreen(name="home_screen"))
-        self.add_widget(SettingScreen(name="setting_screen"))
-        self.add_widget(TutorialScreen(name="tutorial_screen"))
-        self.add_widget(EditorScreen(name="editor_screen"))
+        self.home_screen = HomeScreen(name="home_screen")
+        self.setting_screen = SettingScreen(name="setting_screen")
+        self.tutorial_screen = TutorialScreen(name="tutorial_screen")
+        self.editor_screen = EditorScreen(name="editor_screen")
+        self.add_widget(self.home_screen)
+        self.add_widget(self.setting_screen)
+        self.add_widget(self.tutorial_screen)
+        self.add_widget(self.editor_screen)
 
     def screen_transition_home(self):
         if self.current_screen.name != "home_screen":
@@ -35,3 +41,10 @@ class Manger(ScreenManager):
         if self.current_screen.name != "editor_screen":
             self.transition.direction = "up"
             self.current = "tutorial_screen"
+
+    def empty_home_screen(self):
+        anchor_layout = AnchorLayout()
+        image = Image(source="assets/images/empty.png", size_hint_x=None,
+                      size_hint_y=None, width=300, height=300)
+        anchor_layout.add_widget(image)
+        self.home_screen.add_widget(anchor_layout)
