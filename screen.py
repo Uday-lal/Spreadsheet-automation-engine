@@ -9,6 +9,7 @@ company: UR's tech.ltd
 from kivy.uix.screenmanager import Screen
 from tkinter import *
 from tkinter import filedialog
+from automate import Automate
 
 
 class Base(Screen):
@@ -27,11 +28,16 @@ class Base(Screen):
             tk_root = Tk()
             tk_root.eval(f"tk::PlaceWindow {tk_root.winfo_toplevel()} center")
             tk_root.withdraw()
-            filename = filedialog.askopenfile(title="Open workbook", filetypes=((".xlsx", "*.xlsx"),)).name
-            self.open_workbook(filename)
+            file_manager = filedialog.askopenfile(title="Open workbook", filetypes=((".xlsx", "*.xlsx"),))
+            if file_manager is not None:
+                filename = file_manager.name
+                self.open_workbook(filename)
 
-    def open_workbook(self, filename):
-        pass
+    @staticmethod
+    def open_workbook(filename):
+        automate = Automate(filename)
+        workbook_data = automate.get_workbook_data()
+        print(workbook_data)
 
 
 class HomeScreen(Base):

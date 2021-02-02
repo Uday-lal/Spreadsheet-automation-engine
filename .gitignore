@@ -9,3 +9,6 @@
 
 # .idea
 /.idea
+
+# test dir
+/test
