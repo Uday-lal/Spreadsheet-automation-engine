@@ -51,7 +51,7 @@ class Base(Screen):
         automate = Automate(filename)
         workbook_data = automate.get_workbook_data()
         self.screen_transition_editor()
-        self.manager.render_wb_data(render_data=workbook_data)
+        print(workbook_data)
         return workbook_data
 
     def screen_transition_editor(self):

@@ -33,20 +33,25 @@ class Automate:
             current_sheet = wb[sheet]
             max_cols = current_sheet.max_column
             max_rows = current_sheet.max_row
-            cols_data = []
+            rows_data = []
+            sheet_data = {}
             rows = {}
 
-            for row in range(1, max_rows+1):
-                for col in range(1, max_cols+1):
+            for row in range(1, max_rows + 1):
+                for col in range(1, max_cols + 1):
                     cell_data = current_sheet.cell(row, col).value
-                    cols_data.append(cell_data)
+                    if cell_data is None:
+                        cell_data = ""
 
-                cols_data_copy = cols_data.copy()
-                rows["row"+str(row)] = cols_data_copy
-                rows["max_col"] = max_cols
-                rows["max_row"] = max_rows
-                cols_data.clear()
+                    rows_data.append(cell_data)
 
-            wb_data[sheet] = rows
+                cols_data_copy = rows_data.copy()
+                rows["row" + str(row)] = cols_data_copy
+                sheet_data["rows"] = rows
+                sheet_data["max_col"] = max_cols
+                sheet_data["max_row"] = max_rows
+                rows_data.clear()
+
+            wb_data[sheet] = sheet_data
 
         return wb_data
