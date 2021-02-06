@@ -9,9 +9,18 @@ from kivy.uix.screenmanager import ScreenManager
 from screen import *
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.image import Image
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.boxlayout import BoxLayout
-from kivymd.uix.label import MDLabel
+from kivy.uix.widget import Widget
+from kivy.graphics import Rectangle, Color
+from kivymd.uix.datatables import MDDataTable
+from kivy.metrics import dp
+
+
+class Canvas(Widget):
+    def __init__(self, pos, size, **kwargs):
+        super().__init__(**kwargs)
+        with self.canvas:
+            Color(168 / 255, 164 / 255, 162 / 255, 1, mode="rgba")
+            Rectangle(pos=pos, size=size)
 
 
 class Manger(ScreenManager):
@@ -73,25 +82,21 @@ class Manger(ScreenManager):
         Define the way to render the wb data
         :return: None
         """
-        grid_layout = GridLayout()
-        box_layout = BoxLayout()
-        label = MDLabel()
-        labels = []
-        sheets = render_data["sheets"]
+        sheet = render_data[render_data["sheets"][0]]
+        rows = sheet["rows"]
+        data_table = MDDataTable(
+            size_hint=(self.width, 0.6),
+            column_data=[
+                ("No.", dp(30)),
+                ("Status", dp(30)),
+                ("Signal Name", dp(60)),
+                ("Severity", dp(30)),
+                ("Stage", dp(30)),
+            ],
+            row_data=rows,
+            elevation=2,
+            rows_num=sheet["max_row"],
+            pos=(self.editor_screen.ids.rail.width, 0)
+        )
 
-        for sheet in sheets:
-            render_data_copy = render_data.copy()
-            del render_data_copy[sheet]["max_col"]
-            del render_data_copy[sheet]["max_row"]
-            current_sheet = render_data_copy[sheet]
-            for col in current_sheet:
-                current_col = current_sheet[col]
-                for data in current_col:
-                    label.text = str(data)
-                    label.font_name = "assets/fonts/Heebo-Regular.ttf"
-                    labels.append(label)
-
-        box_layout.add_widget(labels[0])
-
-        grid_layout.add_widget(box_layout)
-        self.editor_screen.add_widget(grid_layout)
+        self.editor_screen.add_widget(data_table)

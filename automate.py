@@ -35,7 +35,7 @@ class Automate:
             max_rows = current_sheet.max_row
             rows_data = []
             sheet_data = {}
-            rows = {}
+            rows = []
 
             for row in range(1, max_rows + 1):
                 for col in range(1, max_cols + 1):
@@ -46,7 +46,7 @@ class Automate:
                     rows_data.append(cell_data)
 
                 cols_data_copy = rows_data.copy()
-                rows["row" + str(row)] = cols_data_copy
+                rows.append(cols_data_copy)
                 sheet_data["rows"] = rows
                 sheet_data["max_col"] = max_cols
                 sheet_data["max_row"] = max_rows
