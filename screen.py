@@ -46,13 +46,13 @@ class Base(Screen):
         """
         Get data from the workbook
         :param filename: path to the excel file
-        :return: dict
+        :return: None
         """
         automate = Automate(filename)
         workbook_data = automate.get_workbook_data()
         self.screen_transition_editor()
         self.manager.render_wb_data(render_data=workbook_data)
-        return workbook_data
+        # print(workbook_data)
 
     def screen_transition_editor(self):
         """

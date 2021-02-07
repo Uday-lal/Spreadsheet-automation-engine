@@ -8,9 +8,96 @@ company: UR's tech.ltd
 from openpyxl import load_workbook
 
 
+def splitting_algorithm(wb_data):
+    """
+    Splitting the wb data into several parts
+    :param wb_data: input wb data
+    :return: dict
+    """
+    sheets = wb_data["sheets"]
+    return_data = {}
+    for sheet in sheets:
+        current_sheet = wb_data[sheet]
+        rows = current_sheet["rows"]
+        for i in range(len(rows)):
+            current_row = rows[i]
+            validation = Validation(data=current_row)
+            if "heading" not in return_data:
+                if validation.is_heading():
+                    return_data["heading"] = current_row
+                    break
+
+        for i in range(len(rows)):
+            current_row = rows[i]
+            validation = Validation(data=current_row)
+            if validation.is_intro_part():
+                return_data["intro_part"] = current_row
+
+    return return_data
+
+
 class FileTypeException(Exception):
     def __init__(self, message):
         self.error_message = message
+
+
+class Validation:
+    def __init__(self, data):
+        self.data = data
+
+    def is_heading(self):
+        """
+        Validating the data as the heading
+        :return: bool
+        """
+        none_times = self.times(data_array=self.data, selected_item="")
+        data_length = len(self.data)
+
+        try:
+            not_none_times = data_length - none_times
+        except TypeError:
+            return True
+
+        if not_none_times != 1 and not_none_times != 0:
+            return True
+        return False
+
+    def is_intro_part(self):
+        """
+        Validating the data as the intro part
+        :return: bool
+        """
+        none_times = self.times(data_array=self.data, selected_item="")
+        data_length = len(self.data)
+
+        try:
+            not_none_times = data_length - none_times
+        except TypeError:
+            return True
+
+        if not_none_times == 1:
+            return True
+        return False
+
+    @staticmethod
+    def times(data_array, selected_item):
+        """
+        Collecting the index of the selected element
+        :param data_array: Input data array
+        :param selected_item: Element needs to search
+        :return: int
+        """
+        itemCount = 0
+        if selected_item not in data_array:
+            return None
+
+        for item in data_array:
+            if item != selected_item:
+                continue
+            else:
+                itemCount += 1
+
+        return itemCount
 
 
 class Automate:

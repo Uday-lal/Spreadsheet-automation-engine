@@ -13,6 +13,7 @@ from kivy.uix.widget import Widget
 from kivy.graphics import Rectangle, Color
 from kivymd.uix.datatables import MDDataTable
 from kivy.metrics import dp
+from automate import splitting_algorithm
 
 
 class Canvas(Widget):
@@ -84,15 +85,17 @@ class Manger(ScreenManager):
         """
         sheet = render_data[render_data["sheets"][0]]
         rows = sheet["rows"]
+        heading_introPart = splitting_algorithm(wb_data=render_data)
+        heading = []
+
+        rows.remove(heading_introPart["heading"])
+
+        for data in heading_introPart["heading"]:
+            heading.append((str(data), dp(30)))
+
         data_table = MDDataTable(
             size_hint=(self.width, 0.6),
-            column_data=[
-                ("No.", dp(30)),
-                ("Status", dp(30)),
-                ("Signal Name", dp(60)),
-                ("Severity", dp(30)),
-                ("Stage", dp(30)),
-            ],
+            column_data=heading,
             row_data=rows,
             elevation=2,
             rows_num=sheet["max_row"],
