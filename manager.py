@@ -9,19 +9,34 @@ from kivy.uix.screenmanager import ScreenManager
 from screen import *
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.image import Image
-from kivy.uix.widget import Widget
-from kivy.graphics import Rectangle, Color
-from kivymd.uix.datatables import MDDataTable
-from kivy.metrics import dp
 from automate import splitting_algorithm
+from kivymd.uix.behaviors import HoverBehavior
+from kivymd.uix.gridlayout import MDGridLayout
+from kivymd.theming import ThemableBehavior
+from kivymd.uix.label import MDLabel
+from kivy.core.window import Window
 
 
-class Canvas(Widget):
-    def __init__(self, pos, size, **kwargs):
-        super().__init__(**kwargs)
-        with self.canvas:
-            Color(168 / 255, 164 / 255, 162 / 255, 1, mode="rgba")
-            Rectangle(pos=pos, size=size)
+class HoverItem(MDGridLayout, ThemableBehavior, HoverBehavior):
+    """Custom item implementing hover behavior."""
+
+    @staticmethod
+    def on_enter(*args):
+        """
+        Run when the cursor enters
+        :param args: *args
+        :return: None
+        """
+        print("hover")
+
+    @staticmethod
+    def on_leave(*args):
+        """
+        Run when the cursor leaves
+        :param args: *args
+        :return: None
+        """
+        print("Not hover")
 
 
 class Manger(ScreenManager):
@@ -85,21 +100,37 @@ class Manger(ScreenManager):
         """
         sheet = render_data[render_data["sheets"][0]]
         rows = sheet["rows"]
+        bg_color = (251 / 255, 237 / 255, 255 / 255, 1)
         heading_introPart = splitting_algorithm(wb_data=render_data)
-        heading = []
+        # canvas = Canvas(pos=(self.editor_screen.ids.rail.width, 0), size=(100, 50))
+        width, height = 100, 50
+        pos_x = self.editor_screen.ids.rail.width
+        pos_y = Window.height / 2
+        main_grid_container = MDGridLayout()
+        # self.editor_screen.ids["hover_canvas"] = canvas
+        # heading = []
 
         rows.remove(heading_introPart["heading"])
 
-        for data in heading_introPart["heading"]:
-            heading.append((str(data), dp(30)))
+        for row in rows:
+            for data in row:
+                grid_layout = MDGridLayout(cols=1)
+                label = MDLabel()
+                label.text = str(data)
+                label.font_name = "assets/fonts/Heebo-Regular.ttf"
+                grid_layout.md_bg_color = bg_color
+                grid_layout.size_hint = (None, None)
+                grid_layout.size = (width, height)
+                grid_layout.pos = (pos_x, pos_y)
+                grid_layout.add_widget(label)
+                main_grid_container.add_widget(grid_layout)
+                pos_x += width
 
-        data_table = MDDataTable(
-            size_hint=(self.width, 0.6),
-            column_data=heading,
-            row_data=rows,
-            elevation=2,
-            rows_num=sheet["max_row"],
-            pos=(self.editor_screen.ids.rail.width, 0)
-        )
+            pos_y -= height
+            pos_x = self.editor_screen.ids.rail.width
 
-        self.editor_screen.add_widget(data_table)
+        main_grid_container.cols = sheet["max_col"]
+        main_grid_container.md_bg_color = bg_color
+        main_grid_container.size = (Window.width, Window.height)
+        main_grid_container.pos = (self.editor_screen.ids.rail.width, (Window.height / 2) * -1)
+        self.editor_screen.add_widget(main_grid_container)
