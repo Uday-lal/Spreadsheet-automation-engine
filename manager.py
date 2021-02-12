@@ -107,7 +107,7 @@ class Manager(ScreenManager):
         width, height = 100, 50
         pos_x = self.editor_screen.ids.rail.width
         pos_y = Window.height / 2
-        main_grid_container = MDGridLayout()
+        main_grid_container = self.editor_screen.ids.container
 
         rows.remove(intro_part)
 
@@ -137,4 +137,3 @@ class Manager(ScreenManager):
         main_grid_container.md_bg_color = bg_color
         main_grid_container.size = (Window.width, Window.height)
         main_grid_container.pos = (self.editor_screen.ids.rail.width, (Window.height / 2) * -1)
-        self.editor_screen.add_widget(main_grid_container)
