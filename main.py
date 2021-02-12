@@ -14,7 +14,7 @@ from manager import Manager
 class Propoint(MDApp):
     def build(self):
         """
-        Strat building the app
+        Start building the app
         :return: Root widget
         """
         Builder.load_file("main.kv")
