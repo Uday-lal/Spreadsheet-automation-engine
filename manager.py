@@ -108,6 +108,7 @@ class Manager(ScreenManager):
         pos_x = self.editor_screen.ids.rail.width
         pos_y = Window.height / 2
         main_grid_container = self.editor_screen.ids.container
+        scroll_view = self.editor_screen.ids.scroll_view
 
         rows.remove(intro_part)
 
@@ -126,6 +127,7 @@ class Manager(ScreenManager):
                 else:
                     label.font_name = "assets/fonts/Heebo-Regular.ttf"
 
+                grid_layout.padding = 2
                 grid_layout.add_widget(label)
                 main_grid_container.add_widget(grid_layout)
                 pos_x += width
@@ -137,3 +139,4 @@ class Manager(ScreenManager):
         main_grid_container.md_bg_color = bg_color
         main_grid_container.size = (Window.width, Window.height)
         main_grid_container.pos = (self.editor_screen.ids.rail.width, (Window.height / 2) * -1)
+        scroll_view.pos = main_grid_container.pos
