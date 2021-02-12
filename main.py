@@ -8,7 +8,7 @@ company: UR's tech.ltd
 
 from kivymd.app import MDApp
 from kivy.lang import Builder
-from manager import Manger
+from manager import Manager
 
 
 class Propoint(MDApp):
@@ -18,7 +18,7 @@ class Propoint(MDApp):
         :return: Root widget
         """
         Builder.load_file("main.kv")
-        root = Manger()
+        root = Manager()
         return root
 
 

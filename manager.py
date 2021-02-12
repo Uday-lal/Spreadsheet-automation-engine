@@ -39,7 +39,7 @@ class HoverItem(MDGridLayout, ThemableBehavior, HoverBehavior):
         print("Not hover")
 
 
-class Manger(ScreenManager):
+class Manager(ScreenManager):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.home_screen = HomeScreen(name="home_screen")
@@ -102,26 +102,30 @@ class Manger(ScreenManager):
         rows = sheet["rows"]
         bg_color = (251 / 255, 237 / 255, 255 / 255, 1)
         heading_introPart = splitting_algorithm(wb_data=render_data)
-        # canvas = Canvas(pos=(self.editor_screen.ids.rail.width, 0), size=(100, 50))
+        heading = heading_introPart["heading"]
+        intro_part = heading_introPart["intro_part"]
         width, height = 100, 50
         pos_x = self.editor_screen.ids.rail.width
         pos_y = Window.height / 2
         main_grid_container = MDGridLayout()
-        # self.editor_screen.ids["hover_canvas"] = canvas
-        # heading = []
 
-        rows.remove(heading_introPart["heading"])
+        rows.remove(intro_part)
 
         for row in rows:
             for data in row:
                 grid_layout = MDGridLayout(cols=1)
                 label = MDLabel()
                 label.text = str(data)
-                label.font_name = "assets/fonts/Heebo-Regular.ttf"
                 grid_layout.md_bg_color = bg_color
                 grid_layout.size_hint = (None, None)
                 grid_layout.size = (width, height)
                 grid_layout.pos = (pos_x, pos_y)
+
+                if row == heading:
+                    label.font_name = "assets/fonts/Heebo-Bold.ttf"
+                else:
+                    label.font_name = "assets/fonts/Heebo-Regular.ttf"
+
                 grid_layout.add_widget(label)
                 main_grid_container.add_widget(grid_layout)
                 pos_x += width
