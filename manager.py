@@ -142,6 +142,6 @@ class Manager(ScreenManager):
         main_grid_container.md_bg_color = bg_color
         main_grid_container.size_hint = (None, None)
         main_grid_container.bind(minimum_height=main_grid_container.setter('height'),
-                     minimum_width=main_grid_container.setter('width'))
+                                 minimum_width=main_grid_container.setter('width'))
         scroll_view.add_widget(main_grid_container)
         nav_rail_container.add_widget(scroll_view)
