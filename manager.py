@@ -124,19 +124,13 @@ class Manager(ScreenManager):
                 grid_layout.size_hint = (None, None)
                 grid_layout.size = (width, height)
                 grid_layout.pos = (pos_x, pos_y)
+                grid_layout.spacing = 2
 
                 if row == heading:
                     label.font_name = "assets/fonts/Heebo-Bold.ttf"
                 else:
                     label.font_name = "assets/fonts/Heebo-Regular.ttf"
 
-                if intro_part is not None:
-                    for intro_data in intro_part:
-                        if intro_data == rows:
-                            label.font_name = "assets/fonts/Heebo-ExtraBold.ttf"
-                            grid_layout.cols = 1
-
-                grid_layout.spacing = 2
                 grid_layout.add_widget(label)
                 main_grid_container.add_widget(grid_layout)
                 pos_x += width
