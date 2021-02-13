@@ -176,6 +176,7 @@
             left_action_items: [["arrow-left", lambda x: editor_screen.back_to_home()]]
 
         MDBoxLayout:
+            id: nav_rail_container
             MDNavigationRail:
                 id: rail
                 md_bg_color: get_color_from_hex("#9962d1")
@@ -192,8 +193,3 @@
                 MDNavigationRailItem:
                     icon: "google-spreadsheet"
                     text: "Marge data"
-
-    ScrollView:
-        id: scroll_view
-        MDList:
-            id: container

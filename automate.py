@@ -15,11 +15,13 @@ def splitting_algorithm(wb_data):
     :return: dict
     """
     sheets = wb_data["sheets"]
+    intro_part = []
     return_data = {}
     for sheet in sheets:
         current_sheet = wb_data[sheet]
         rows = current_sheet["rows"]
-        for i in range(len(rows)):
+
+        for i in range(len(rows)):  # Checking for the heading
             current_row = rows[i]
             validation = Validation(data=current_row)
             if "heading" not in return_data:
@@ -27,11 +29,15 @@ def splitting_algorithm(wb_data):
                     return_data["heading"] = current_row
                     break
 
-        for i in range(len(rows)):
+        for i in range(len(rows)):  # Checking for the intro part
             current_row = rows[i]
             validation = Validation(data=current_row)
             if validation.is_intro_part():
-                return_data["intro_part"] = current_row
+                intro_part.append(current_row)
+                return_data["intro_part"] = intro_part
+
+        if "intro_part" not in return_data:
+            return_data["intro_part"] = None
 
     return return_data
 
@@ -53,11 +59,10 @@ class Validation:
         none_times = self.times(data_array=self.data, selected_item="")
         data_length = len(self.data)
 
-        try:
-            not_none_times = data_length - none_times
-        except TypeError:
-            return True
+        if none_times is None:
+            none_times = 0
 
+        not_none_times = data_length - none_times
         if not_none_times != 1 and not_none_times != 0:
             return True
         return False
@@ -70,10 +75,10 @@ class Validation:
         none_times = self.times(data_array=self.data, selected_item="")
         data_length = len(self.data)
 
-        try:
-            not_none_times = data_length - none_times
-        except TypeError:
-            return True
+        if none_times is None:
+            none_times = 0
+
+        not_none_times = data_length - none_times
 
         if not_none_times == 1:
             return True

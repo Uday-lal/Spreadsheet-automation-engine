@@ -15,6 +15,7 @@ from kivymd.uix.gridlayout import MDGridLayout
 from kivymd.theming import ThemableBehavior
 from kivymd.uix.label import MDLabel
 from kivy.core.window import Window
+from kivy.uix.scrollview import ScrollView
 
 
 class HoverItem(MDGridLayout, ThemableBehavior, HoverBehavior):
@@ -107,10 +108,12 @@ class Manager(ScreenManager):
         width, height = 100, 50
         pos_x = self.editor_screen.ids.rail.width
         pos_y = Window.height / 2
-        main_grid_container = self.editor_screen.ids.container
-        scroll_view = self.editor_screen.ids.scroll_view
+        main_grid_container = MDGridLayout()
+        scroll_view = ScrollView(scroll_type=['bars'],
+                                 bar_width='9dp',
+                                 scroll_wheel_distance=100)
 
-        rows.remove(intro_part)
+        nav_rail_container = self.editor_screen.ids.nav_rail_container
 
         for row in rows:
             for data in row:
@@ -127,7 +130,7 @@ class Manager(ScreenManager):
                 else:
                     label.font_name = "assets/fonts/Heebo-Regular.ttf"
 
-                grid_layout.padding = 2
+                grid_layout.spacing = 2
                 grid_layout.add_widget(label)
                 main_grid_container.add_widget(grid_layout)
                 pos_x += width
@@ -137,6 +140,8 @@ class Manager(ScreenManager):
 
         main_grid_container.cols = sheet["max_col"]
         main_grid_container.md_bg_color = bg_color
-        main_grid_container.size = (Window.width, Window.height)
-        main_grid_container.pos = (self.editor_screen.ids.rail.width, (Window.height / 2) * -1)
-        scroll_view.pos = main_grid_container.pos
+        main_grid_container.size_hint = (None, None)
+        main_grid_container.bind(minimum_height=main_grid_container.setter('height'),
+                     minimum_width=main_grid_container.setter('width'))
+        scroll_view.add_widget(main_grid_container)
+        nav_rail_container.add_widget(scroll_view)
