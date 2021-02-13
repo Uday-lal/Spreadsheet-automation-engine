@@ -113,7 +113,7 @@ class Manager(ScreenManager):
                                  bar_width='9dp',
                                  scroll_wheel_distance=100)
 
-        nav_rail_container = self.editor_screen.ids.nav_rail_container
+        data_table_container = self.editor_screen.ids.data_table_container
 
         for row in rows:
             for data in row:
@@ -130,6 +130,12 @@ class Manager(ScreenManager):
                 else:
                     label.font_name = "assets/fonts/Heebo-Regular.ttf"
 
+                if intro_part is not None:
+                    for intro_data in intro_part:
+                        if intro_data == rows:
+                            label.font_name = "assets/fonts/Heebo-ExtraBold.ttf"
+                            grid_layout.cols = 1
+
                 grid_layout.spacing = 2
                 grid_layout.add_widget(label)
                 main_grid_container.add_widget(grid_layout)
@@ -144,4 +150,6 @@ class Manager(ScreenManager):
         main_grid_container.bind(minimum_height=main_grid_container.setter('height'),
                                  minimum_width=main_grid_container.setter('width'))
         scroll_view.add_widget(main_grid_container)
-        nav_rail_container.add_widget(scroll_view)
+        data_table_container.md_bg_color = bg_color
+        data_table_container.size = (Window.width, Window.height)
+        data_table_container.add_widget(scroll_view)
