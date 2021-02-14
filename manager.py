@@ -6,7 +6,7 @@ company: UR's tech.ltd
 --------------------------------------------------------->
 """
 from kivy.uix.screenmanager import ScreenManager
-from screen import *
+from screen import HomeScreen, SettingScreen, TutorialScreen, EditorScreen
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.image import Image
 from automate import splitting_algorithm
@@ -42,7 +42,7 @@ class HoverItem(MDGridLayout, ThemableBehavior, HoverBehavior):
 
 class Manager(ScreenManager):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super(Manager, self).__init__(**kwargs)
         self.home_screen = HomeScreen(name="home_screen")
         self.setting_screen = SettingScreen(name="setting_screen")
         self.tutorial_screen = TutorialScreen(name="tutorial_screen")
@@ -104,7 +104,6 @@ class Manager(ScreenManager):
         bg_color = (251 / 255, 237 / 255, 255 / 255, 1)
         heading_introPart = splitting_algorithm(wb_data=render_data)
         heading = heading_introPart["heading"]
-        intro_part = heading_introPart["intro_part"]
         width, height = 100, 50
         pos_x = self.editor_screen.ids.rail.width
         pos_y = Window.height / 2
@@ -124,7 +123,7 @@ class Manager(ScreenManager):
                 grid_layout.size_hint = (None, None)
                 grid_layout.size = (width, height)
                 grid_layout.pos = (pos_x, pos_y)
-                grid_layout.spacing = 2
+                grid_layout.padding = 1
 
                 if row == heading:
                     label.font_name = "assets/fonts/Heebo-Bold.ttf"
