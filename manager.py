@@ -9,35 +9,6 @@ from kivy.uix.screenmanager import ScreenManager
 from screen import HomeScreen, SettingScreen, TutorialScreen, EditorScreen
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.image import Image
-from automate import splitting_algorithm
-from kivymd.uix.behaviors import HoverBehavior
-from kivymd.uix.gridlayout import MDGridLayout
-from kivymd.theming import ThemableBehavior
-from kivymd.uix.label import MDLabel
-from kivy.core.window import Window
-from kivy.uix.scrollview import ScrollView
-
-
-class HoverItem(MDGridLayout, ThemableBehavior, HoverBehavior):
-    """Custom item implementing hover behavior."""
-
-    @staticmethod
-    def on_enter(*args):
-        """
-        Run when the cursor enters
-        :param args: *args
-        :return: None
-        """
-        print("hover")
-
-    @staticmethod
-    def on_leave(*args):
-        """
-        Run when the cursor leaves
-        :param args: *args
-        :return: None
-        """
-        print("Not hover")
 
 
 class Manager(ScreenManager):
@@ -93,56 +64,3 @@ class Manager(ScreenManager):
                       size_hint_y=None, width=300, height=300)
         anchor_layout.add_widget(image)
         self.home_screen.add_widget(anchor_layout)
-
-    def render_wb_data(self, render_data):
-        """
-        Define the way to render the wb data
-        :return: None
-        """
-        sheet = render_data[render_data["sheets"][0]]
-        rows = sheet["rows"]
-        bg_color = (251 / 255, 237 / 255, 255 / 255, 1)
-        heading_introPart = splitting_algorithm(wb_data=render_data)
-        heading = heading_introPart["heading"]
-        width, height = 100, 50
-        pos_x = self.editor_screen.ids.rail.width
-        pos_y = Window.height / 2
-        main_grid_container = MDGridLayout()
-        scroll_view = ScrollView(scroll_type=['bars'],
-                                 bar_width='9dp',
-                                 scroll_wheel_distance=100)
-
-        data_table_container = self.editor_screen.ids.data_table_container
-
-        for row in rows:
-            for data in row:
-                grid_layout = MDGridLayout(cols=1)
-                label = MDLabel()
-                label.text = str(data)
-                grid_layout.md_bg_color = bg_color
-                grid_layout.size_hint = (None, None)
-                grid_layout.size = (width, height)
-                grid_layout.pos = (pos_x, pos_y)
-                grid_layout.padding = 1
-
-                if row == heading:
-                    label.font_name = "assets/fonts/Heebo-Bold.ttf"
-                else:
-                    label.font_name = "assets/fonts/Heebo-Regular.ttf"
-
-                grid_layout.add_widget(label)
-                main_grid_container.add_widget(grid_layout)
-                pos_x += width
-
-            pos_y -= height
-            pos_x = self.editor_screen.ids.rail.width
-
-        main_grid_container.cols = sheet["max_col"]
-        main_grid_container.md_bg_color = bg_color
-        main_grid_container.size_hint = (None, None)
-        main_grid_container.bind(minimum_height=main_grid_container.setter('height'),
-                                 minimum_width=main_grid_container.setter('width'))
-        scroll_view.add_widget(main_grid_container)
-        data_table_container.md_bg_color = bg_color
-        data_table_container.size = (Window.width, Window.height)
-        data_table_container.add_widget(scroll_view)
