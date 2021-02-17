@@ -17,7 +17,7 @@ from kivy.uix.behaviors import ButtonBehavior
 class Cell(Widget, ButtonBehavior):
     """Building the cell widget."""
 
-    def __init__(self, size, pos, is_car_section=False, **kwargs):
+    def __init__(self, size, pos, **kwargs):
         super(Cell, self).__init__(**kwargs)
         self.border_width = 1
         self.border_color = (0, 0, 0, 1)
@@ -30,7 +30,8 @@ class Cell(Widget, ButtonBehavior):
             Color(self.border_color[0], self.border_color[1], self.border_color[2], self.border_color[3])
             Line(width=self.border_width, rectangle=(self.pos_x, self.pos_y, self.width, self.height))
 
-        if is_car_section:  # car(column and row) section validation
+        self.is_car_section = False  # car(column and row) section validation
+        if self.is_car_section:
             self.add_bg_color()
 
         label.text = str(self.text)
@@ -59,4 +60,17 @@ class Cell(Widget, ButtonBehavior):
 
 
 class DashBoard(Widget):
-    pass
+    def __init__(self, **kwargs):
+        super(DashBoard, self).__init__(**kwargs)
+        self.max_range = 1000
+
+    def base_layout(self):
+        """
+        Make the base layout of the dashboard.
+        :return: None
+        """
+        upper_car_char = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+        for column in range(self.max_range):
+            for row in range(len(upper_car_char)):
+                pass
