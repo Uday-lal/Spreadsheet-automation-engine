@@ -8,42 +8,55 @@ company: UR's tech.ltd
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 Making the dashboard.
 """
-from kivy.uix.widget import Widget
-from kivy.graphics import Color, Line, Rectangle
 from kivy.uix.label import Label
+from kivy.graphics import Color, Line, Rectangle
+from kivy.uix.widget import Widget
+from kivy.uix.behaviors import ButtonBehavior
 
 
-class Cell(Widget):
-    """Making the cell"""
+class Cell(Widget, ButtonBehavior):
+    """Building the cell widget."""
 
-    def __init__(self, size, pos, text, **kwargs):
+    def __init__(self, size, pos, is_car_section=False, **kwargs):
         super(Cell, self).__init__(**kwargs)
-        if type(pos) is not tuple or type(
-                size) is not tuple:  # Validating the required input values based on there type
-            raise TypeError("type of pos and size should be tuple")
-
-        self.size = size
-        self.pos = pos
-        self.text = str(text)
-        self.label = Label(text=self.text, size=self.size, pos=self.pos)
-        self.widget = Widget()
         self.border_width = 1
         self.border_color = (0, 0, 0, 1)
-        with self.label.canvas:
-            Color(self.border_color[0], self.border_color[1], self.border_color[2], self.border_color[3])
-            Line(width=1, rectangle=(self.pos[0], self.pos[1] + 36, self.size[0], self.size[1]))
-        self.widget.add_widget(self.label)
+        self.text = ""
+        label = Label()
+        self.pos_x, self.pos_y = pos
+        self.width, self.height = size
 
-    def add_bg_color(self, color=(194 / 255, 190 / 255, 190 / 255, 1)):
+        with self.canvas:
+            Color(self.border_color[0], self.border_color[1], self.border_color[2], self.border_color[3])
+            Line(width=self.border_width, rectangle=(self.pos_x, self.pos_y, self.width, self.height))
+
+        if is_car_section:  # car(column and row) section validation
+            self.add_bg_color()
+
+        label.text = str(self.text)
+        label.font_name = "assets/fonts/Heebo-Regular.ttf"
+        label.color = (0, 0, 0, 1)
+        label.center = self.center
+        self.add_widget(label)
+
+    def add_bg_color(self, color=(194 / 255, 194 / 255, 194 / 255, 1)):
         """
         Add the bg color to the cell
         :param color: Color to apply by default set to grey
         :return: None
         """
-        with self.label.canvas.before:
+        with self.canvas.before:
             Color(color[0], color[1], color[2], color[3])
-            Rectangle(size=self.size, pos=(self.pos[0], self.pos[1] + 36))
-        self.widget.add_widget(self.label)
+            Rectangle(pos=(self.pos_x, self.pos_y), size=(self.width, self.height))
+
+    def on_release(self, on_release_func=None):
+        """
+        Execute when this widget in click
+        :param on_release_func: Function that execute when this widget in click
+        :return: type(on_release_func)
+        """
+        return on_release_func
+
 
 class DashBoard(Widget):
     pass
