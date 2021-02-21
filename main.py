@@ -12,7 +12,7 @@ Starting the building the application.
 from kivymd.app import MDApp
 from kivy.lang import Builder
 from manager import Manager
-import register
+
 
 class Propoint(MDApp):
     def build(self):

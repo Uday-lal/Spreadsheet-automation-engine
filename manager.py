@@ -12,14 +12,11 @@ from kivy.uix.screenmanager import ScreenManager
 from screen import HomeScreen, SettingScreen, TutorialScreen, EditorScreen
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.image import Image
-from automate import splitting_algorithm
 from kivymd.uix.behaviors import HoverBehavior
 from kivymd.uix.gridlayout import MDGridLayout
 from kivymd.theming import ThemableBehavior
-from kivymd.uix.label import MDLabel
+from dashboard import DashBoard
 from kivy.core.window import Window
-from kivy.uix.scrollview import ScrollView
-from kivy.graphics import Line, Color
 
 
 class HoverItem(MDGridLayout, ThemableBehavior, HoverBehavior):
@@ -103,54 +100,7 @@ class Manager(ScreenManager):
         Define the way to render the wb data
         :return: None
         """
-        sheet = render_data[render_data["sheets"][0]]
-        rows = sheet["rows"]
-        bg_color = (251 / 255, 237 / 255, 255 / 255, 1)
-        heading_introPart = splitting_algorithm(wb_data=render_data)
-        heading = heading_introPart["heading"]
-        width, height = 100, 50
-        pos_x = self.editor_screen.ids.rail.width
-        pos_y = Window.height / 2
-        main_grid_container = MDGridLayout()
-        scroll_view = ScrollView(scroll_type=['bars'],
-                                 bar_width='9dp',
-                                 scroll_wheel_distance=100)
-
-        data_table_container = self.editor_screen.ids.data_table_container
-
-        for row in rows:
-            for data in row:
-                grid_layout = MDGridLayout(cols=1)
-                label = MDLabel()
-                label.text = str(data)
-                grid_layout.md_bg_color = bg_color
-                grid_layout.size_hint = (None, None)
-                grid_layout.size = (width, height)
-                grid_layout.pos = (pos_x, pos_y)
-                grid_layout.padding = 1
-                with grid_layout.canvas.before:
-                    Color(0, 0, 0, 1, mode="rgba")
-                    Line(width=1,
-                         rectangle=(grid_layout.pos[0], grid_layout.pos[1], grid_layout.size[0], grid_layout.size[1]))
-
-                if row == heading:
-                    label.font_name = "assets/fonts/Heebo-Bold.ttf"
-                else:
-                    label.font_name = "assets/fonts/Heebo-Regular.ttf"
-
-                grid_layout.add_widget(label)
-                main_grid_container.add_widget(grid_layout)
-                pos_x += width
-
-            pos_y -= height
-            pos_x = self.editor_screen.ids.rail.width
-
-        main_grid_container.cols = sheet["max_col"]
-        main_grid_container.md_bg_color = bg_color
-        main_grid_container.size_hint = (None, None)
-        main_grid_container.bind(minimum_height=main_grid_container.setter('height'),
-                                 minimum_width=main_grid_container.setter('width'))
-        scroll_view.add_widget(main_grid_container)
-        data_table_container.md_bg_color = bg_color
-        data_table_container.size = (Window.width, Window.height)
-        data_table_container.add_widget(scroll_view)
+        print(render_data)
+        self.editor_screen.ids.dash_board_container.add_widget(
+            DashBoard(pos=[self.editor_screen.ids.rail.width, (Window.height - self.editor_screen.ids.tool_bar.height)])
+        )
