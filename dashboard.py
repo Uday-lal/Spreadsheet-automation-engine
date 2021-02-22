@@ -25,6 +25,7 @@ class Cell(ButtonBehavior, Widget):
         self.border_color = (0, 0, 0, 1)
         self.pos = pos
         self.size = size
+        self.is_car_component = False  # car(column and row) component 
         widget.size = self.size
         widget.pos = self.pos
         with widget.canvas:
@@ -48,4 +49,13 @@ class Cell(ButtonBehavior, Widget):
         Execute when user click to a perticular cell
         :return: None
         """
+        pass
+
+
+class DashBoard:
+    def __init__(self, render_data, container):
+        self.render_data = render_data
+        self.container = container
+
+    def render_data(self):
         pass

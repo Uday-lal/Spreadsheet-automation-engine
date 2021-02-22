@@ -15,8 +15,6 @@ from kivy.uix.image import Image
 from kivymd.uix.behaviors import HoverBehavior
 from kivymd.uix.gridlayout import MDGridLayout
 from kivymd.theming import ThemableBehavior
-from dashboard import DashBoard
-from kivy.core.window import Window
 
 
 class HoverItem(MDGridLayout, ThemableBehavior, HoverBehavior):
@@ -100,7 +98,4 @@ class Manager(ScreenManager):
         Define the way to render the wb data
         :return: None
         """
-        print(render_data)
-        self.editor_screen.ids.dash_board_container.add_widget(
-            DashBoard(pos=[self.editor_screen.ids.rail.width, (Window.height - self.editor_screen.ids.tool_bar.height)])
-        )
+        pass
