@@ -98,4 +98,4 @@ class Manager(ScreenManager):
         Define the way to render the wb data
         :return: None
         """
-        pass
+        print(render_data)

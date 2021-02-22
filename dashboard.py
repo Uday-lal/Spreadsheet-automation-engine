@@ -25,7 +25,7 @@ class Cell(ButtonBehavior, Widget):
         self.border_color = (0, 0, 0, 1)
         self.pos = pos
         self.size = size
-        self.is_car_component = False  # car(column and row) component 
+        self.is_car_component = False  # car(column and row) component which define the heading of column and rows.
         widget.size = self.size
         widget.pos = self.pos
         with widget.canvas:
@@ -46,16 +46,41 @@ class Cell(ButtonBehavior, Widget):
 
     def on_release(self):
         """
-        Execute when user click to a perticular cell
+        Execute when user click to a particular cell
         :return: None
         """
         pass
 
 
 class DashBoard:
-    def __init__(self, render_data, container):
-        self.render_data = render_data
+    def __init__(self, wb_data, container):
+        self.wb_data = wb_data
         self.container = container
 
     def render_data(self):
-        pass
+        """
+        Render the wb data in the form of datatable.
+        :return: None
+        """
+        sheets = self.wb_data["sheets"]
+
+    @staticmethod
+    def get_column_head(len_r):
+        """
+        Get the column head  such as
+        if number of column is grater then 26
+        then returns -> (AA, AB, AC, AD) and so on
+        :param len_r: The of length of rows.
+        :return: str
+        """
+        return_value = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        len_t = len(return_value)  # len_t: total length
+        current_alpha_index = round(len_r / len_t) - 1
+        next_alpha_index = round(len_r - len_t) - 1
+        current_alpha = str(return_value[current_alpha_index])
+
+        for i in range(next_alpha_index + 1):
+            next_alpha = str(return_value[i])
+            return_value = return_value + (current_alpha + next_alpha)
+
+        return return_value

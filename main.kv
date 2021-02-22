@@ -197,5 +197,20 @@
                     text: "Marge data"
 
             Widget:
+                id: main_tool_bar
+                canvas.before:
+                    Color:
+                        rgba: get_color_from_hex("#bca3d6")
+                    Rectangle:
+                        pos: rail.width, ((window.Window.height - tool_bar.height) - 50)
+                        size: tool_bar.width, 50
+
+                MDDropDownItem:
+                    id: drop_item
+                    pos: main_tool_bar.x, ((window.Window.height - tool_bar.height) - 50)
+                    text: 'Sheets'
+                    on_release: self.set_item("Sheet1", "Sheet2", "Sheet3")
+
+            Widget:
                 id: dash_board_container
                 size: window.Window.width, window.Window.height
