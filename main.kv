@@ -166,6 +166,7 @@
         hint_animation: True
         callback: tutorial_screen.open_file_manager
 
+
 <EditorScreen>:
     id: editor_screen
 
@@ -205,11 +206,20 @@
                         pos: rail.width, ((window.Window.height - tool_bar.height) - 50)
                         size: tool_bar.width, 50
 
-                MDDropDownItem:
-                    id: drop_item
-                    pos: main_tool_bar.x, ((window.Window.height - tool_bar.height) - 50)
-                    text: 'Sheets'
-                    on_release: self.set_item("Sheet1", "Sheet2", "Sheet3")
+                MDBoxLayout:
+                    pos: rail.width, ((window.Window.height - tool_bar.height) - 50)
+
+                    MDDropDownItem:
+                        id: drop_item_sheets
+                        text: "Sheets"
+                        font_name: "assets/fonts/Heebo-Regular.ttf"
+                        on_release: editor_screen.toolbar_menu_sheets()
+
+                    MDDropDownItem:
+                        id: drop_item_tools
+                        text: "Tools"
+                        font_name: "assets/fonts/Heebo-Regular.ttf"
+                        on_release: editor_screen.toolbar_menu_tools()
 
             Widget:
                 id: dash_board_container
