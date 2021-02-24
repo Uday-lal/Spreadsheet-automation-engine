@@ -98,4 +98,5 @@ class Manager(ScreenManager):
         Define the way to render the wb data
         :return: None
         """
+        self.sheets = render_data["sheets"]
         print(render_data)

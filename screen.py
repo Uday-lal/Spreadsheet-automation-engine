@@ -40,19 +40,25 @@ class Base(Screen):
             tk_root.withdraw()
             file_manager = filedialog.askopenfile(title="Open workbook", filetypes=((".xlsx", "*.xlsx"),))
             if file_manager is not None:
-                filename = file_manager.name
-                self.open_workbook(filename)
+                self.filename = file_manager.name
+                self.open_workbook()
 
-    def open_workbook(self, filename):
+    def get_wb_data(self):
+        """
+        Get the data from the selected workbook.
+        :return: dict
+        """
+        automation = Automate(filename=self.filename)
+        work_book_data = automation.get_workbook_data()
+        return work_book_data
+
+    def open_workbook(self):
         """
         Get data from the workbook
-        :param filename: path to the excel file
         :return: None
         """
-        automate = Automate(filename)
-        self.workbook_data = automate.get_workbook_data()
+        self.manager.render_wb_data(render_data=self.get_wb_data())
         self.screen_transition_editor()
-        self.manager.render_wb_data(render_data=self.workbook_data)
 
     def screen_transition_editor(self):
         """
@@ -61,49 +67,6 @@ class Base(Screen):
         """
         self.manager.transition.direction = "left"
         self.manager.current = "editor_screen"
-
-    def toolbar_menu_sheets(self):
-        """
-        Defining the menu bar for the MDDropDownItem/sheets ->
-        (Which give the information about the sheets).
-        :return: None
-        """
-        sheets = self.workbook_data["sheets"]
-        drop_down_menu = MDDropdownMenu(
-            caller=self.ids.drop_item_sheets,
-            items=[{"text": str(sheets[i]), "font_name": "assets/font/Heebo-Regular/ttf"}
-                    for i in range(len(sheets))
-                   ],
-            width_mult=4
-        )
-        drop_down_menu.bind(on_release=self.drop_down_menu_callback)
-        drop_down_menu.open()
-
-    def toolbar_menu_tools(self):
-        """
-        Defining the menu bar for the MDDropDownItem/tools ->
-        (Which give the information about the tools).
-        :return: None
-        """
-        automation_tool = ["Apply formulas", "Sort", "Reverse", "Delete", "Merge sheet"]
-        drop_down_menu = MDDropdownMenu(
-            caller=self.ids.drop_item_tools,
-            items=[{"text": str(automation_tool[i]), "font_name": "assets/font/Heebo-Regular/ttf"}
-                   for i in range(len(automation_tool))
-                   ],
-            width_mult=4
-        )
-        drop_down_menu.bind(on_release=self.drop_down_menu_callback)
-        drop_down_menu.open()
-
-    def drop_down_menu_callback(self, instance_menu, instance_menu_item):
-        """
-        Receive the input from the mentioned drop_down_menu
-        :param instance_menu: Instance of the menu on which users click.
-        :param instance_menu_item: Instance of the menu_item on which users click.
-        :return: None
-        """
-        pass
 
 
 class HomeScreen(Base):
@@ -122,7 +85,56 @@ class EditorScreen(Base):
     def back_to_home(self):
         """
         Define back to home screen functionality
-        :return: 
+        :return: None
         """
         self.manager.transition.direction = "right"
         self.manager.current = "home_screen"
+
+    def toolbar_menu_sheets(self):
+        """
+        Defining the menu bar for the MDDropDownItem/sheets ->
+        (Which give the information about the sheets).
+        :return: None
+        """
+        sheets = self.manager.sheets
+        self.drop_down_menu_sheets = MDDropdownMenu(
+            caller=self.ids.drop_item_sheets,
+            items=[{"text": str(sheets[i]), "font_name": "assets/fonts/Heebo-Regular.ttf"}
+                   for i in range(len(sheets))
+                   ],
+            width_mult=4
+        )
+        self.drop_down_menu_sheets.bind(on_release=self.drop_down_menu_callback)
+        self.drop_down_menu_sheets.open()
+
+    def toolbar_menu_tools(self):
+        """
+        Defining the menu bar for the MDDropDownItem/tools ->
+        (Which give the information about the tools).
+        :return: None
+        """
+        automation_tool = ["Apply formulas", "Sort", "Reverse", "Delete", "Merge sheet"]
+        self.drop_down_menu_tool = MDDropdownMenu(
+            caller=self.ids.drop_item_tools,
+            items=[{"text": str(automation_tool[i]), "font_name": "assets/fonts/Heebo-Regular.ttf"}
+                   for i in range(len(automation_tool))
+                   ],
+            width_mult=4
+        )
+        self.drop_down_menu_tool.bind(on_release=self.drop_down_menu_callback)
+        self.drop_down_menu_tool.open()
+
+    def drop_down_menu_callback(self, instance_menu, instance_menu_item):
+        """
+        Receive the input from the mentioned drop_down_menu
+        :param instance_menu: Instance of the menu on which users click.
+        :param instance_menu_item: Instance of the menu_item on which users click.
+        :return: None
+        """
+        dropdown_menu = instance_menu.caller
+        if dropdown_menu.text == "Sheets":
+            dropdown_menu.set_item(f"Sheets/{instance_menu_item.text}")
+            self.drop_down_menu_sheets.dismiss()
+        else:
+            dropdown_menu.set_item(f"Tools/{instance_menu_item.text}")
+            self.drop_down_menu_tool.dismiss()
