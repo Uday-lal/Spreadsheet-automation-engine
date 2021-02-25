@@ -62,7 +62,7 @@ class DashBoard:
         Render the wb data in the form of datatable.
         :return: None
         """
-        sheets = self.wb_data["sheets"]
+        pass
 
     @staticmethod
     def get_column_head(len_r):
@@ -75,12 +75,15 @@ class DashBoard:
         """
         return_value = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         len_t = len(return_value)  # len_t: total length
-        current_alpha_index = round(len_r / len_t) - 1
+        current_alpha_index = 0
         next_alpha_index = round(len_r - len_t) - 1
-        current_alpha = str(return_value[current_alpha_index])
 
-        for i in range(next_alpha_index + 1):
-            next_alpha = str(return_value[i])
+        for i in range(1, next_alpha_index + 1):
+            current_alpha = str(return_value[current_alpha_index])
+            next_alpha = str(return_value[i - 1])
             return_value = return_value + (current_alpha + next_alpha)
+
+            if i % len_t == 0:
+                current_alpha_index += 1
 
         return return_value
