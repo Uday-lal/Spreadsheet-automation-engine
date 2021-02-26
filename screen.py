@@ -129,12 +129,16 @@ class EditorScreen(Base):
         Receive the input from the mentioned drop_down_menu
         :param instance_menu: Instance of the menu on which users click.
         :param instance_menu_item: Instance of the menu_item on which users click.
-        :return: None
+        :return: str
         """
         dropdown_menu = instance_menu.caller
+        selected_item = instance_menu_item.text
+
         if dropdown_menu.text == "Sheets":
-            dropdown_menu.set_item(f"Sheets/{instance_menu_item.text}")
+            dropdown_menu.set_item(f"Sheets/{selected_item}")
             self.drop_down_menu_sheets.dismiss()
         else:
-            dropdown_menu.set_item(f"Tools/{instance_menu_item.text}")
+            dropdown_menu.set_item(f"Tools/{selected_item}")
             self.drop_down_menu_tool.dismiss()
+
+        return selected_item
