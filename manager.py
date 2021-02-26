@@ -98,5 +98,6 @@ class Manager(ScreenManager):
         Define the way to render the wb data
         :return: None
         """
-        self.sheets = render_data["sheets"]
+        self.sheets = render_data["sheets"]   # This attribute is going to use by -> (sheets display dropdown menu).
+        selected_sheet = self.editor_screen.
         print(render_data)
