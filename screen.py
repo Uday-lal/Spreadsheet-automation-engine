@@ -49,8 +49,7 @@ class Base(Screen):
         :return: dict
         """
         automation = Automate(filename=self.filename)
-        work_book_data = automation.get_workbook_data()
-        return work_book_data
+        return automation.get_workbook_data()
 
     def open_workbook(self):
         """
@@ -140,5 +139,3 @@ class EditorScreen(Base):
         else:
             dropdown_menu.set_item(f"Tools/{selected_item}")
             self.drop_down_menu_tool.dismiss()
-
-        return selected_item

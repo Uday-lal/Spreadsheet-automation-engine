@@ -15,6 +15,7 @@ from kivy.uix.image import Image
 from kivymd.uix.behaviors import HoverBehavior
 from kivymd.uix.gridlayout import MDGridLayout
 from kivymd.theming import ThemableBehavior
+from dashboard import DashBoard
 
 
 class HoverItem(MDGridLayout, ThemableBehavior, HoverBehavior):
@@ -99,5 +100,6 @@ class Manager(ScreenManager):
         :return: None
         """
         self.sheets = render_data["sheets"]   # This attribute is going to use by -> (sheets display dropdown menu).
-        selected_sheet = self.editor_screen.
+        dash_board = DashBoard(wb_data=render_data, container=self.editor_screen.ids.dash_board_container)
+        dash_board.render_data(sheet=self.sheets[0])
         print(render_data)
