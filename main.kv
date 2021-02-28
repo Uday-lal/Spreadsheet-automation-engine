@@ -166,7 +166,6 @@
         hint_animation: True
         callback: tutorial_screen.open_file_manager
 
-
 <EditorScreen>:
     id: editor_screen
 
@@ -221,6 +220,7 @@
                         font_name: "assets/fonts/Heebo-Regular.ttf"
                         on_release: editor_screen.toolbar_menu_tools()
 
-            Widget:
+            MDGridLayout:
                 id: dash_board_container
+                cols: 1
                 pos: rail.width, (window.Window.height - tool_bar.height) - main_tool_bar.height

@@ -4,9 +4,6 @@ Copyrights (c) to UR's tech.ltd 2021. All rights reserved
 Author: Uday lal
 company: UR's tech.ltd
 --------------------------------------------------------->
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Making the main manager class.
 """
 from kivy.uix.screenmanager import ScreenManager
 from screen import HomeScreen, SettingScreen, TutorialScreen, EditorScreen
@@ -15,7 +12,17 @@ from kivy.uix.image import Image
 from kivymd.uix.behaviors import HoverBehavior
 from kivymd.uix.gridlayout import MDGridLayout
 from kivymd.theming import ThemableBehavior
-from dashboard import DashBoard
+from kivy.uix.widget import Widget
+from kivy.graphics import Color, Line
+
+
+class Canvas(Widget):
+    def __init__(self, pos, size, **kwargs):
+        super(Canvas, self).__init__(**kwargs)
+        self.color = (0, 0, 0, 1)
+        with self.canvas.before:
+            Color(self.color, mode="rgba")
+            Line(rectangle=(pos[0], pos[1], size[0], size[1]), width=2)
 
 
 class HoverItem(MDGridLayout, ThemableBehavior, HoverBehavior):
@@ -99,7 +106,4 @@ class Manager(ScreenManager):
         Define the way to render the wb data
         :return: None
         """
-        self.sheets = render_data["sheets"]   # This attribute is going to use by -> (sheets display dropdown menu).
-        dash_board = DashBoard(wb_data=render_data, container=self.editor_screen.ids.dash_board_container)
-        dash_board.render_data(sheet=self.sheets[0])
         print(render_data)
