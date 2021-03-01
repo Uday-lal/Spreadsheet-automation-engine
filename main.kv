@@ -166,6 +166,24 @@
         hint_animation: True
         callback: tutorial_screen.open_file_manager
 
+<Cell>:
+    canvas:
+        Color:
+            rgba: 0, 0, 0, 1
+        Line:
+            width: 2
+            rectangle: (self.x, self.y, self.width, self.height)
+
+<RecyclerDashBoardLayout>:
+    viewclass: 'Cell'
+
+    RecycleBoxLayout:
+        default_size: None, dp(56)
+        default_size_hint: 1, None
+        size_hint_y: None
+        height: self.minimum_height
+        orientation: 'vertical'
+
 <EditorScreen>:
     id: editor_screen
 
@@ -179,6 +197,7 @@
             left_action_items: [["arrow-left", lambda x: editor_screen.back_to_home()]]
 
         MDBoxLayout:
+            id: container
             MDNavigationRail:
                 id: rail
                 md_bg_color: get_color_from_hex("#9962d1")
@@ -220,7 +239,5 @@
                         font_name: "assets/fonts/Heebo-Regular.ttf"
                         on_release: editor_screen.toolbar_menu_tools()
 
-            MDGridLayout:
-                id: dash_board_container
-                cols: 1
-                pos: rail.width, (window.Window.height - tool_bar.height) - main_tool_bar.height
+            Widget:
+                id: container

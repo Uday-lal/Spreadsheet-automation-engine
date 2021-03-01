@@ -5,15 +5,17 @@ Author: Uday lal
 company: UR's tech.ltd
 --------------------------------------------------------->
 """
-from kivy.uix.screenmanager import ScreenManager
-from screen import HomeScreen, SettingScreen, TutorialScreen, EditorScreen
+from kivy.graphics import Color, Line
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.image import Image
+from kivy.uix.screenmanager import ScreenManager
+from kivy.uix.widget import Widget
+
+from kivymd.theming import ThemableBehavior
 from kivymd.uix.behaviors import HoverBehavior
 from kivymd.uix.gridlayout import MDGridLayout
-from kivymd.theming import ThemableBehavior
-from kivy.uix.widget import Widget
-from kivy.graphics import Color, Line
+from screen import HomeScreen, SettingScreen, TutorialScreen, EditorScreen
+from dashboard import *
 
 
 class Canvas(Widget):
@@ -107,4 +109,8 @@ class Manager(ScreenManager):
         :return: None
         """
         self.sheets = render_data["sheets"]  # Making the reference to dropdown items.
-        print(render_data)
+        self.render_data = render_data[self.sheets[0]]["rows"]
+        dash_board = DashBoard()
+        dash_board.render_data(data=self.render_data)
+        self.editor_screen.ids.container.add_widget(dash_board)
+        # print(render_data)
