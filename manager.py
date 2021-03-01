@@ -109,8 +109,24 @@ class Manager(ScreenManager):
         :return: None
         """
         self.sheets = render_data["sheets"]  # Making the reference to dropdown items.
-        self.render_data = render_data[self.sheets[0]]["rows"]
-        dash_board = DashBoard()
-        dash_board.render_data(data=self.render_data)
-        self.editor_screen.ids.container.add_widget(dash_board)
-        # print(render_data)
+        self.render_data = render_data
+        sheet = self.render_data[self.sheets[0]]
+        row_data = sheet["rows"]
+        self.dash_board = DashBoard()
+        self.dash_board.data = row_data
+        self.dash_board.max_cols = sheet["max_col"]
+        self.dash_board.render_data()
+        self.editor_screen.ids.container.add_widget(self.dash_board)
+
+    def update_dashboard(self, selected_sheet):
+        """
+        Update the dashboard whenever
+        a new sheet is selected
+        :param selected_sheet: Sheet selected by the user
+        :return: None
+        """
+        sheet = self.render_data[selected_sheet]
+        self.dash_board.data = sheet["rows"]
+        self.dash_board.max_cols = sheet["max_col"]
+        self.dash_board.clear_widgets()  # Removing the old child widgets.
+        self.dash_board.render_data()

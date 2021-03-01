@@ -11,6 +11,7 @@ from tkinter import *
 from tkinter import filedialog
 from automate import Automate
 from kivymd.uix.menu import MDDropdownMenu
+from kivy.properties import NumericProperty
 
 
 class Base(Screen):
@@ -81,6 +82,8 @@ class TutorialScreen(Base):
 
 
 class EditorScreen(Base):
+    drop_down_tool_bar_height = NumericProperty()
+
     def back_to_home(self):
         """
         Define back to home screen functionality
@@ -135,6 +138,7 @@ class EditorScreen(Base):
 
         if dropdown_menu.text == "Sheets":
             dropdown_menu.set_item(f"Sheets/{selected_item}")
+            self.manager.update_dashboard(selected_sheet=selected_item)
             self.drop_down_menu_sheets.dismiss()
         else:
             dropdown_menu.set_item(f"Tools/{selected_item}")

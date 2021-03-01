@@ -174,18 +174,24 @@
             width: 2
             rectangle: (self.x, self.y, self.width, self.height)
 
+<DashBoard>:
+    pos: (app.root.editor_screen.ids.rail.width,  0)
+    size: (window.Window.width, window.Window.height - (app.root.editor_screen.ids.tool_bar.height + app.root.editor_screen.drop_down_tool_bar_height))
+
 <RecyclerDashBoardLayout>:
+    id: recycle_view
     viewclass: 'Cell'
 
-    RecycleBoxLayout:
+    RecycleGridLayout:
         default_size: None, dp(56)
         default_size_hint: 1, None
         size_hint_y: None
         height: self.minimum_height
-        orientation: 'vertical'
+        cols: recycle_view.max_cols
 
 <EditorScreen>:
     id: editor_screen
+    drop_down_tool_bar_height: 50
 
     MDBoxLayout:
         orientation: "vertical"
@@ -221,8 +227,8 @@
                     Color:
                         rgba: get_color_from_hex("#bca3d6")
                     Rectangle:
-                        pos: rail.width, ((window.Window.height - tool_bar.height) - 50)
-                        size: tool_bar.width, 50
+                        pos: rail.width, ((window.Window.height - tool_bar.height) - editor_screen.drop_down_tool_bar_height)
+                        size: tool_bar.width, editor_screen.drop_down_tool_bar_height
 
                 MDBoxLayout:
                     pos: rail.width, ((window.Window.height - tool_bar.height) - 50)
@@ -241,3 +247,4 @@
 
             Widget:
                 id: container
+                pos: (rail.width, window.Window.height - (tool_bar.height + main_tool_bar.height))

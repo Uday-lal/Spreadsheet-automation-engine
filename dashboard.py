@@ -9,28 +9,38 @@ Making the dashboard.
 """
 from kivy.uix.recycleview import RecycleView
 from kivy.uix.label import Label
-from screen import Base
-from kivy.uix.anchorlayout import AnchorLayout
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivy.properties import ListProperty, NumericProperty
+from kivy.uix.behaviors import ButtonBehavior
 
 
-class Cell(Label):
+class Cell(ButtonBehavior, Label):
     def __init__(self, **kwargs):
         super(Cell, self).__init__(**kwargs)
         self.center = self.center
 
+    def on_release(self):
+        print(self.text)
+
 
 class RecyclerDashBoardLayout(RecycleView):
-    def __init__(self, render_data,  **kwargs):
+    max_cols = NumericProperty()
+
+    def __init__(self, render_data, max_cols, **kwargs):
         super(RecyclerDashBoardLayout, self).__init__(**kwargs)
-        print(render_data)
-        self.data = [{"text": str(data),"color": (0, 0, 0, 1), "font_name": "assets/fonts/Heebo-Regular.ttf"}
-                     for data in render_data]
+        self.max_cols = max_cols
+        self.data = [{"text": str(data), "font_name": "assets/fonts/Heebo-Regular.ttf", "color": (0, 0, 0, 1)}
+                     for row_data in render_data for data in row_data]
 
 
-class DashBoard(AnchorLayout):
+class DashBoard(MDBoxLayout):
+    data = ListProperty([])
+    max_cols = NumericProperty()
+
     def __init__(self, **kwargs):
         super(DashBoard, self).__init__(**kwargs)
+        self.orientation = "vertical"
 
-    def render_data(self, data):
-        recycle_view_dash_board = RecyclerDashBoardLayout(render_data=data)
+    def render_data(self):
+        recycle_view_dash_board = RecyclerDashBoardLayout(render_data=self.data, max_cols=self.max_cols)
         self.add_widget(recycle_view_dash_board)
