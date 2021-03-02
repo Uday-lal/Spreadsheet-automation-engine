@@ -29,8 +29,14 @@ class RecyclerDashBoardLayout(RecycleView):
     def __init__(self, render_data, max_cols, **kwargs):
         super(RecyclerDashBoardLayout, self).__init__(**kwargs)
         self.max_cols = max_cols
-        self.data = [{"text": str(data), "font_name": "assets/fonts/Heebo-Regular.ttf", "color": (0, 0, 0, 1)}
-                     for row_data in render_data for data in row_data]
+        self.data = [
+            {
+                "text": str(data),
+                "font_name": "assets/fonts/Heebo-Regular.ttf",
+                "color": (0, 0, 0, 1)
+            }
+            for row_data in render_data for data in row_data
+        ]
 
 
 class DashBoard(MDBoxLayout):
