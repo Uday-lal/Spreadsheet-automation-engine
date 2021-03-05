@@ -167,12 +167,21 @@
         callback: tutorial_screen.open_file_manager
 
 <Cell>:
+    id: cell
     canvas:
         Color:
             rgba: 0, 0, 0, 1
         Line:
-            width: 2
+            width: 1
             rectangle: (self.x, self.y, self.width, self.height)
+
+    canvas.before:
+        Color:
+            rgba:
+                cell.bg_color
+        Rectangle:
+            pos: cell.pos
+            size: cell.size
 
 <DashBoard>:
     pos: (app.root.editor_screen.ids.rail.width,  0)
