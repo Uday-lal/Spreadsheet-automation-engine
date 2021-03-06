@@ -56,7 +56,7 @@ class BoardHeader(ScrollView):
             headers.text = str(data)
             headers.font_name = "assets/fonts/Heebo-Regular.ttf"
             headers.color = (0, 0, 0, 1)
-            headers.bg_color = [199 / 255, 199 / 255, 199 / 255, 199 / 255, 1]
+            headers.bg_color = (199 / 255, 199 / 255, 199 / 255, 199 / 255, 1)
             self.add_widget(headers)
 
 
