@@ -187,6 +187,22 @@
     pos: (app.root.editor_screen.ids.rail.width,  0)
     size: (window.Window.width, window.Window.height - (app.root.editor_screen.ids.tool_bar.height + app.root.editor_screen.drop_down_tool_bar_height))
 
+<BoardHeader>:
+    id: board_header
+    header: header
+    bar_width: 0
+    do_scroll: False
+    size_hint: (1, None)
+    height: 25
+    effect_cls: "ScrollEffect"
+
+    GridLayout:
+        id: header
+        cols: board_header.max_cols
+        size_hint: (None, None)
+        width: self.minimum_width
+        height: self.minimum_height
+
 <RecyclerDashBoardLayout>:
     id: recycle_view
     viewclass: 'Cell'

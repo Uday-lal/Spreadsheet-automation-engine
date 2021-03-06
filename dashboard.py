@@ -18,6 +18,7 @@ from kivy.properties import ListProperty, NumericProperty, ObjectProperty
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.metrics import dp
 from kivy.uix.scrollview import ScrollView
+import string
 
 
 class Cell(ButtonBehavior, Label):
@@ -33,17 +34,27 @@ class Cell(ButtonBehavior, Label):
 
 
 class BoardHeader(ScrollView):
-    header_data_obj = ObjectProperty()
+    header = ObjectProperty(None)
     header_data = ListProperty([])
+    max_cols = NumericProperty()
 
     def __init__(self, **kwargs):
         super(BoardHeader, self).__init__(**kwargs)
-        self.header_data_obj = Cell()
+        self.render_headers()
+
+    def render_headers(self):
+        """
+        Render the headers to the screen.
+        :return: None
+        """
+        headers = Cell()
 
         for data in self.header_data:
-            self.header_data_obj.text = str(data)
-            self.header_data_obj.font_name = "assets/fonts/Heebo-Regular.ttf"
-            self.header_data_obj.color = (0, 0, 0, 1)
+            headers.text = str(data)
+            headers.font_name = "assets/fonts/Heebo-Regular.ttf"
+            headers.color = (0, 0, 0, 1)
+            headers.bg_color = [199 / 255, 199 / 255, 199 / 255, 199 / 255, 1]
+            self.add_widget(headers)
 
 
 class RecyclerDashBoardLayout(RecycleView):
@@ -75,5 +86,34 @@ class DashBoard(MDBoxLayout):
         self.orientation = "vertical"
 
     def render_data(self):
+        """
+        Render the workbook data to the screen.
+        :return: None
+        """
         recycle_view_dash_board = RecyclerDashBoardLayout(render_data=self.data, max_cols=self.max_cols)
         self.add_widget(recycle_view_dash_board)
+
+    def get_headers(self):
+        """
+        Generate the header data based on the
+        workbook data.
+        :return: str
+        """
+        letters = [letter for letter in string.ascii_uppercase]
+
+        if len(letters) < self.max_cols:
+            max_len = len(letters)
+            first_letter_i = round(self.max_cols / max_len)
+            last_letter_i = self.max_cols - max_len
+
+            for fli in range(first_letter_i):
+                first_letter = letters[fli]
+                for lli in range(last_letter_i):
+                    last_letter = letters[lli]
+                    letter = first_letter + last_letter
+                    letters.append(letter)
+
+            return letters
+
+        else:
+            return letters
