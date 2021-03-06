@@ -14,7 +14,7 @@ Making the dashboard.
 from kivy.uix.recycleview import RecycleView
 from kivy.uix.label import Label
 from kivymd.uix.boxlayout import MDBoxLayout
-from kivy.properties import ListProperty, NumericProperty, ObjectProperty
+from kivy.properties import ListProperty, NumericProperty, ObjectProperty, ColorProperty
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.metrics import dp
 from kivy.uix.scrollview import ScrollView
@@ -22,7 +22,8 @@ import string
 
 
 class Cell(ButtonBehavior, Label):
-    bg_color = ListProperty([1, 1, 1, 1])
+    border_color = ColorProperty((0, 0, 0, 1))
+    bg_color = ColorProperty((1, 1, 1, 1))
 
     def __init__(self, **kwargs):
         super(Cell, self).__init__(**kwargs)
@@ -30,6 +31,8 @@ class Cell(ButtonBehavior, Label):
         self.padding_x = dp(4)
 
     def on_release(self):
+        self.border_color = (0, 0, 1, 1)
+        self.bg_color = (192 / 255, 206 / 255, 250 / 255, 1)
         print(self.text)
 
 
@@ -113,7 +116,7 @@ class DashBoard(MDBoxLayout):
                     letter = first_letter + last_letter
                     letters.append(letter)
 
-            return letters
+            return letters[0:self.max_cols]
 
         else:
             return letters

@@ -170,7 +170,8 @@
     id: cell
     canvas:
         Color:
-            rgba: 0, 0, 0, 1
+            rgba:
+                cell.border_color
         Line:
             width: 1
             rectangle: (self.x, self.y, self.width, self.height)
