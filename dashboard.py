@@ -18,6 +18,7 @@ from kivy.properties import ListProperty, NumericProperty, ObjectProperty, Color
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.metrics import dp
 from kivy.uix.scrollview import ScrollView
+from kivy.utils import get_color_from_hex
 import string
 
 
@@ -28,6 +29,7 @@ class Cell(ButtonBehavior, Label):
     def __init__(self, **kwargs):
         super(Cell, self).__init__(**kwargs)
         self.center = self.center
+        self.font_name = "assets/fonts/Heebo-Regular.ttf"
         self.padding_x = dp(4)
 
     def on_release(self):
@@ -38,11 +40,14 @@ class Cell(ButtonBehavior, Label):
 
 class BoardHeader(ScrollView):
     header = ObjectProperty(None)
-    header_data = ListProperty([])
     max_cols = NumericProperty()
 
-    def __init__(self, **kwargs):
+    def __init__(self, header_data, max_cols, **kwargs):
         super(BoardHeader, self).__init__(**kwargs)
+        self.max_cols = max_cols
+        print(self.ids.header.cols)
+        self.header_data = header_data
+        print(self.header_data)
         self.render_headers()
 
     def render_headers(self):
@@ -50,14 +55,12 @@ class BoardHeader(ScrollView):
         Render the headers to the screen.
         :return: None
         """
-        headers = Cell()
-
         for data in self.header_data:
+            headers = Cell()
             headers.text = str(data)
-            headers.font_name = "assets/fonts/Heebo-Regular.ttf"
-            headers.color = (0, 0, 0, 1)
-            headers.bg_color = (199 / 255, 199 / 255, 199 / 255, 199 / 255, 1)
-            self.add_widget(headers)
+            headers.size = (100, 25)
+            headers.bg_color = get_color_from_hex("#c4c3c2")
+            self.header.add_widget(headers)
 
 
 class RecyclerDashBoardLayout(RecycleView):
@@ -66,14 +69,9 @@ class RecyclerDashBoardLayout(RecycleView):
     def __init__(self, render_data, max_cols, **kwargs):
         super(RecyclerDashBoardLayout, self).__init__(**kwargs)
         self.max_cols = max_cols
-        self.scroll_type = ["bars"]
-        self.bar_width = dp(9)
-        self.scroll_wheel_distance = 100
         self.data = [
             {
                 "text": str(data),
-                "font_name": "assets/fonts/Heebo-Regular.ttf",
-                "color": (0, 0, 0, 1),
                 "size": (100, 25)
             }
             for row_data in render_data for data in row_data
@@ -94,6 +92,9 @@ class DashBoard(MDBoxLayout):
         :return: None
         """
         recycle_view_dash_board = RecyclerDashBoardLayout(render_data=self.data, max_cols=self.max_cols)
+        header_data = self.get_headers()
+        headers = BoardHeader(header_data=header_data, max_cols=len(header_data))
+        self.add_widget(headers)
         self.add_widget(recycle_view_dash_board)
 
     def get_headers(self):
@@ -119,4 +120,4 @@ class DashBoard(MDBoxLayout):
             return letters[0:self.max_cols]
 
         else:
-            return letters
+            return letters[0:self.max_cols]

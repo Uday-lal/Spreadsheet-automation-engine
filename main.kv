@@ -168,6 +168,7 @@
 
 <Cell>:
     id: cell
+    color: 0, 0, 0, 1
     canvas:
         Color:
             rgba:
@@ -194,6 +195,7 @@
     bar_width: 0
     do_scroll: False
     size_hint: (1, None)
+    width: window.Window.width
     height: 25
     effect_cls: "ScrollEffect"
 
@@ -201,8 +203,8 @@
         id: header
         cols: board_header.max_cols
         size_hint: (None, None)
-        width: self.minimum_width
-        height: self.minimum_height
+        width: board_header.width
+        height: board_header.height
 
 <RecyclerDashBoardLayout>:
     id: recycle_view
