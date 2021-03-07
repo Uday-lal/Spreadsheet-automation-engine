@@ -45,9 +45,7 @@ class BoardHeader(ScrollView):
     def __init__(self, header_data, max_cols, **kwargs):
         super(BoardHeader, self).__init__(**kwargs)
         self.max_cols = max_cols
-        print(self.ids.header.cols)
         self.header_data = header_data
-        print(self.header_data)
         self.render_headers()
 
     def render_headers(self):
