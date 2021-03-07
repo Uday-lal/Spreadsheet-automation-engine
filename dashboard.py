@@ -99,7 +99,7 @@ class DashBoard(MDBoxLayout):
         """
         Generate the header data based on the
         workbook data.
-        :return: str
+        :return: list
         """
         letters = [letter for letter in string.ascii_uppercase]
 
