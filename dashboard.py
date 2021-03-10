@@ -14,7 +14,12 @@ Making the dashboard.
 from kivy.uix.recycleview import RecycleView
 from kivy.uix.label import Label
 from kivymd.uix.boxlayout import MDBoxLayout
-from kivy.properties import ListProperty, NumericProperty, ObjectProperty, ColorProperty
+from kivy.properties import (
+    ListProperty,
+    NumericProperty,
+    ObjectProperty,
+    ColorProperty
+)
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.metrics import dp
 from kivy.uix.scrollview import ScrollView
