@@ -4,10 +4,6 @@ Copyrights (c) to UR's tech.ltd 2021. All rights reserved
 Author: Uday lal
 company: UR's tech.ltd
 --------------------------------------------------------->
-
-Special thanks for the info at:
-`https://stackoverflow.com/questions/50219281/python-how-to-add-vertical-scroll-in-recycleview`
-
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 Making the dashboard.
 """
