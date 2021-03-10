@@ -16,7 +16,6 @@ from manager import Manager
 
 class Propoint(MDApp):
     title = "Propoint"
-    icon = "assets/images/logo.png"
 
     def build(self):
         """
