@@ -80,10 +80,10 @@ class DashBoard(MDBoxLayout):
         """
         headers = self.get_headers()
         headers.insert(0, "")
-        data = self.insert_row_master()
-        data.insert(0, headers)
-        self.max_cols = len(data[0])
-        recycle_view_dash_board = RecyclerDashBoardLayout(render_data=data, max_cols=self.max_cols)
+        self.insert_row_master()
+        self.data.insert(0, headers)
+        self.max_cols = len(self.data[0])
+        recycle_view_dash_board = RecyclerDashBoardLayout(render_data=self.data, max_cols=self.max_cols)
         self.add_widget(recycle_view_dash_board)
 
     def get_headers(self):
@@ -112,9 +112,11 @@ class DashBoard(MDBoxLayout):
             return letters[0:self.max_cols]
 
     def insert_row_master(self):
+        """
+        Add the index on the wb_data
+        :return: None
+        """
         index = 0
         for row_data in self.data:
             index += 1
             row_data.insert(0, index)
-
-        return self.data
