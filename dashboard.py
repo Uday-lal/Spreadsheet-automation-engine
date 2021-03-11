@@ -70,6 +70,10 @@ class BoardHeader(ScrollView):
             self.header.add_widget(headers)
 
     def get_cols_minimum(self):
+        """
+        Add the minimum column to the RecycleGridLayout
+        :return: None
+        """
         for i in range(self.max_cols):
             self.cols_minimum[i] = 200
 
