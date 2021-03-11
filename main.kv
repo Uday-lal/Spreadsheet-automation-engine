@@ -193,7 +193,6 @@
     id: board_header
     header: header
     bar_width: 0
-    do_scroll: False
     size_hint: (1, None)
     width: window.Window.width
     height: 25
@@ -211,9 +210,12 @@
     viewclass: 'Cell'
 
     RecycleGridLayout:
+        cols_minimum: root.cols_minimum
         default_size: None, dp(56)
         default_size_hint: 1, None
+        size_hint: None, None
         size_hint_y: None
+        width: self.minimum_width
         height: self.minimum_height
         cols: recycle_view.max_cols
 

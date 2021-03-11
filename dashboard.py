@@ -4,6 +4,10 @@ Copyrights (c) to UR's tech.ltd 2021. All rights reserved
 Author: Uday lal
 company: UR's tech.ltd
 --------------------------------------------------------->
+
+Special thanks to the information at:
+https://stackoverflow.com/questions/50219281/python-how-to-add-vertical-scroll-in-recycleview
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 Making the dashboard.
 """
@@ -14,7 +18,8 @@ from kivy.properties import (
     ListProperty,
     NumericProperty,
     ObjectProperty,
-    ColorProperty
+    ColorProperty,
+    DictProperty
 )
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.metrics import dp
@@ -42,12 +47,15 @@ class Cell(ButtonBehavior, Label):
 class BoardHeader(ScrollView):
     header = ObjectProperty(None)
     max_cols = NumericProperty()
+    cols_minimum = DictProperty()
 
     def __init__(self, header_data, max_cols, **kwargs):
         super(BoardHeader, self).__init__(**kwargs)
         self.max_cols = max_cols
+        self.do_scroll_y = False
         self.header_data = header_data
         self.render_headers()
+        self.get_cols_minimum()
 
     def render_headers(self):
         """
@@ -61,9 +69,14 @@ class BoardHeader(ScrollView):
             headers.bg_color = get_color_from_hex("#c4c3c2")
             self.header.add_widget(headers)
 
+    def get_cols_minimum(self):
+        for i in range(self.max_cols):
+            self.cols_minimum[i] = 200
+
 
 class RecyclerDashBoardLayout(RecycleView):
     max_cols = NumericProperty()
+    cols_minimum = DictProperty()
 
     def __init__(self, render_data, max_cols, **kwargs):
         super(RecyclerDashBoardLayout, self).__init__(**kwargs)
@@ -93,6 +106,7 @@ class DashBoard(MDBoxLayout):
         recycle_view_dash_board = RecyclerDashBoardLayout(render_data=self.data, max_cols=self.max_cols)
         header_data = self.get_headers()
         headers = BoardHeader(header_data=header_data, max_cols=len(header_data))
+        recycle_view_dash_board.cols_minimum = headers.cols_minimum
         self.add_widget(headers)
         self.add_widget(recycle_view_dash_board)
 
