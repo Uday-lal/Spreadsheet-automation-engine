@@ -17,20 +17,21 @@ from kivymd.uix.boxlayout import MDBoxLayout
 from kivy.properties import (
     ListProperty,
     NumericProperty,
-    ObjectProperty,
     ColorProperty,
-    DictProperty
+    DictProperty,
+    BooleanProperty
 )
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.metrics import dp
-from kivy.uix.scrollview import ScrollView
-from kivy.utils import get_color_from_hex
 import string
 
 
 class Cell(ButtonBehavior, Label):
     border_color = ColorProperty((0, 0, 0, 1))
     bg_color = ColorProperty((1, 1, 1, 1))
+    selected_border_color = ColorProperty((0, 0, 1, 1))
+    selected_color = ColorProperty((192 / 255, 206 / 255, 250 / 255, 1))
+    is_selected = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         super(Cell, self).__init__(**kwargs)
@@ -39,43 +40,8 @@ class Cell(ButtonBehavior, Label):
         self.padding_x = dp(4)
 
     def on_release(self):
-        self.border_color = (0, 0, 1, 1)
-        self.bg_color = (192 / 255, 206 / 255, 250 / 255, 1)
+        self.is_selected = True
         print(self.text)
-
-
-class BoardHeader(ScrollView):
-    header = ObjectProperty(None)
-    max_cols = NumericProperty()
-    cols_minimum = DictProperty()
-
-    def __init__(self, header_data, max_cols, **kwargs):
-        super(BoardHeader, self).__init__(**kwargs)
-        self.max_cols = max_cols
-        self.do_scroll_y = False
-        self.header_data = header_data
-        self.render_headers()
-        self.get_cols_minimum()
-
-    def render_headers(self):
-        """
-        Render the headers to the screen.
-        :return: None
-        """
-        for data in self.header_data:
-            headers = Cell()
-            headers.text = str(data)
-            headers.size = (100, 25)
-            headers.bg_color = get_color_from_hex("#c4c3c2")
-            self.header.add_widget(headers)
-
-    def get_cols_minimum(self):
-        """
-        Add the minimum column to the RecycleGridLayout
-        :return: None
-        """
-        for i in range(self.max_cols):
-            self.cols_minimum[i] = 200
 
 
 class RecyclerDashBoardLayout(RecycleView):
@@ -85,6 +51,7 @@ class RecyclerDashBoardLayout(RecycleView):
     def __init__(self, render_data, max_cols, **kwargs):
         super(RecyclerDashBoardLayout, self).__init__(**kwargs)
         self.max_cols = max_cols
+        self.get_cols_minimum()
         self.data = [
             {
                 "text": str(data),
@@ -92,6 +59,10 @@ class RecyclerDashBoardLayout(RecycleView):
             }
             for row_data in render_data for data in row_data
         ]
+
+    def get_cols_minimum(self):
+        for i in range(self.max_cols):
+            self.cols_minimum[i] = 200
 
 
 class DashBoard(MDBoxLayout):
@@ -107,11 +78,12 @@ class DashBoard(MDBoxLayout):
         Render the workbook data to the screen.
         :return: None
         """
-        recycle_view_dash_board = RecyclerDashBoardLayout(render_data=self.data, max_cols=self.max_cols)
-        header_data = self.get_headers()
-        headers = BoardHeader(header_data=header_data, max_cols=len(header_data))
-        recycle_view_dash_board.cols_minimum = headers.cols_minimum
-        self.add_widget(headers)
+        headers = self.get_headers()
+        headers.insert(0, "")
+        data = self.insert_row_master()
+        data.insert(0, headers)
+        self.max_cols = len(data[0])
+        recycle_view_dash_board = RecyclerDashBoardLayout(render_data=data, max_cols=self.max_cols)
         self.add_widget(recycle_view_dash_board)
 
     def get_headers(self):
@@ -138,3 +110,11 @@ class DashBoard(MDBoxLayout):
 
         else:
             return letters[0:self.max_cols]
+
+    def insert_row_master(self):
+        index = 0
+        for row_data in self.data:
+            index += 1
+            row_data.insert(0, index)
+
+        return self.data
