@@ -79,7 +79,6 @@ class Manager(ScreenManager):
         clean_data = self.clean_data(data=sheet_data)
         row_data = clean_data["rows"]
         max_cols = clean_data["max_cols"]
-        print(clean_data)
         self.dash_board = DashBoard()
         self.dash_board.data = row_data
         self.dash_board.max_cols = max_cols
