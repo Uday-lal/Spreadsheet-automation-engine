@@ -143,7 +143,7 @@ class Automate:
                 cols_data_copy = rows_data.copy()
                 rows.append(cols_data_copy)
                 sheet_data["rows"] = rows
-                sheet_data["max_cols"] = max_cols
+                sheet_data["max_cols"] = max_cols + 1
                 sheet_data["max_row"] = max_rows
                 rows_data.clear()
 
