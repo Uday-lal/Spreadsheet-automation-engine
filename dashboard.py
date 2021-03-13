@@ -30,6 +30,7 @@ class Cell(ButtonBehavior, Label):
     bg_color = ColorProperty((1, 1, 1, 1))
     selected_border_color = ColorProperty((0, 0, 1, 1))
     selected_color = ColorProperty((192 / 255, 206 / 255, 250 / 255, 1))
+    master_bg_color = ColorProperty((191 / 255, 191 / 255, 191 / 255, 1))
     is_selected = BooleanProperty(False)
     is_master = BooleanProperty(False)
 
@@ -38,10 +39,6 @@ class Cell(ButtonBehavior, Label):
         self.center = self.center
         self.font_name = "assets/fonts/Heebo-Regular.ttf"
         self.padding_x = dp(4)
-
-    def on_release(self):
-        self.is_selected = True
-        print(self.text)
 
 
 class RecyclerDashBoardLayout(RecycleView):

@@ -169,11 +169,14 @@
 <Cell>:
     id: cell
     color: 0, 0, 0, 1
+    on_release:
+        self.bg_color = self.selected_color;
+        self.border_color = (0, 0, 1, 1)
 
     canvas:
         Color:
             rgba:
-                cell.border_color if not cell.is_selected else cell.selected_border_color
+                cell.border_color
         Line:
             width: 1
             rectangle: (self.x, self.y, self.width, self.height)
@@ -181,7 +184,7 @@
     canvas.before:
         Color:
             rgba:
-                cell.bg_color if not cell.is_selected else cell.selected_color
+                cell.bg_color if not cell.is_master else cell.master_bg_color
         Rectangle:
             pos: cell.pos
             size: cell.size
