@@ -22,10 +22,11 @@ class DataSetup:
         Defining the process to clean the data.
         :return: dict
         """
-        clean_data = self.insert_row_master()
-        self.max_cols = len(clean_data[0])
+        row_data = self.insert_row_master()
         headers = self.get_headers()
-        clean_data.insert(0, headers)
+        row_data.insert(0, headers)
+        clean_data = self.add_master_id(data=row_data)
+        self.max_cols = len(clean_data[0])
         self.sheet_data["rows"] = clean_data
         self.sheet_data["max_cols"] = self.max_cols
         return self.sheet_data
@@ -61,9 +62,30 @@ class DataSetup:
         Add the index on the wb_data
         :return: list
         """
-        index = 0
-        for row_data in self.data:
-            index += 1
+        for index, row_data in enumerate(self.data, 1):
             row_data.insert(0, index)
+
+        return self.data
+
+    def add_master_id(self, data):
+        """
+        Defining a way to identify the index number and column header
+        by constructing a data obj which is a list of three values such as ->
+
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        [data, is_master, is_selected] =>
+        ----------------------------------------
+        data -> Data display to the dashboard
+        is_selected -> It is a boolean state
+        is_master -> It is also a boolean state
+        ---------------------------------------
+        :return: list
+        """
+        for i, row_data in enumerate(data):
+            for j, _data in enumerate(row_data):
+                master_header = [_data, False, False]  # As documented above ↑
+                if j == 0 or i == 0:
+                    master_header[1] = True
+                row_data[j] = master_header
 
         return self.data

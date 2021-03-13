@@ -23,7 +23,6 @@ from kivy.properties import (
 )
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.metrics import dp
-import string
 
 
 class Cell(ButtonBehavior, Label):
@@ -56,8 +55,10 @@ class RecyclerDashBoardLayout(RecycleView):
         self.get_cols_minimum()
         self.data = [
             {
-                "text": str(data),
-                "size": (100, 25)
+                "text": str(data[0]),
+                "size": (100, 25),
+                "is_master": data[1],
+                "is_selected": data[2]
             }
             for row_data in render_data for data in row_data
         ]
@@ -84,45 +85,5 @@ class DashBoard(MDBoxLayout):
         Render the workbook data to the screen.
         :return: None
         """
-        headers = self.get_headers()
-        headers.insert(0, "")
-        self.insert_row_master()
-        self.data.insert(0, headers)
-        self.max_cols = len(self.data[0])
         recycle_view_dash_board = RecyclerDashBoardLayout(render_data=self.data, max_cols=self.max_cols)
         self.add_widget(recycle_view_dash_board)
-
-    def get_headers(self):
-        """
-        Generate the header data based on the
-        workbook data.
-        :return: list
-        """
-        letters = [letter for letter in string.ascii_uppercase]
-
-        if len(letters) < self.max_cols:
-            max_len = len(letters)
-            first_letter_i = round(self.max_cols / max_len)
-            last_letter_i = self.max_cols - max_len
-
-            for fli in range(first_letter_i):
-                first_letter = letters[fli]
-                for lli in range(last_letter_i):
-                    last_letter = letters[lli]
-                    letter = first_letter + last_letter
-                    letters.append(letter)
-
-            return letters[0:self.max_cols]
-
-        else:
-            return letters[0:self.max_cols]
-
-    def insert_row_master(self):
-        """
-        Add the index on the wb_data
-        :return: None
-        """
-        index = 0
-        for row_data in self.data:
-            index += 1
-            row_data.insert(0, index)
