@@ -5,51 +5,18 @@ Author: Uday lal
 company: UR's tech.ltd
 --------------------------------------------------------->
 """
-from kivy.graphics import Color, Line
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.image import Image
 from kivy.uix.screenmanager import ScreenManager
-from kivy.uix.widget import Widget
 
-from kivymd.theming import ThemableBehavior
-from kivymd.uix.behaviors import HoverBehavior
-from kivymd.uix.gridlayout import MDGridLayout
 from screen import HomeScreen, SettingScreen, TutorialScreen, EditorScreen
 from dashboard import *
-
-
-class Canvas(Widget):
-    def __init__(self, pos, size, **kwargs):
-        super(Canvas, self).__init__(**kwargs)
-        self.color = (0, 0, 0, 1)
-        with self.canvas.before:
-            Color(self.color, mode="rgba")
-            Line(rectangle=(pos[0], pos[1], size[0], size[1]), width=2)
-
-
-class HoverItem(MDGridLayout, ThemableBehavior, HoverBehavior):
-    """Custom item implementing hover behavior."""
-
-    @staticmethod
-    def on_enter(*args):
-        """
-        Run when the cursor enters
-        :param args: *args
-        :return: None
-        """
-        print("hover")
-
-    @staticmethod
-    def on_leave(*args):
-        """
-        Run when the cursor leaves
-        :param args: *args
-        :return: None
-        """
-        print("Not hover")
+from kivy.properties import NumericProperty
 
 
 class Manager(ScreenManager):
+    max_cols = NumericProperty()
+
     def __init__(self, **kwargs):
         super(Manager, self).__init__(**kwargs)
         self.home_screen = HomeScreen(name="home_screen")
@@ -112,9 +79,10 @@ class Manager(ScreenManager):
         self.render_data = render_data
         sheet = self.render_data[self.sheets[0]]
         row_data = sheet["rows"]
+        self.max_cols = sheet["max_cols"]
         self.dash_board = DashBoard()
         self.dash_board.data = row_data
-        self.dash_board.max_cols = sheet["max_col"]
+        self.dash_board.max_cols = self.max_cols
         self.dash_board.render_data()
         self.editor_screen.ids.container.add_widget(self.dash_board)
 
@@ -127,6 +95,7 @@ class Manager(ScreenManager):
         """
         sheet = self.render_data[selected_sheet]
         self.dash_board.data = sheet["rows"]
-        self.dash_board.max_cols = sheet["max_col"]
+        print(f"From dashboard {str(self.max_cols)}")
+        self.dash_board.max_cols = self.max_cols
         self.dash_board.clear_widgets()  # Removing the old child widgets.
         self.dash_board.render_data()

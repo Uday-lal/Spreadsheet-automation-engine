@@ -32,6 +32,7 @@ class Cell(ButtonBehavior, Label):
     selected_border_color = ColorProperty((0, 0, 1, 1))
     selected_color = ColorProperty((192 / 255, 206 / 255, 250 / 255, 1))
     is_selected = BooleanProperty(False)
+    is_master = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         super(Cell, self).__init__(**kwargs)
@@ -51,6 +52,7 @@ class RecyclerDashBoardLayout(RecycleView):
     def __init__(self, render_data, max_cols, **kwargs):
         super(RecyclerDashBoardLayout, self).__init__(**kwargs)
         self.max_cols = max_cols
+        print(f"Recycler view {str(self.max_cols)}")
         self.get_cols_minimum()
         self.data = [
             {
@@ -61,6 +63,10 @@ class RecyclerDashBoardLayout(RecycleView):
         ]
 
     def get_cols_minimum(self):
+        """
+        Making the width of each column in the dashboard
+        :return: None
+        """
         for i in range(self.max_cols):
             self.cols_minimum[i] = 200
 
