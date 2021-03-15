@@ -126,6 +126,9 @@ class EditorScreen(Base):
         self.drop_down_menu_tool.bind(on_release=self.drop_down_menu_callback)
         self.drop_down_menu_tool.open()
 
+    def toolbar_menu_add_column_row(self):
+        pass
+
     def drop_down_menu_callback(self, instance_menu, instance_menu_item):
         """
         Receive the input from the mentioned drop_down_menu

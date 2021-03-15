@@ -76,8 +76,8 @@ class DataSetup:
         [data, is_master, is_selected] =>
         ----------------------------------------
         data -> Data display to the dashboard
-        is_selected -> It is a boolean state
-        is_master -> It is also a boolean state
+        is_master -> It is a boolean state
+        is_selected -> It is also boolean state
         ---------------------------------------
         :return: list
         """

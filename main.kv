@@ -170,7 +170,8 @@
     id: cell
     color: 0, 0, 0, 1
     on_release:
-        self.bg_color = self.selected_color;
+        if self.is_selected:\
+        self.bg_color = (192 / 255, 206 / 255, 250 / 255, 1);
         self.border_color = (0, 0, 1, 1)
 
     canvas:
@@ -264,6 +265,12 @@
                         text: "Tools"
                         font_name: "assets/fonts/Heebo-Regular.ttf"
                         on_release: editor_screen.toolbar_menu_tools()
+
+                    MDDropDownItem:
+                        id: drop_item_add_button
+                        text: "Add"
+                        font_name: "assets/fonts/Heebo-Regular.ttf"
+                        # on_release: editor_screen.toolbar_menu_add_column_row()
 
             Widget:
                 id: container

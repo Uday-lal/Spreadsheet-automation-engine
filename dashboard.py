@@ -19,7 +19,8 @@ from kivy.properties import (
     NumericProperty,
     ColorProperty,
     DictProperty,
-    BooleanProperty
+    BooleanProperty,
+    ObjectProperty
 )
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.metrics import dp
@@ -33,12 +34,24 @@ class Cell(ButtonBehavior, Label):
     master_bg_color = ColorProperty((191 / 255, 191 / 255, 191 / 255, 1))
     is_selected = BooleanProperty(False)
     is_master = BooleanProperty(False)
+    column_index = NumericProperty()
+    row_index = NumericProperty()
 
     def __init__(self, **kwargs):
         super(Cell, self).__init__(**kwargs)
         self.center = self.center
         self.font_name = "assets/fonts/Heebo-Regular.ttf"
         self.padding_x = dp(4)
+
+    def on_release(self):
+        """
+        Defining the logic if any cell click.
+        :return: None
+        """
+        self.is_selected = True
+        dash_board_helper = DashBoardHelper()
+        dash_board_helper.cell = self
+        dash_board_helper.on_click()
 
 
 class RecyclerDashBoardLayout(RecycleView):
@@ -48,16 +61,17 @@ class RecyclerDashBoardLayout(RecycleView):
     def __init__(self, render_data, max_cols, **kwargs):
         super(RecyclerDashBoardLayout, self).__init__(**kwargs)
         self.max_cols = max_cols
-        print(f"Recycler view {str(self.max_cols)}")
         self.get_cols_minimum()
         self.data = [
             {
                 "text": str(data[0]),
                 "size": (100, 25),
                 "is_master": data[1],
-                "is_selected": data[2]
+                "is_selected": data[2],
+                "column_index": ci,
+                "row_index": ri
             }
-            for row_data in render_data for data in row_data
+            for ri, row_data in enumerate(render_data) for ci, data in enumerate(row_data)
         ]
 
     def get_cols_minimum(self):
@@ -84,3 +98,46 @@ class DashBoard(MDBoxLayout):
         """
         recycle_view_dash_board = RecyclerDashBoardLayout(render_data=self.data, max_cols=self.max_cols)
         self.add_widget(recycle_view_dash_board)
+
+
+class DashBoardHelper(DashBoard):
+    cell = ObjectProperty(None)
+
+    def __init__(self, **kwargs):
+        super(DashBoardHelper, self).__init__(**kwargs)
+
+    def on_click(self):
+        """
+        Define the response when any cell is clicked
+        :return: None
+        """
+        if self.cell.is_master:
+            print(self.data)
+            self.master_selection(column_index=self.cell.column_index)
+        # if cell.is_selected:
+        #     self.selection()
+
+    def master_selection(self, column_index):
+        """
+        Update the data dict on the master selection
+        :param column_index: Column index of the cell
+        :return: None
+        """
+        while True:
+            try:
+                fia_data = self.fast_iter_algorithm()  # Data comes from fia => (fast_iter_algorithm)
+                cell_data = next(fia_data)[column_index]
+                cell_data[2] = True
+            except StopIteration:
+                break
+
+    def selection(self):
+        pass
+
+    def fast_iter_algorithm(self):
+        data_len = len(self.data)
+        for i in range(data_len):
+            if i == (data_len + 1):
+                raise StopIteration()
+            data = self.data[i] if i % 2 == 0 else self.data[data_len - i]
+            yield data
