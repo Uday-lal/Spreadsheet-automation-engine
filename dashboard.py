@@ -43,6 +43,11 @@ class Cell(ButtonBehavior, Label):
         self.font_name = "assets/fonts/Heebo-Regular.ttf"
         self.padding_x = dp(4)
 
+    def on_release(self):
+        self.is_selected = True
+        dash_board = DashBoard()
+        dash_board.on_click(cell=self)
+
 
 class RecyclerDashBoardLayout(RecycleView):
     max_cols = NumericProperty()
@@ -74,8 +79,9 @@ class RecyclerDashBoardLayout(RecycleView):
             self.cols_minimum[i] = 200
 
 
-class DashBoard(MDBoxLayout, Cell):
+class DashBoard(MDBoxLayout):
     max_cols = NumericProperty()
+    data = ListProperty([])
 
     def __init__(self, **kwargs):
         super(DashBoard, self).__init__(**kwargs)
@@ -90,20 +96,15 @@ class DashBoard(MDBoxLayout, Cell):
         recycle_view_dash_board = RecyclerDashBoardLayout(render_data=self.data, max_cols=self.max_cols)
         self.add_widget(recycle_view_dash_board)
 
-    def on_release(self):
-        print("working")
-        self.on_click(cell=self)
-
     def on_click(self, cell):
         """
         Define the response when any cell is clicked
         :return: None
         """
         if cell.is_master:
-            print(self.data)
+            self.data = cell.data
             self.master_selection(column_index=cell.column_index)
-        # if cell.is_selected:
-        #     self.selection()
+            print(self.data)
 
     def master_selection(self, column_index):
         """
@@ -111,21 +112,18 @@ class DashBoard(MDBoxLayout, Cell):
         :param column_index: Column index of the cell
         :return: None
         """
+        fia_data = self.fast_iter_algorithm()  # Data comes from fia => (fast_iter_algorithm)
         while True:
             try:
-                fia_data = self.fast_iter_algorithm()  # Data comes from fia => (fast_iter_algorithm)
                 cell_data = next(fia_data)[column_index]
                 cell_data[2] = True
+                print(cell_data)
             except StopIteration:
                 break
 
-    def selection(self):
-        pass
-
     def fast_iter_algorithm(self):
         data_len = len(self.data)
-        for i in range(data_len):
-            if i == (data_len + 1):
-                raise StopIteration()
+        total_iter_len = round(data_len / 2)
+        for i in range(total_iter_len):
             data = self.data[i] if i % 2 == 0 else self.data[data_len - i]
             yield data
