@@ -42,11 +42,25 @@ class Cell(ButtonBehavior, Label):
         self.center = self.center
         self.font_name = "assets/fonts/Heebo-Regular.ttf"
         self.padding_x = dp(4)
+        if self.is_selected:
+            self.selected_styles()
 
     def on_release(self):
         self.is_selected = True
-        dash_board = DashBoard()
-        dash_board.on_click(cell=self)
+        if self.is_master:
+            dash_board = DashBoard()
+            dash_board.on_click(cell=self)
+        self.__init__()
+
+    def selected_styles(self):
+        """
+        Defining the selected styles
+        so that it could change based
+        on the state of is_selected
+        :return: None
+        """
+        self.bg_color = (148 / 255, 189 / 255, 255 / 255, 1)
+        self.border_color = (0, 0, 1, 1)
 
 
 class RecyclerDashBoardLayout(RecycleView):
