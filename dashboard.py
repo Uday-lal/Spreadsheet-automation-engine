@@ -136,6 +136,11 @@ class DashBoard(MDBoxLayout):
                 break
 
     def fast_iter_algorithm(self):
+        """
+        Define a algorithm which is able to iterate from a
+        iterable object as fast as possible
+        :return: yielding the data
+        """
         data_len = len(self.data)
         total_iter_len = round(data_len / 2)
         for i in range(total_iter_len):
