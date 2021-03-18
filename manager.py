@@ -82,7 +82,7 @@ class Manager(ScreenManager):
         self.dash_board = DashBoard()
         self.dash_board.data = row_data
         self.dash_board.max_cols = max_cols
-        self.dash_board.render_data()
+        self.dash_board.render_data(data=row_data)
         self.editor_screen.ids.container.add_widget(self.dash_board)
 
     def update_dashboard(self, selected_sheet):
@@ -93,10 +93,10 @@ class Manager(ScreenManager):
         :return: None
         """
         sheet_data = self.render_data[selected_sheet]
-        self.dash_board.data = sheet_data["rows"]
-        self.dash_board.max_cols = self.max_cols
+        clean_data = self.clean_data(data=sheet_data)
+        self.dash_board.max_cols = clean_data["max_cols"]
         self.dash_board.clear_widgets()  # Removing the old child widgets.
-        self.dash_board.render_data()
+        self.dash_board.render_data(data=clean_data["rows"])
 
     @staticmethod
     def clean_data(data):

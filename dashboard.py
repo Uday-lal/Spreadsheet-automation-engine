@@ -15,12 +15,11 @@ from kivy.uix.recycleview import RecycleView
 from kivy.uix.label import Label
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivy.properties import (
-    ListProperty,
     NumericProperty,
     ColorProperty,
     DictProperty,
     BooleanProperty,
-    ObjectProperty
+    ListProperty
 )
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.metrics import dp
@@ -36,22 +35,13 @@ class Cell(ButtonBehavior, Label):
     is_master = BooleanProperty(False)
     column_index = NumericProperty()
     row_index = NumericProperty()
+    data = ListProperty()
 
     def __init__(self, **kwargs):
         super(Cell, self).__init__(**kwargs)
         self.center = self.center
         self.font_name = "assets/fonts/Heebo-Regular.ttf"
         self.padding_x = dp(4)
-
-    def on_release(self):
-        """
-        Defining the logic if any cell click.
-        :return: None
-        """
-        self.is_selected = True
-        dash_board_helper = DashBoardHelper()
-        dash_board_helper.cell = self
-        dash_board_helper.on_click()
 
 
 class RecyclerDashBoardLayout(RecycleView):
@@ -69,7 +59,8 @@ class RecyclerDashBoardLayout(RecycleView):
                 "is_master": data[1],
                 "is_selected": data[2],
                 "column_index": ci,
-                "row_index": ri
+                "row_index": ri,
+                "data": render_data
             }
             for ri, row_data in enumerate(render_data) for ci, data in enumerate(row_data)
         ]
@@ -83,37 +74,34 @@ class RecyclerDashBoardLayout(RecycleView):
             self.cols_minimum[i] = 200
 
 
-class DashBoard(MDBoxLayout):
-    data = ListProperty([])
+class DashBoard(MDBoxLayout, Cell):
     max_cols = NumericProperty()
 
     def __init__(self, **kwargs):
         super(DashBoard, self).__init__(**kwargs)
         self.orientation = "vertical"
 
-    def render_data(self):
+    def render_data(self, data):
         """
         Render the workbook data to the screen.
         :return: None
         """
+        self.data = data
         recycle_view_dash_board = RecyclerDashBoardLayout(render_data=self.data, max_cols=self.max_cols)
         self.add_widget(recycle_view_dash_board)
 
+    def on_release(self):
+        print("working")
+        self.on_click(cell=self)
 
-class DashBoardHelper(DashBoard):
-    cell = ObjectProperty(None)
-
-    def __init__(self, **kwargs):
-        super(DashBoardHelper, self).__init__(**kwargs)
-
-    def on_click(self):
+    def on_click(self, cell):
         """
         Define the response when any cell is clicked
         :return: None
         """
-        if self.cell.is_master:
+        if cell.is_master:
             print(self.data)
-            self.master_selection(column_index=self.cell.column_index)
+            self.master_selection(column_index=cell.column_index)
         # if cell.is_selected:
         #     self.selection()
 
