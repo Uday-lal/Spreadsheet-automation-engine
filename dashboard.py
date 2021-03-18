@@ -95,7 +95,6 @@ class RecyclerDashBoardLayout(RecycleView):
 
 class DashBoard(MDBoxLayout):
     max_cols = NumericProperty()
-    data = ListProperty([])
 
     def __init__(self, **kwargs):
         super(DashBoard, self).__init__(**kwargs)
@@ -115,10 +114,11 @@ class DashBoard(MDBoxLayout):
         Define the response when any cell is clicked
         :return: None
         """
-        if cell.is_master:
-            self.data = cell.data
-            self.master_selection(column_index=cell.column_index)
-            print(self.data)
+        self.cell = cell
+        if self.cell.is_master:
+            self.data = self.cell.data
+            self.master_selection(column_index=self.cell.column_index)
+            self.reload_dashboard()
 
     def master_selection(self, column_index):
         """
@@ -131,7 +131,6 @@ class DashBoard(MDBoxLayout):
             try:
                 cell_data = next(fia_data)[column_index]
                 cell_data[2] = True
-                print(cell_data)
             except StopIteration:
                 break
 
@@ -146,3 +145,7 @@ class DashBoard(MDBoxLayout):
         for i in range(total_iter_len):
             data = self.data[i] if i % 2 == 0 else self.data[data_len - i]
             yield data
+
+    def reload_dashboard(self):
+        self.max_cols = len(self.data[0])
+        self.render_data(data=self.data)
