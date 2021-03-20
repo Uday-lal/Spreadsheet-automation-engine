@@ -43,7 +43,7 @@ class Cell(ButtonBehavior, Label):
         self.font_name = "assets/fonts/Heebo-Regular.ttf"
         self.padding_x = dp(4)
         if self.is_selected:
-            self.selected_styles()
+            self.give_selected_styles()
 
     def on_release(self):
         self.is_selected = True
@@ -52,7 +52,7 @@ class Cell(ButtonBehavior, Label):
             dash_board.on_click(cell=self)
         self.__init__()
 
-    def selected_styles(self):
+    def give_selected_styles(self):
         """
         Defining the selected styles
         so that it could change based
@@ -118,6 +118,7 @@ class DashBoard(MDBoxLayout):
         if self.cell.is_master:
             self.data = self.cell.data
             self.master_selection(column_index=self.cell.column_index)
+            print(self.data)
             self.reload_dashboard()
 
     def master_selection(self, column_index):
@@ -137,14 +138,27 @@ class DashBoard(MDBoxLayout):
     def fast_iter_algorithm(self):
         """
         Define a algorithm which is able to iterate from a
-        iterable object as fast as possible
+        iterable object as fast as possible by counting
+        the wave count on the positive wave cycle it
+        will run from up to down direction and in the negative
+        wave cycle it will run down to up
         :return: yielding the data
         """
-        data_len = len(self.data)
+        data_len = len(self.data) - 1
         total_iter_len = round(data_len / 2)
+        wave = 0  # As documented above ↑
         for i in range(total_iter_len):
-            data = self.data[i] if i % 2 == 0 else self.data[data_len - i]
+            wave += 1
+            print(i)
+            data = self.data[i] if wave % 2 == 0 else self.data[data_len - i]
             yield data
+
+    def selection(self):
+        """
+        Turn the state of is_selected boolean
+        :return: None
+        """
+        pass
 
     def reload_dashboard(self):
         self.max_cols = len(self.data[0])
