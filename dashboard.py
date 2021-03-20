@@ -149,7 +149,6 @@ class DashBoard(MDBoxLayout):
         wave = 0  # As documented above ↑
         for i in range(total_iter_len):
             wave += 1
-            print(i)
             data = self.data[i] if wave % 2 == 0 else self.data[data_len - i]
             yield data
 
