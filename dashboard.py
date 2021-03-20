@@ -127,34 +127,26 @@ class DashBoard(MDBoxLayout):
         :param column_index: Column index of the cell
         :return: None
         """
-        fia_data = self.fast_iter_algorithm()  # Data comes from fia => (fast_iter_algorithm)
+        _data = self.get_data()
         while True:
             try:
-                cell_data = next(fia_data)[column_index]
+                cell_data = next(_data)[column_index]
                 cell_data[2] = True
             except StopIteration:
                 break
 
-    def fast_iter_algorithm(self):
+    def get_data(self):
         """
-        Define a algorithm which is able to iterate from a
-        iterable object as fast as possible by counting
-        the wave count on the positive wave cycle it
-        will run from up to down direction and in the negative
-        wave cycle it will run down to up
-        :return: yielding the data
+        Iterate through the data
+        as by yielding it
+        :return: None
         """
-        data_len = len(self.data) - 1
-        total_iter_len = round(data_len / 2)
-        wave = 0  # As documented above ↑
-        for i in range(total_iter_len):
-            wave += 1
-            data = self.data[i] if wave % 2 == 0 else self.data[data_len - i]
+        for data in self.data:
             yield data
 
     def selection(self):
         """
-        Turn the state of is_selected boolean
+        Reverse the state of is_selected boolean
         :return: None
         """
         pass
