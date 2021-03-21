@@ -31,7 +31,7 @@ class Cell(ButtonBehavior, Label):
     selected_border_color = ColorProperty((0, 0, 1, 1))
     selected_color = ColorProperty((192 / 255, 206 / 255, 250 / 255, 1))
     master_bg_color = ColorProperty((191 / 255, 191 / 255, 191 / 255, 1))
-    is_selected = BooleanProperty(False)
+    is_selected = BooleanProperty()
     is_master = BooleanProperty(False)
     column_index = NumericProperty()
     row_index = NumericProperty()
@@ -46,11 +46,12 @@ class Cell(ButtonBehavior, Label):
             self.give_selected_styles()
 
     def on_release(self):
-        self.is_selected = True
-        if self.is_master:
-            dash_board = DashBoard()
-            dash_board.on_click(cell=self)
-        self.__init__()
+        """
+        Respond to the click event
+        :return: None
+        """
+        dash_board = DashBoard()
+        dash_board.on_click(cell=self)
 
     def give_selected_styles(self):
         """
@@ -118,8 +119,9 @@ class DashBoard(MDBoxLayout):
         if self.cell.is_master:
             self.data = self.cell.data
             self.master_selection(column_index=self.cell.column_index)
-            print(self.data)
             self.reload_dashboard()
+        else:
+            self.apply_selection()
 
     def master_selection(self, column_index):
         """
@@ -144,12 +146,13 @@ class DashBoard(MDBoxLayout):
         for data in self.data:
             yield data
 
-    def selection(self):
+    def apply_selection(self):
         """
         Reverse the state of is_selected boolean
         :return: None
         """
-        pass
+        self.cell.is_selected = True
+        self.cell.__init__()
 
     def reload_dashboard(self):
         self.max_cols = len(self.data[0])

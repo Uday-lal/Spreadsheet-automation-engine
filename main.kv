@@ -173,7 +173,7 @@
     canvas:
         Color:
             rgba:
-                cell.border_color
+                cell.border_color if not cell.is_selected else (0, 0, 1, 1)
         Line:
             width: 1
             rectangle: (self.x, self.y, self.width, self.height)
@@ -181,7 +181,7 @@
     canvas.before:
         Color:
             rgba:
-                cell.bg_color if not cell.is_master else cell.master_bg_color
+                cell.master_bg_color if cell.is_master else (192 / 255, 206 / 255, 250 / 255, 1) if cell.is_selected else (1, 1, 1, 1)
         Rectangle:
             pos: cell.pos
             size: cell.size
@@ -197,6 +197,7 @@
     scroll_type: ['bars']
 
     RecycleGridLayout:
+        id: test
         cols_minimum: root.cols_minimum
         default_size: None, dp(56)
         default_size_hint: 1, None
