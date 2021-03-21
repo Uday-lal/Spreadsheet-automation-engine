@@ -9,7 +9,7 @@ company: UR's tech.ltd
 from kivy.uix.screenmanager import Screen
 from tkinter import *
 from tkinter import filedialog
-from automate import Automate
+from Automate.automate import Automate
 from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import NumericProperty
 
@@ -145,7 +145,17 @@ class EditorScreen(Base):
             self.drop_down_menu_sheets.dismiss()
         else:
             dropdown_menu.set_item(f"Tools/{selected_item}")
-            self.dash_board_connection()
+            processing_data = self.dash_board_connection()
+            if selected_item == "Apply formulas":
+                pass
+            elif selected_item == "Sort":
+                pass
+            elif selected_item == "Reverse":
+                pass
+            elif selected_item == "Delete":
+                pass
+            elif selected_item == "Marge sheet":
+                pass
             self.drop_down_menu_tool.dismiss()
 
     def dash_board_connection(self):

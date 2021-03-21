@@ -6,7 +6,7 @@ company: UR's tech.ltd
 --------------------------------------------------------->
 
 ~~~~~~~~~~~~~~~~~~~~~~~
-Making the automation engine.
+Starting the main automation class.
 """
 from openpyxl import load_workbook
 
@@ -150,3 +150,18 @@ class Automate:
             wb_data[sheet] = sheet_data
 
         return wb_data
+
+    def apply_formula(self):
+        """
+        Execute instruction given by the
+        user to modifying the columns and
+        the rows ->
+
+        ------------------------------------
+        This instruction is for applying
+        mathematical  terms to the rows and
+        columns.
+        ------------------------------------
+        :return: list
+        """
+        pass
