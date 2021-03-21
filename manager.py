@@ -10,7 +10,7 @@ from kivy.uix.image import Image
 from kivy.uix.screenmanager import ScreenManager
 
 from screen import HomeScreen, SettingScreen, TutorialScreen, EditorScreen
-from dashboard import *
+from dashboard import DashBoard
 from dataSetup import DataSetup
 
 
@@ -108,3 +108,10 @@ class Manager(ScreenManager):
         """
         data_setup = DataSetup(data)
         return data_setup.get_clean_data()
+
+    def get_selected_data(self):
+        """
+        Collect the selected data
+        :return: list
+        """
+        return self.dash_board.provide_selected_data()

@@ -24,6 +24,8 @@ from kivy.properties import (
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.metrics import dp
 
+processing_data = []
+
 
 class Cell(ButtonBehavior, Label):
     border_color = ColorProperty((0, 0, 0, 1))
@@ -133,6 +135,7 @@ class DashBoard(MDBoxLayout):
         while True:
             try:
                 cell_data = next(_data)[column_index]
+                processing_data.append(cell_data)
                 cell_data[2] = True
             except StopIteration:
                 break
@@ -157,3 +160,12 @@ class DashBoard(MDBoxLayout):
     def reload_dashboard(self):
         self.max_cols = len(self.data[0])
         self.render_data(data=self.data)
+
+    @staticmethod
+    def provide_selected_data():
+        """
+        Provide selected data to the manager
+        for further processing
+        :return: dict
+        """
+        return processing_data

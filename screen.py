@@ -145,4 +145,13 @@ class EditorScreen(Base):
             self.drop_down_menu_sheets.dismiss()
         else:
             dropdown_menu.set_item(f"Tools/{selected_item}")
+            self.dash_board_connection()
             self.drop_down_menu_tool.dismiss()
+
+    def dash_board_connection(self):
+        """
+        Make a connection between dashboard and
+        automation engine for sharing data
+        :return: None
+        """
+        return self.manager.get_selected_data()
