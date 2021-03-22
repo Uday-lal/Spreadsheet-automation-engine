@@ -9,7 +9,7 @@ company: UR's tech.ltd
 from kivy.uix.screenmanager import Screen
 from tkinter import *
 from tkinter import filedialog
-from Automate.automate import Automate
+from Automate import Automate
 from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import NumericProperty
 
