@@ -144,7 +144,7 @@ class DashBoard(MDBoxLayout):
         """
         Iterate through the data
         as by yielding it
-        :return: None
+        :return: generator object
         """
         for data in self.data:
             yield data

@@ -12,3 +12,6 @@
 
 # test dir
 /test
+
+# Automate/__pycache__
+/Automate/__pycache__
