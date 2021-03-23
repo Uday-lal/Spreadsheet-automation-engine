@@ -60,11 +60,13 @@ class CoordinateOperationController:
         --------------------------------
         sample input: ["b", "*", "c"]
         --------------------------------
-        :return: None
+        :return: tuple
         """
         value1, operation, value2 = self.clean_input()
         operation = self.operations[operation]
-        return value1, operation, value2
+        value1_index = self.headers.index(value1)
+        value2_index = self.headers.index(value2)
+        return value1_index, operation, value2_index
 
     def clean_input(self):
         """
