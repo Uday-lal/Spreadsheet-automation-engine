@@ -23,6 +23,7 @@ from kivy.properties import (
 )
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.metrics import dp
+from apply_selection import ApplySelection
 
 processing_data = []
 
@@ -118,54 +119,25 @@ class DashBoard(MDBoxLayout):
         :return: None
         """
         self.cell = cell
+        self.data = self.cell.data
+        self.apply_selection = ApplySelection(data=self.data)
         if self.cell.is_master:
-            self.data = self.cell.data
-            self.master_selection(column_index=self.cell.column_index)
+            master_selected_data = self.apply_selection.master_selection(column_index=self.cell.column_index)
+            processing_data.append(master_selected_data)
+            self.apply_selection.empty_processing_data()
             self.reload_dashboard()
         else:
-            self.apply_selection()
-
-    def master_selection(self, column_index):
-        """
-        Update the data dict on the master selection
-        :param column_index: Column index of the cell
-        :return: None
-        """
-        _data = self.get_data()
-        while True:
-            try:
-                cell_data = next(_data)[column_index]
-                processing_data.append(cell_data)
-                cell_data[2] = True
-            except StopIteration:
-                break
-
-    def get_data(self):
-        """
-        Iterate through the data
-        as by yielding it
-        :return: generator object
-        """
-        for data in self.data:
-            yield data
-
-    def apply_selection(self):
-        """
-        Reverse the state of is_selected boolean
-        :return: None
-        """
-        self.cell.is_selected = True
-        self.cell.__init__()
+            self.apply_selection.apply_selection(cell=self.cell)
 
     def reload_dashboard(self):
+        """
+        Reload the dashboard make the
+        affect of changes
+        :return: None
+        """
         self.max_cols = len(self.data[0])
         self.render_data(data=self.data)
 
     @staticmethod
     def provide_selected_data():
-        """
-        Provide selected data to the manager
-        for further processing
-        :return: dict
-        """
-        return processing_data
+        return processing_data[0]
