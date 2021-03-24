@@ -122,7 +122,7 @@ class Automate:
         """
         wb = load_workbook(self.filename)
         sheets = wb.sheetnames
-        wb_data = {"sheets": sheets}
+        wb_data = {"filename": self.filename, "sheets": sheets}
 
         for sheet in sheets:
             current_sheet = wb[sheet]

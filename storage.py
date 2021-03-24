@@ -26,13 +26,13 @@ class Storage(JsonStore):
         except FileExistsError:
             pass
 
-    def save(self, wb_data):
+    def save(self, wb_data, filename):
         """
         Saving the given data
         :param wb_data: Data need to be save
         :return: None
         """
-        self.put(key=wb_data["filename"], date_of_modify=self.current_date, data=wb_data["data"])
+        self.put(key=filename, date_of_modify=self.current_date, data=wb_data)
 
     def read_data(self, filename):
         """
