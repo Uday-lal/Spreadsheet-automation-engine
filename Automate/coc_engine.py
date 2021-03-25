@@ -42,9 +42,9 @@ char_table = {
 
 
 class CoordinateOperationController:
-    def __init__(self, headers, inputs):
+    def __init__(self, data, inputs):
         self.inputs = str(inputs)
-        self.headers = headers
+        self.data = data
         self.operations = {  # Defining the possible operations with several commands
             "+": "add",
             "-": "sub",
@@ -64,8 +64,8 @@ class CoordinateOperationController:
         """
         value1, operation, value2 = self.clean_input()
         operation = self.operations[operation]
-        value1_index = self.headers.index(value1)
-        value2_index = self.headers.index(value2)
+        value1_index = self.data.index(value1)
+        value2_index = self.data.index(value2)
         return value1_index, operation, value2_index
 
     def clean_input(self):

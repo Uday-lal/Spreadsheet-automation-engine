@@ -151,7 +151,7 @@ class Automate:
 
         return wb_data
 
-    def apply_formula(self):
+    def apply_formula(self, data):
         """
         Execute instruction given by the
         user to modifying the columns and
@@ -162,6 +162,7 @@ class Automate:
         mathematical  terms to the rows and
         columns.
         ------------------------------------
+        :param data: Data on which we need to apply mathematical logic
         :return: list
         """
         pass
