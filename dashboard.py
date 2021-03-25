@@ -24,8 +24,14 @@ from kivy.properties import (
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.metrics import dp
 from apply_selection import ApplySelection
+from kivy.uix.popup import Popup
+from kivymd.uix.gridlayout import MDGridLayout
 
 processing_data = []
+
+
+class PopupContent(MDGridLayout):
+    pass
 
 
 class Cell(ButtonBehavior, Label):
@@ -55,6 +61,14 @@ class Cell(ButtonBehavior, Label):
         """
         dash_board = DashBoard()
         dash_board.on_click(cell=self)
+        popup = Popup(
+            title="Update cell",
+            content=PopupContent(),
+            size_hint=(None, None),
+            size=(400, 200),
+            separator_height=1
+        )
+        popup.open()
 
     def give_selected_styles(self):
         """
