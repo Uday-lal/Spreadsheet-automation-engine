@@ -217,6 +217,7 @@
 
         AnchorLayout:
             MDTextField:
+                id: update_text_field
                 hint_text: "Update cell"
                 mode: "rectangle"
                 line_color_focus: (0, 0, 0, 1)
@@ -231,6 +232,7 @@
             MDRaisedButton:
                 text: "Update"
                 md_bg_color: get_color_from_hex("#9962d1")
+                on_release: app.root.editor_screen.get_popup_field_data(text_field_data=update_text_field.text)
 
 
 <EditorScreen>:

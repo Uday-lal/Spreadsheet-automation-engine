@@ -165,3 +165,13 @@ class EditorScreen(Base):
         :return: None
         """
         return self.manager.get_selected_data()
+
+    @staticmethod
+    def get_popup_field_data(text_field_data):
+        """
+        Take the text field data on the
+        popup and apply some logic on it
+        :param text_field_data: text field data coming from MDTextField
+        :return: str
+        """
+        return text_field_data

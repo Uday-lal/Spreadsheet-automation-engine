@@ -59,16 +59,18 @@ class Cell(ButtonBehavior, Label):
         Respond to the click event
         :return: None
         """
-        dash_board = DashBoard()
-        dash_board.on_click(cell=self)
-        popup = Popup(
-            title="Update cell",
-            content=PopupContent(),
-            size_hint=(None, None),
-            size=(400, 200),
-            separator_height=1
-        )
-        popup.open()
+        if self.is_master:
+            dash_board = DashBoard()
+            dash_board.on_click(cell=self)
+        else:
+            popup = Popup(
+                title="Update cell",
+                content=PopupContent(),
+                size_hint=(None, None),
+                size=(400, 200),
+                separator_height=1
+            )
+            popup.open()
 
     def give_selected_styles(self):
         """
