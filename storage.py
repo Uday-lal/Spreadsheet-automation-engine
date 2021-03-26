@@ -44,7 +44,14 @@ class Storage(JsonStore):
         Read the stored data
         :return: list
         """
-        file = open(self.filename)
-        data = json.load(file)
+        self.file = open(self.filename)
+        data = json.load(self.file)
         for key in data:
             return data[key]["data"]
+
+    def close_file(self):
+        """
+        Close the json file to pervert  ResourceWarning
+        :return: None
+        """
+        self.file.close()

@@ -115,6 +115,7 @@ class RecyclerDashBoardLayout(RecycleView):
 
 class DashBoard(MDBoxLayout):
     max_cols = NumericProperty()
+    data = ListProperty()
 
     def __init__(self, **kwargs):
         super(DashBoard, self).__init__(**kwargs)
