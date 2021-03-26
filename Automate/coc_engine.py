@@ -79,10 +79,9 @@ class CoordinateOperationController:
 
         return return_data
 
-    def clean_input(self):
+    def shape_input(self):
         """
-        Cleaning the input and make it
-        in perfect shape
+        Make the input in perfect shape
         :return: list
         """
         return_data = []
@@ -103,9 +102,12 @@ class CoordinateOperationController:
         """
         selected_data = []
         self.inputs = inputs
-        clean_input = self.clean_input()
-        print("clean_input: ", clean_input)
-        indexes = self.data_index(sample_input=clean_input)
+        self.shape_data = self.shape_input()
+
+        if len(self.shape_data) > 3:
+            self.shape_data = self.clean_data()
+
+        indexes = self.data_index(sample_input=self.shape_data)
         wb_data = self.storage.read_data()["rows"]
         c1, c2 = indexes
 
@@ -119,13 +121,11 @@ class CoordinateOperationController:
 
         def dual_selection(coordinate):
             cc, rc = coordinate  # cc => (Column coordinate), rc => (Row coordinate)
-            selected_data.append(wb_data[cc][rc][0])
+            selected_data.append(wb_data[int(cc)][int(rc) - 1][0])
 
         if type(c1) is tuple or type(c2) is tuple:
             for index in indexes:
-                if index is tuple:
-                    dual_selection(coordinate=index)
-                elif index is tuple:
+                if type(index) is tuple:
                     dual_selection(coordinate=index)
                 else:
                     direct_selector(index=index)
@@ -146,3 +146,21 @@ class CoordinateOperationController:
         """
         for i in range(len(data)):
             yield data[i]
+
+    def clean_data(self):
+        """
+        Clean the unclean shape_data
+        :return: list
+        """
+        clean_data = []
+
+        for i, data in enumerate(self.shape_data):
+            if data.isdigit():
+                last_index = i - 1
+                if self.shape_data[last_index].isalpha():
+                    clean_data.remove(self.shape_data[last_index])
+                    data = self.shape_data[last_index] + data
+
+            clean_data.append(data)
+
+        return clean_data
