@@ -232,7 +232,7 @@
             MDRaisedButton:
                 text: "Update"
                 md_bg_color: get_color_from_hex("#9962d1")
-                on_release: app.root.editor_screen.get_popup_field_data(text_field_data=update_text_field.text)
+                on_release: app.root.editor_screen.update_cell(text_field_data=update_text_field.text, cell=popup_content.clicked_cell); popup_content._popup.dismiss()
 
 
 <EditorScreen>:

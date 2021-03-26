@@ -29,15 +29,13 @@ class Storage(JsonStore):
 
         os.chdir(save_path)
 
-    def save(self, wb_data, filename):
+    def save(self, wb_data):
         """
         Saving the given data
-        :param filename: Name of the workbook
         :param wb_data: Data need to be save
         :return: None
         """
-        path, _filename = os.path.split(filename)
-        self.put(key=_filename, path=path, date_of_modify=self.current_date, data=wb_data)
+        self.put(key="", date_of_modify=self.current_date, data=wb_data)
 
     def read_data(self):
         """
@@ -47,7 +45,7 @@ class Storage(JsonStore):
         self.file = open(self.filename)
         data = json.load(self.file)
         for key in data:
-            return data[key]["data"]
+            return data[key]["data"]["rows"]
 
     def close_file(self):
         """

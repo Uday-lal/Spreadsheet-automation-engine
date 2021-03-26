@@ -50,14 +50,3 @@ class ApplySelection:
         :return: None
         """
         cell.is_selected = True
-
-    @staticmethod
-    def empty_processing_data():
-        """
-        Empties the processing_data list
-        to do not fill the user's computer
-        memory because we are making the
-        copy of this list in the next phase
-        :return: None
-        """
-        processing_data.clear()

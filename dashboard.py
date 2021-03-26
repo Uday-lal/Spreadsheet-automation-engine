@@ -19,7 +19,8 @@ from kivy.properties import (
     ColorProperty,
     DictProperty,
     BooleanProperty,
-    ListProperty
+    ListProperty,
+    ObjectProperty
 )
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.metrics import dp
@@ -31,7 +32,8 @@ processing_data = []
 
 
 class PopupContent(MDGridLayout):
-    pass
+    clicked_cell = ObjectProperty()
+    _popup = ObjectProperty()
 
 
 class Cell(ButtonBehavior, Label):
@@ -40,7 +42,7 @@ class Cell(ButtonBehavior, Label):
     selected_border_color = ColorProperty((0, 0, 1, 1))
     selected_color = ColorProperty((192 / 255, 206 / 255, 250 / 255, 1))
     master_bg_color = ColorProperty((191 / 255, 191 / 255, 191 / 255, 1))
-    is_selected = BooleanProperty()
+    is_selected = BooleanProperty(False)
     is_master = BooleanProperty(False)
     column_index = NumericProperty()
     row_index = NumericProperty()
@@ -70,6 +72,8 @@ class Cell(ButtonBehavior, Label):
                 size=(400, 200),
                 separator_height=1
             )
+            popup.content.clicked_cell = self
+            popup.content._popup = popup
             popup.open()
 
     def give_selected_styles(self):
@@ -95,8 +99,8 @@ class RecyclerDashBoardLayout(RecycleView):
             {
                 "text": str(data[0]),
                 "size": (100, 25),
-                "is_master": data[1],
                 "is_selected": data[2],
+                "is_master": data[1],
                 "column_index": ci,
                 "row_index": ri,
                 "data": render_data
@@ -141,7 +145,6 @@ class DashBoard(MDBoxLayout):
         if self.cell.is_master:
             master_selected_data = self.apply_selection.master_selection(column_index=self.cell.column_index)
             processing_data.append(master_selected_data)
-            self.apply_selection.empty_processing_data()
             self.reload_dashboard()
         else:
             self.apply_selection.apply_selection(cell=self.cell)

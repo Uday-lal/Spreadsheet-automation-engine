@@ -79,7 +79,7 @@ class Manager(ScreenManager):
         self.render_data = render_data
         sheet_data = self.render_data[self.sheets[0]]
         clean_data = self.clean_data(data=sheet_data)
-        self.storage.save(wb_data=clean_data, filename=self.render_data["filename"])
+        self.storage.save(wb_data=clean_data)
         row_data = clean_data["rows"]
         max_cols = clean_data["max_cols"]
         self.dash_board = DashBoard()

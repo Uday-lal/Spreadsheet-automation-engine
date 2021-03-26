@@ -12,6 +12,7 @@ from tkinter import filedialog
 from Automate import Automate
 from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import NumericProperty
+from storage import Storage
 
 
 class Base(Screen):
@@ -146,6 +147,7 @@ class EditorScreen(Base):
         else:
             dropdown_menu.set_item(f"Tools/{selected_item}")
             processing_data = self.dash_board_connection()
+            print(processing_data)
             if selected_item == "Apply formulas":
                 pass
             elif selected_item == "Sort":
@@ -167,11 +169,17 @@ class EditorScreen(Base):
         return self.manager.get_selected_data()
 
     @staticmethod
-    def get_popup_field_data(text_field_data):
+    def update_cell(text_field_data, cell):
         """
         Take the text field data on the
         popup and apply some logic on it
         :param text_field_data: text field data coming from MDTextField
-        :return: str
+        :param cell: Cell object which is clicked
+        :return: None
         """
-        return text_field_data
+        storage = Storage()
+        if text_field_data != "":
+            data = storage.read_data()
+            data[cell.row_index][cell.column_index][0] = text_field_data
+            storage.save(wb_data=data)
+            cell.text = text_field_data
