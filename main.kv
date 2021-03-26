@@ -186,6 +186,10 @@
             pos: cell.pos
             size: cell.size
 
+    on_release:
+        if cell.is_master:\
+        app.root.editor_screen.master_selection(cell=cell)
+
 <DashBoard>:
     pos: (app.root.editor_screen.ids.rail.width,  0)
     size: (window.Window.width, window.Window.height - (app.root.editor_screen.ids.tool_bar.height + app.root.editor_screen.drop_down_tool_bar_height))

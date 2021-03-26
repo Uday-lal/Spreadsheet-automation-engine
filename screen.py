@@ -12,6 +12,7 @@ from tkinter import filedialog
 from Automate import Automate
 from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import NumericProperty
+from apply_selection import ApplySelection
 
 
 class Base(Screen):
@@ -181,3 +182,16 @@ class EditorScreen(Base):
             data[current_sheet]["rows"][cell.row_index][cell.column_index][0] = text_field_data
             self.manager.storage.save(wb_data=data)
             self.manager.reload_dashboard(data=self.manager.storage.read_data()[current_sheet]["rows"])
+
+    def master_selection(self, cell):
+        """
+        Making master selection and change the dashboard
+        accordingly
+        :param cell: Cell object
+        :return: None
+        """
+        data = self.manager.storage.read_data()
+        apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
+        apply_selection.master_selection(column_index=cell.column_index)
+        self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
+        self.manager.storage.save(wb_data=data)

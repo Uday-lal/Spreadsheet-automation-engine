@@ -24,7 +24,6 @@ from kivy.properties import (
 )
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.metrics import dp
-from apply_selection import ApplySelection
 from kivy.uix.popup import Popup
 from kivymd.uix.gridlayout import MDGridLayout
 
@@ -46,7 +45,6 @@ class Cell(ButtonBehavior, Label):
     is_master = BooleanProperty(False)
     column_index = NumericProperty()
     row_index = NumericProperty()
-    data = ListProperty()
 
     def __init__(self, **kwargs):
         super(Cell, self).__init__(**kwargs)
@@ -61,10 +59,7 @@ class Cell(ButtonBehavior, Label):
         Respond to the click event
         :return: None
         """
-        if self.is_master:
-            dash_board = DashBoard()
-            dash_board.on_click(cell=self)
-        else:
+        if not self.is_master:
             popup = Popup(
                 title="Update cell",
                 content=PopupContent(),
@@ -102,8 +97,7 @@ class RecyclerDashBoardLayout(RecycleView):
                 "is_selected": data[2],
                 "is_master": data[1],
                 "column_index": ci,
-                "row_index": ri,
-                "data": render_data
+                "row_index": ri
             }
             for ri, row_data in enumerate(render_data) for ci, data in enumerate(row_data)
         ]
@@ -133,31 +127,3 @@ class DashBoard(MDBoxLayout):
         self.data = data
         recycle_view_dash_board = RecyclerDashBoardLayout(render_data=self.data, max_cols=self.max_cols)
         self.add_widget(recycle_view_dash_board)
-
-    def on_click(self, cell):
-        """
-        Define the response when any cell is clicked
-        :return: None
-        """
-        self.cell = cell
-        self.data = self.cell.data
-        self.apply_selection = ApplySelection(data=self.data)
-        if self.cell.is_master:
-            master_selected_data = self.apply_selection.master_selection(column_index=self.cell.column_index)
-            processing_data.append(master_selected_data)
-            self.reload_dashboard()
-        else:
-            self.apply_selection.apply_selection(cell=self.cell)
-
-    def reload_dashboard(self):
-        """
-        Reload the dashboard make the
-        affect of changes
-        :return: None
-        """
-        self.max_cols = len(self.data[0])
-        self.render_data(data=self.data)
-
-    @staticmethod
-    def provide_selected_data():
-        return processing_data[0]
