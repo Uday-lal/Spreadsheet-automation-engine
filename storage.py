@@ -32,7 +32,7 @@ class Storage(JsonStore):
     def save(self, wb_data):
         """
         Saving the given data
-        :param wb_data: Data need to be save
+        :param max_cols: Maximum number of column presented in the sheet
         :return: None
         """
         self.put(key="", date_of_modify=self.current_date, data=wb_data)
@@ -45,7 +45,7 @@ class Storage(JsonStore):
         self.file = open(self.filename)
         data = json.load(self.file)
         for key in data:
-            return data[key]["data"]["rows"]
+            return data[key]["data"]
 
     def close_file(self):
         """

@@ -12,7 +12,6 @@ from tkinter import filedialog
 from Automate import Automate
 from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import NumericProperty
-from storage import Storage
 
 
 class Base(Screen):
@@ -168,8 +167,7 @@ class EditorScreen(Base):
         """
         return self.manager.get_selected_data()
 
-    @staticmethod
-    def update_cell(text_field_data, cell):
+    def update_cell(self, text_field_data, cell):
         """
         Take the text field data on the
         popup and apply some logic on it
@@ -177,9 +175,9 @@ class EditorScreen(Base):
         :param cell: Cell object which is clicked
         :return: None
         """
-        storage = Storage()
         if text_field_data != "":
-            data = storage.read_data()
-            data[cell.row_index][cell.column_index][0] = text_field_data
-            storage.save(wb_data=data)
-            cell.text = text_field_data
+            data = self.manager.storage.read_data()
+            current_sheet = self.manager.current_sheet
+            data[current_sheet]["rows"][cell.row_index][cell.column_index][0] = text_field_data
+            self.manager.storage.save(wb_data=data)
+            self.manager.reload_dashboard(data=self.manager.storage.read_data()[current_sheet]["rows"])

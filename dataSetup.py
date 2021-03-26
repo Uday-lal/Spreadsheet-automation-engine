@@ -16,19 +16,25 @@ class DataSetup:
         self.sheet_data = data
         self.data = self.sheet_data["rows"]
         self.max_cols = self.sheet_data["max_cols"]
+        try:
+            self.is_cleaned = self.sheet_data["is_cleaned"]
+        except KeyError:
+            self.is_cleaned = False
 
     def get_clean_data(self):
         """
         Defining the process to clean the data.
         :return: dict
         """
-        row_data = self.insert_row_master()
-        headers = self.get_headers()
-        row_data.insert(0, headers)
-        clean_data = self.add_master_id(data=row_data)
-        self.max_cols = len(clean_data[0])
-        self.sheet_data["rows"] = clean_data
-        self.sheet_data["max_cols"] = self.max_cols
+        if not self.is_cleaned:
+            row_data = self.insert_row_master()
+            headers = self.get_headers()
+            row_data.insert(0, headers)
+            clean_data = self.add_master_id(data=row_data)
+            self.max_cols = len(clean_data[0])
+            self.sheet_data["rows"] = clean_data
+            self.sheet_data["max_cols"] = self.max_cols
+            self.sheet_data["is_cleaned"] = True
         return self.sheet_data
 
     def get_headers(self):

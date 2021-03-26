@@ -13,9 +13,12 @@ from screen import HomeScreen, SettingScreen, TutorialScreen, EditorScreen
 from dashboard import DashBoard
 from dataSetup import DataSetup
 from storage import Storage
+from kivy.properties import StringProperty
 
 
 class Manager(ScreenManager):
+    current_sheet = StringProperty()
+
     def __init__(self, **kwargs):
         super(Manager, self).__init__(**kwargs)
         self.home_screen = HomeScreen(name="home_screen")
@@ -78,11 +81,14 @@ class Manager(ScreenManager):
         self.sheets = render_data["sheets"]  # Making the reference to dropdown items.
         self.render_data = render_data
         sheet_data = self.render_data[self.sheets[0]]
+        self.current_sheet = self.sheets[0]
         clean_data = self.clean_data(data=sheet_data)
-        self.storage.save(wb_data=clean_data)
+        self.render_data[self.sheets[0]]["rows"] = clean_data["rows"]
+        self.storage.save(wb_data=self.render_data)
         row_data = clean_data["rows"]
         max_cols = clean_data["max_cols"]
         self.dash_board = DashBoard()
+        self.editor_screen.ids.dashboard = self.dash_board
         self.dash_board.data = row_data
         self.dash_board.max_cols = max_cols
         self.dash_board.render_data(data=row_data)
@@ -95,11 +101,12 @@ class Manager(ScreenManager):
         :param selected_sheet: Sheet selected by the user
         :return: None
         """
-        sheet_data = self.render_data[selected_sheet]
-        clean_data = self.clean_data(data=sheet_data)
+        self.current_sheet = selected_sheet
+        sheet_data = self.storage.read_data()
+        clean_data = self.clean_data(data=sheet_data[self.current_sheet])
+        self.storage.save(wb_data=sheet_data)
         self.dash_board.max_cols = clean_data["max_cols"]
-        self.dash_board.clear_widgets()  # Removing the old child widgets.
-        self.dash_board.render_data(data=clean_data["rows"])
+        self.reload_dashboard(data=clean_data["rows"])
 
     @staticmethod
     def clean_data(data):
@@ -118,3 +125,15 @@ class Manager(ScreenManager):
         :return: list
         """
         return self.dash_board.provide_selected_data()
+
+    def reload_dashboard(self, data):
+        """
+        Reload the dashboard by deleting all
+        its child widgets
+        :param data: Data that use to render
+        :return: None
+        """
+        self.dash_board.clear_widgets()  # Removing the old child widgets.
+        self.dash_board.render_data(data=data)
+        self.editor_screen.ids.container.clear_widgets()
+        self.editor_screen.ids.container.add_widget(self.dash_board)
