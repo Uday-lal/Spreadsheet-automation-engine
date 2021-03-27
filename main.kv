@@ -281,6 +281,7 @@
 
                 MDBoxLayout:
                     pos: rail.width, ((window.Window.height - tool_bar.height) - 50)
+                    size: 1000, editor_screen.drop_down_tool_bar_height
 
                     MDDropDownItem:
                         id: drop_item_sheets
@@ -299,6 +300,12 @@
                         text: "Add"
                         font_name: "assets/fonts/Heebo-Regular.ttf"
                         # on_release: editor_screen.toolbar_menu_add_column_row()
+
+                    MDTextFieldRect:
+                        size_hint: 1, None
+                        height: "30dp"
+                        multiline: False
+                        hint_text: "Command palette"
 
             Widget:
                 id: container
