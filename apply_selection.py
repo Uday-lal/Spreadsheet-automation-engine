@@ -25,18 +25,20 @@ class ApplySelection:
         """
         self.column_index = cell.column_index
         self.row_index = cell.row_index
-        if not cell.text.isdigit():
-            _data = self.get_data()
 
-            while True:
-                try:
-                    cell_data = next(_data)[self.column_index]
-                    cell_data[2] = True
-                    processing_data.append(cell_data)
-                except StopIteration:
-                    return processing_data
-        else:
-            self.master_column_selection()
+        if cell.text != "":
+            if not cell.text.isdigit():
+                _data = self.get_data()
+
+                while True:
+                    try:
+                        cell_data = next(_data)[self.column_index]
+                        cell_data[2] = True
+                        processing_data.append(cell_data)
+                    except StopIteration:
+                        return processing_data
+            else:
+                self.master_column_selection()
 
     def get_data(self):
         """
@@ -67,3 +69,19 @@ class ApplySelection:
                 processing_data.append(cell_data)
             except StopIteration:
                 return processing_data
+
+    def unselect(self):
+        """
+        Defining the way to unselect
+        the selected cell.
+        :return: None
+        """
+        _data = self.get_data()
+        while True:
+            try:
+                data = next(_data)
+                for cell_data in data:
+                    cell_data[2] = False
+            except StopIteration:
+                processing_data.clear()
+                break

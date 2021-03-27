@@ -12,7 +12,6 @@ from kivy.uix.screenmanager import ScreenManager
 from screen import HomeScreen, SettingScreen, TutorialScreen, EditorScreen
 from dashboard import DashBoard
 from dataSetup import DataSetup
-from storage import Storage
 from kivy.properties import StringProperty
 
 
@@ -25,7 +24,6 @@ class Manager(ScreenManager):
         self.setting_screen = SettingScreen(name="setting_screen")
         self.tutorial_screen = TutorialScreen(name="tutorial_screen")
         self.editor_screen = EditorScreen(name="editor_screen")
-        self.storage = Storage()
         self.add_widget(self.home_screen)
         self.add_widget(self.setting_screen)
         self.add_widget(self.tutorial_screen)
@@ -84,7 +82,6 @@ class Manager(ScreenManager):
         self.current_sheet = self.sheets[0]
         clean_data = self.clean_data(data=sheet_data)
         self.render_data[self.sheets[0]]["rows"] = clean_data["rows"]
-        self.storage.save(wb_data=self.render_data)
         row_data = clean_data["rows"]
         max_cols = clean_data["max_cols"]
         self.dash_board = DashBoard()
@@ -102,9 +99,8 @@ class Manager(ScreenManager):
         :return: None
         """
         self.current_sheet = selected_sheet
-        sheet_data = self.storage.read_data()
+        sheet_data = self.render_data
         clean_data = self.clean_data(data=sheet_data[self.current_sheet])
-        self.storage.save(wb_data=sheet_data)
         self.dash_board.max_cols = clean_data["max_cols"]
         self.reload_dashboard(data=clean_data["rows"])
 

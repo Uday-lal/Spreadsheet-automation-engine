@@ -185,11 +185,10 @@ class EditorScreen(Base):
         :return: None
         """
         if text_field_data != "":
-            data = self.manager.storage.read_data()
+            data = self.manager.render_data
             current_sheet = self.manager.current_sheet
             data[current_sheet]["rows"][cell.row_index][cell.column_index][0] = text_field_data
-            self.manager.storage.save(wb_data=data)
-            self.manager.reload_dashboard(data=self.manager.storage.read_data()[current_sheet]["rows"])
+            self.manager.reload_dashboard(data=data[current_sheet]["rows"])
 
     def master_selection(self, cell):
         """
@@ -198,8 +197,19 @@ class EditorScreen(Base):
         :param cell: Cell object
         :return: None
         """
-        data = self.manager.storage.read_data()
+        data = self.manager.render_data
         apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
         apply_selection.master_selection(cell=cell)
         self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
-        self.manager.storage.save(wb_data=data)
+
+    def unselect_master_selection(self):
+        """
+        Unselecting the selected all the cell
+        if users click to other self or navigate
+        to a other screen
+        :return: None
+        """
+        data = self.manager.render_data
+        apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
+        apply_selection.unselect()
+        self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
