@@ -102,9 +102,13 @@ class EditorScreen(Base):
         sheets = self.manager.sheets
         self.drop_down_menu_sheets = MDDropdownMenu(
             caller=self.ids.drop_item_sheets,
-            items=[{"text": str(sheets[i]), "font_name": "assets/fonts/Heebo-Regular.ttf"}
-                   for i in range(len(sheets))
-                   ],
+            items=[
+                {
+                    "text": str(sheets[i]),
+                    "font_name": "assets/fonts/Heebo-Regular.ttf"
+                }
+                for i in range(len(sheets))
+            ],
             width_mult=4
         )
         self.drop_down_menu_sheets.bind(on_release=self.drop_down_menu_callback)
@@ -119,9 +123,13 @@ class EditorScreen(Base):
         automation_tool = ["Apply formulas", "Sort", "Reverse", "Delete", "Merge sheet"]
         self.drop_down_menu_tool = MDDropdownMenu(
             caller=self.ids.drop_item_tools,
-            items=[{"text": str(automation_tool[i]), "font_name": "assets/fonts/Heebo-Regular.ttf"}
-                   for i in range(len(automation_tool))
-                   ],
+            items=[
+                {
+                    "text": str(automation_tool[i]),
+                    "font_name": "assets/fonts/Heebo-Regular.ttf"
+                }
+                for i in range(len(automation_tool))
+            ],
             width_mult=4
         )
         self.drop_down_menu_tool.bind(on_release=self.drop_down_menu_callback)
