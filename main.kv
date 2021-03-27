@@ -187,7 +187,7 @@
             size: cell.size
 
     on_release:
-        app.root.editor_screen.master_selection(cell=cell) if cell.is_master else app.root.editor_screen.unselect_master_selection()
+        app.root.editor_screen.master_selection(cell=cell) if cell.is_master else app.root.editor_screen.unselect_master_selections()
 
 <DashBoard>:
     pos: (app.root.editor_screen.ids.rail.width,  0)

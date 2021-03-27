@@ -202,7 +202,7 @@ class EditorScreen(Base):
         apply_selection.master_selection(cell=cell)
         self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
 
-    def unselect_master_selection(self):
+    def unselect_master_selections(self):
         """
         Unselecting the selected all the cell
         if users click to other self or navigate

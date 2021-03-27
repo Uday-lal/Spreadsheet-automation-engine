@@ -60,16 +60,17 @@ class Cell(ButtonBehavior, Label):
         :return: None
         """
         if not self.is_master:
-            popup = Popup(
-                title="Update cell",
-                content=PopupContent(),
-                size_hint=(None, None),
-                size=(400, 200),
-                separator_height=1
-            )
-            popup.content.clicked_cell = self
-            popup.content._popup = popup
-            popup.open()
+            if not self.is_selected:
+                popup = Popup(
+                    title="Update cell",
+                    content=PopupContent(),
+                    size_hint=(None, None),
+                    size=(400, 200),
+                    separator_height=1
+                )
+                popup.content.clicked_cell = self
+                popup.content._popup = popup
+                popup.open()
 
     def give_selected_styles(self):
         """
