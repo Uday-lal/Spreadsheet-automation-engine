@@ -17,21 +17,26 @@ class ApplySelection:
     def __init__(self, data):
         self.data = data
 
-    def master_selection(self, column_index):
+    def master_selection(self, cell):
         """
         Update the data dict on the master selection
-        :param column_index: Column index of the cell
+        :param cell: Cell object
         :return: None
         """
-        _data = self.get_data()
+        self.column_index = cell.column_index
+        self.row_index = cell.row_index
+        if not cell.text.isdigit():
+            _data = self.get_data()
 
-        while True:
-            try:
-                cell_data = next(_data)[column_index]
-                cell_data[2] = True
-                processing_data.append(cell_data)
-            except StopIteration:
-                return processing_data
+            while True:
+                try:
+                    cell_data = next(_data)[self.column_index]
+                    cell_data[2] = True
+                    processing_data.append(cell_data)
+                except StopIteration:
+                    return processing_data
+        else:
+            self.master_column_selection()
 
     def get_data(self):
         """
@@ -50,3 +55,15 @@ class ApplySelection:
         :return: None
         """
         cell.is_selected = True
+
+    def master_column_selection(self):
+        self.data = self.data[self.row_index]
+        _data = self.get_data()
+
+        while True:
+            try:
+                cell_data = next(_data)
+                cell_data[2] = True
+                processing_data.append(cell_data)
+            except StopIteration:
+                return processing_data

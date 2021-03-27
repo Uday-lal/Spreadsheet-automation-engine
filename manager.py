@@ -135,5 +135,3 @@ class Manager(ScreenManager):
         """
         self.dash_board.clear_widgets()  # Removing the old child widgets.
         self.dash_board.render_data(data=data)
-        self.editor_screen.ids.container.clear_widgets()
-        self.editor_screen.ids.container.add_widget(self.dash_board)

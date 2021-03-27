@@ -200,6 +200,6 @@ class EditorScreen(Base):
         """
         data = self.manager.storage.read_data()
         apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
-        apply_selection.master_selection(column_index=cell.column_index)
+        apply_selection.master_selection(cell=cell)
         self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
         self.manager.storage.save(wb_data=data)
