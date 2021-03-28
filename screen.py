@@ -213,3 +213,6 @@ class EditorScreen(Base):
         apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
         apply_selection.unselect()
         self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
+
+    def execute_commands(self, command):
+        pass

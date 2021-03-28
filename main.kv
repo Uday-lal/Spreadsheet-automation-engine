@@ -302,10 +302,12 @@
                         # on_release: editor_screen.toolbar_menu_add_column_row()
 
                     MDTextFieldRect:
+                        id: command_palette
                         size_hint: 1, None
                         height: "30dp"
                         multiline: False
                         hint_text: "Command palette"
+                        on_text: editor_screen.execute_commands(command=self.text)
 
             Widget:
                 id: container

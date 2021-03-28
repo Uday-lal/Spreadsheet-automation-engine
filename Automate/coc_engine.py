@@ -10,7 +10,6 @@ COC(Coordinate Operation Controller) is type engine which is
 responsible for handle all the inputs coming from input box
 to select cells to perform mathematical logic
 """
-from storage import Storage
 
 char_table = {
     'a': 'A',
@@ -43,14 +42,25 @@ char_table = {
 
 
 class CoordinateOperationController:
-    def __init__(self):
-        self.storage = Storage()
-        self.operations = {  # Defining the possible operations with several commands
+    def __init__(self, headers, commands):
+        self.commands = str(commands)
+        self.headers = headers
+        self.operators = {  # Defining the possible operators with several commands
             "+": "add",
             "-": "sub",
             "/": "divide",
-            "*": "multiply"
+            "*": "multiply",
+            "=": "equal_to"
         }
+
+    def execute(self):
+        """
+        Execute the command that are
+        given.
+        :return: dict
+        """
+        data_for_execution = {}
+        shaped_input = self.shape_input()
 
     def data_index(self, sample_input):
         """
@@ -63,8 +73,8 @@ class CoordinateOperationController:
         :param sample_input: Input data base on which it going to return some value
         :return: list
         """
-        headers = self.storage.read_data()["rows"][0]
-        self.storage.close_file()
+        headers = self.headers["rows"][0]
+
         return_data = []
 
         for value in sample_input:
@@ -81,86 +91,51 @@ class CoordinateOperationController:
 
     def shape_input(self):
         """
-        Make the input in perfect shape
+        Make the input in perfect shape.
+
+        -------------------------------------------
+        sample_output: ["B", "*", "C"],
+                       ["B1", "*", "C"] or
+                       ["A1", "=", "B1", "*", "C"]
+        -------------------------------------------
         :return: list
         """
         return_data = []
 
-        for data in self.inputs:
+        for data in self.commands:
             if data != " ":
                 if data in char_table.keys():
                     data = char_table[data]
                 return_data.append(data)
 
-        return return_data
+        return self.clean_data(unclean_data=return_data)
 
-    def selector(self, inputs):
-        """
-        Select cell, rows and column on to the
-        given data
-        :return: list
-        """
-        selected_data = []
-        self.inputs = inputs
-        self.shape_data = self.shape_input()
-
-        if len(self.shape_data) > 3:
-            self.shape_data = self.clean_data()
-
-        indexes = self.data_index(sample_input=self.shape_data)
-        wb_data = self.storage.read_data()["rows"]
-        c1, c2 = indexes
-
-        def direct_selector(index):
-            data = self.gen(data=wb_data)
-            while True:
-                try:
-                    selected_data.append(next(data)[index][0])
-                except StopIteration:
-                    break
-
-        def dual_selection(coordinate):
-            cc, rc = coordinate  # cc => (Column coordinate), rc => (Row coordinate)
-            selected_data.append(wb_data[int(cc)][int(rc) - 1][0])
-
-        if type(c1) is tuple or type(c2) is tuple:
-            for index in indexes:
-                if type(index) is tuple:
-                    dual_selection(coordinate=index)
-                else:
-                    direct_selector(index=index)
-
-        else:
-            for index in indexes:
-                direct_selector(index=index)
-
-        return selected_data
-
-    @staticmethod
-    def gen(data):
-        """
-        Generator method which help us to iterate
-        as fast as possible
-        :param data: Data on which we need to iterate
-        :return: generator
-        """
-        for i in range(len(data)):
-            yield data[i]
-
-    def clean_data(self):
+    def clean_data(self, unclean_data):
         """
         Clean the unclean shape_data
         :return: list
         """
         clean_data = []
 
-        for i, data in enumerate(self.shape_data):
-            if data.isdigit():
-                last_index = i - 1
-                if self.shape_data[last_index].isalpha():
-                    clean_data.remove(self.shape_data[last_index])
-                    data = self.shape_data[last_index] + data
+        for i, data in enumerate(unclean_data):
+            if data.isalpha():
+                current_index = i
+                try:
+                    while True:
+                        current_index += 1
+                        next_value = unclean_data[current_index]
+                        if next_value.isdigit():
+                            data += next_value
+                        else:
+                            break
+                except IndexError:
+                    pass
 
+            if data.isdigit() and i != 0:
+                if not unclean_data[i - 1] in self.operators.keys():
+                    data = None
             clean_data.append(data)
+
+        clean_data = list(filter(None, clean_data))
 
         return clean_data
