@@ -83,7 +83,7 @@ class CoordinateOperationController:
                 else:
                     next_value = self.data_index(command=[shape_input[i + 1]])[0] if not shape_input[
                         i + 1].isdigit() else \
-                        shape_input[i + 1]
+                        int(shape_input[i + 1])
                     node[operator] = next_value
                     data_for_execution[root_key].append(node)
 
