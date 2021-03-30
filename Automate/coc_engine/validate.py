@@ -34,7 +34,6 @@ class Validator:
         count_equal_to_ok = self.count_equal_to()
         coc_order_ok = self.coc_order()
         check_coordinate_ok = self.check_coordinate()
-        print(self.command)
         if coc_order_ok and count_equal_to_ok and check_coordinate_ok:
             return True
         else:
