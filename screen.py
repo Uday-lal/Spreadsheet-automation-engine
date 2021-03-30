@@ -14,6 +14,7 @@ from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import NumericProperty
 from apply_selection import ApplySelection
 from Automate.coc_engine import CoordinateOperationController
+from Automate.coc_engine.validate import Validator
 
 
 class Base(Screen):
@@ -216,7 +217,16 @@ class EditorScreen(Base):
         self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
 
     def validate(self, command):
-        pass
+        headers = self.manager.render_data[self.manager.current_sheet]["rows"][0]
+        validate = Validator(
+            headers=headers,
+            max_rows=self.manager.render_data[self.manager.current_sheet]["max_row"],
+            command=command
+        ).validate()
+        if validate:
+            self.ids.command_palette._primary_color = (0, 1, 0, 1)
+        else:
+            self.ids.command_palette._primary_color = (1, 0, 0, 1)
 
     def execute_command(self, command):
         headers = self.manager.render_data[self.manager.current_sheet]["rows"][0]

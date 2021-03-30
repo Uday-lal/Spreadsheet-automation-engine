@@ -9,6 +9,7 @@ company: UR's tech.ltd
 Validating the users inserted commands
 """
 from .clean_command import CleanCommand
+import re
 
 
 class Validator:
@@ -94,7 +95,7 @@ class Validator:
                         if command not in headers:
                             return False
             else:
-                column_index, row_index = command
+                column_index, row_index = re.match(r"([a-z]+)([0-9]+)", command, re.I).groups()
                 if int(row_index) <= 0 or int(row_index) > self.max_rows or column_index not in headers:
                     return False
         return True
