@@ -11,10 +11,23 @@ from tkinter import *
 from tkinter import filedialog
 from Automate import Automate
 from kivymd.uix.menu import MDDropdownMenu
-from kivy.properties import NumericProperty
+from kivy.properties import (
+    NumericProperty,
+    BooleanProperty,
+    StringProperty
+)
 from apply_selection import ApplySelection
 from Automate.coc_engine import CoordinateOperationController
 from Automate.coc_engine.validate import Validator
+from kivymd.uix.snackbar import BaseSnackbar
+from kivymd.uix.button import MDFlatButton
+from kivy.core.window import Window
+
+
+class MySnackBar(BaseSnackbar):
+    text = StringProperty(None)
+    icon = StringProperty(None)
+    font_size = NumericProperty("15sp")
 
 
 class Base(Screen):
@@ -86,6 +99,7 @@ class TutorialScreen(Base):
 
 class EditorScreen(Base):
     drop_down_tool_bar_height = NumericProperty()
+    validate_commands = BooleanProperty()  # Commands inserted in the command palette
 
     def back_to_home(self):
         """
@@ -218,20 +232,31 @@ class EditorScreen(Base):
 
     def validate(self, command):
         headers = self.manager.render_data[self.manager.current_sheet]["rows"][0]
-        validate = Validator(
+        self.validate_commands = Validator(
             headers=headers,
             max_rows=self.manager.render_data[self.manager.current_sheet]["max_row"],
             command=command
         ).validate()
-        if validate:
+        if self.validate_commands:
             self.ids.command_palette._primary_color = (0, 1, 0, 1)
         else:
             self.ids.command_palette._primary_color = (1, 0, 0, 1)
 
     def execute_command(self, command):
-        headers = self.manager.render_data[self.manager.current_sheet]["rows"][0]
-        data_for_execution = CoordinateOperationController(headers=headers, commands=command).execute()
-        print(data_for_execution)
+        if self.validate_commands:
+            headers = self.manager.render_data[self.manager.current_sheet]["rows"][0]
+            data_for_execution = CoordinateOperationController(headers=headers, commands=command).execute()
+            print(data_for_execution)
+        else:
+            snack_bar = MySnackBar(
+                text="Invalid command! System refuse to accept this command",
+                icon="alert",
+                snackbar_x="10dp",
+                snackbar_y="10dp",
+                buttons=[MDFlatButton(text="Cancel", text_color=(0, 0, 0, 1))]
+            )
+            snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
+            snack_bar.open()
 
     def execute(self):
         pass

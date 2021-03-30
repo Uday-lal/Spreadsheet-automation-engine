@@ -237,6 +237,23 @@
                 md_bg_color: get_color_from_hex("#9962d1")
                 on_release: app.root.editor_screen.update_cell(text_field_data=update_text_field.text, cell=popup_content.clicked_cell); popup_content._popup.dismiss()
 
+<MySnackBar>
+    MDIconButton:
+        pos_hint: {'center_y': .5}
+        icon: root.icon
+        opposite_colors: True
+
+    MDLabel:
+        id: text_bar
+        size_hint_y: None
+        height: self.texture_size[1]
+        text: root.text
+        font_size: root.font_size
+        theme_text_color: 'Custom'
+        text_color: get_color_from_hex('ffffff')
+        shorten: True
+        shorten_from: 'right'
+        pos_hint: {'center_y': .5}
 
 <EditorScreen>:
     id: editor_screen
