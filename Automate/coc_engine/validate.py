@@ -35,7 +35,8 @@ class Validator:
         count_equal_to_ok = self.count_equal_to()
         coc_order_ok = self.coc_order()
         check_coordinate_ok = self.check_coordinate()
-        if coc_order_ok and count_equal_to_ok and check_coordinate_ok:
+        assign_error_ok = self.assign_error()
+        if coc_order_ok and count_equal_to_ok and check_coordinate_ok and assign_error_ok:
             return True
         else:
             return False
@@ -118,3 +119,18 @@ class Validator:
                 return_list.append(itemCount)
 
         return return_list
+
+    def assign_error(self):
+        """
+        Preventing the assign error could
+        happen due to user mistake and in
+        coc code execution
+        :return: bool
+        """
+        try:
+            if self.command[0].isdigit():
+                return False
+            else:
+                return True
+        except IndexError:
+            return True
