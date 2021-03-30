@@ -16,6 +16,8 @@ class Validator:
         self.command = CleanCommand(commands=command).shape_input()
         self.headers = headers
         self.max_rows = max_rows
+        self.not_excepted_special_char = ["!", "@", "#", "$", "%", "^", "&", "(", ")", "_", "'", "[", "]", "{",
+                                          "}", ":", ";", "<", ">", ",", ".", "?", "|", "\\", "\""]
         self.operators = {
             "+": "add",
             "-": "sub",
@@ -29,7 +31,14 @@ class Validator:
         Validating the user commands
         :return: bool
         """
-        pass
+        count_equal_to_ok = self.count_equal_to()
+        coc_order_ok = self.coc_order()
+        check_coordinate_ok = self.check_coordinate()
+        print(self.command)
+        if coc_order_ok and count_equal_to_ok and check_coordinate_ok:
+            return True
+        else:
+            return False
 
     def count_equal_to(self):
         """
@@ -38,6 +47,10 @@ class Validator:
         :return: bool
         """
         equal_to_count = self.count_index(selected_item="=")
+        if equal_to_count is None:
+            equal_to_count = []
+        if len(equal_to_count) == 0:
+            return True
         if len(equal_to_count) != 1:
             return False
         return True
@@ -50,10 +63,22 @@ class Validator:
         :return: bool
         """
         for i, command in enumerate(self.command):
-            if command not in self.operators.keys():
-                next_value = self.command[i + 1]
-                if next_value not in self.operators:
-                    return False
+            if command in self.operators.keys():
+                try:
+                    next_value = self.command[i + 1]
+                    if next_value in self.operators.keys():
+                        return False
+                except IndexError:
+                    pass
+            else:
+                try:
+                    if command in self.not_excepted_special_char:
+                        return False
+                    next_value = self.command[i + 1]
+                    if next_value not in self.operators.keys():
+                        return False
+                except IndexError:
+                    pass
         return True
 
     def check_coordinate(self):
@@ -65,12 +90,13 @@ class Validator:
 
         for command in self.command:
             if len(command) == 1:
-                if command not in self.operators.keys():
-                    if command not in headers:
-                        return False
+                if not command.isdigit():
+                    if command not in self.operators.keys():
+                        if command not in headers:
+                            return False
             else:
                 column_index, row_index = command
-                if row_index <= 0 or row_index > self.max_rows or column_index not in headers:
+                if int(row_index) <= 0 or int(row_index) > self.max_rows or column_index not in headers:
                     return False
         return True
 
