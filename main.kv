@@ -307,7 +307,13 @@
                         height: "30dp"
                         multiline: False
                         hint_text: "Command palette"
-                        on_text: editor_screen.execute_commands(command=self.text)
+                        on_text: editor_screen.validate(command=self.text)
+
+                    MDFlatButton:
+                        text: "Update"
+                        theme_text_color: "Custom"
+                        text_color: 0, 0, 1, 1
+                        on_release: editor_screen.execute_command(command=command_palette.text); command_palette.text = ""
 
             Widget:
                 id: container

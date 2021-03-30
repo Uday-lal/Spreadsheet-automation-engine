@@ -13,6 +13,7 @@ from Automate import Automate
 from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import NumericProperty
 from apply_selection import ApplySelection
+from Automate.coc_engine import CoordinateOperationController
 
 
 class Base(Screen):
@@ -214,5 +215,13 @@ class EditorScreen(Base):
         apply_selection.unselect()
         self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
 
-    def execute_commands(self, command):
+    def validate(self, command):
+        pass
+
+    def execute_command(self, command):
+        headers = self.manager.render_data[self.manager.current_sheet]["rows"][0]
+        data_for_execution = CoordinateOperationController(headers=headers, commands=command).execute()
+        print(data_for_execution)
+
+    def execute(self):
         pass
