@@ -20,11 +20,11 @@ from apply_selection import ApplySelection
 from Automate.coc_engine import CoordinateOperationController
 from Automate.coc_engine.validate import Validator
 from kivymd.uix.snackbar import BaseSnackbar
-from kivymd.uix.button import MDFlatButton
 from kivy.core.window import Window
 
 
-class MySnackBar(BaseSnackbar):
+class ErrorSnackBar(BaseSnackbar):
+    """Shows the command on the screen"""
     text = StringProperty(None)
     icon = StringProperty(None)
     font_size = NumericProperty("15sp")
@@ -243,20 +243,25 @@ class EditorScreen(Base):
             self.ids.command_palette._primary_color = (1, 0, 0, 1)
 
     def execute_command(self, command):
-        if self.validate_commands:
-            headers = self.manager.render_data[self.manager.current_sheet]["rows"][0]
-            data_for_execution = CoordinateOperationController(headers=headers, commands=command).execute()
-            print(data_for_execution)
-        else:
-            snack_bar = MySnackBar(
-                text="Invalid command! System refuse to accept this command",
-                icon="alert",
-                snackbar_x="10dp",
-                snackbar_y="10dp",
-                buttons=[MDFlatButton(text="Cancel", text_color=(0, 0, 0, 1))]
-            )
-            snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
-            snack_bar.open()
+        if command != "":
+            if self.validate_commands:
+                headers = self.manager.render_data[self.manager.current_sheet]["rows"][0]
+                data_for_execution = CoordinateOperationController(headers=headers, commands=command).execute()
+                print(data_for_execution)
+            else:
+                snack_bar = ErrorSnackBar(
+                    text="Invalid command! System refuse to accept this command",
+                    icon="alert",
+                    snackbar_x="10dp",
+                    snackbar_y="10dp"
+                )
+                snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
+                snack_bar.open()
 
     def execute(self):
+        """
+        Execute the ins instructions coming from
+        coc engine
+        :return: None
+        """
         pass
