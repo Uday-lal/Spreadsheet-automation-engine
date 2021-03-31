@@ -52,7 +52,7 @@ class Validator:
             equal_to_count = []
         if len(equal_to_count) == 0:
             return True
-        if len(equal_to_count) != 1:
+        if len(equal_to_count) != 1 or self.command.index("=") != 1:
             return False
         return True
 

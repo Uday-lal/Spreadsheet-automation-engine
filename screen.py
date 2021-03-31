@@ -231,6 +231,11 @@ class EditorScreen(Base):
         self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
 
     def validate(self, command):
+        """
+        Validate the insert command
+        :param command: Inserted command
+        :return: None
+        """
         headers = self.manager.render_data[self.manager.current_sheet]["rows"][0]
         self.validate_commands = Validator(
             headers=headers,
@@ -243,6 +248,12 @@ class EditorScreen(Base):
             self.ids.command_palette._primary_color = (1, 0, 0, 1)
 
     def execute_command(self, command):
+        """
+        Given the validated command to
+        the coc engine
+        :param command: Command for execution
+        :return: None
+        """
         if command != "":
             if self.validate_commands:
                 headers = self.manager.render_data[self.manager.current_sheet]["rows"][0]
