@@ -64,6 +64,8 @@ class Validator:
         :return: bool
         """
         for i, command in enumerate(self.command):
+            if i == 0 and command in self.operators.keys():
+                return False
             if command in self.operators.keys():
                 try:
                     next_value = self.command[i + 1]
