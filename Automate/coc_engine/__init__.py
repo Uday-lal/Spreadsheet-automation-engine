@@ -51,7 +51,7 @@ class CoordinateOperationController:
                 if operator_coming_times == 1:
                     last_value, next_value = self.data_index([shape_input[i - 1]])[0], self.data_index(
                         [shape_input[i + 1]])[0]
-                    node[operator] = (last_value, next_value)
+                    node[operator] = [last_value, next_value]
                     self.data_for_execution[self.root_key].append(node)
                 else:
                     next_value = self.data_index(command=[shape_input[i + 1]])[0] if not shape_input[
@@ -60,6 +60,7 @@ class CoordinateOperationController:
                     node[operator] = next_value
                     self.data_for_execution[self.root_key].append(node)
 
+        self.arrange()
         return self.data_for_execution
 
     def data_index(self, command):
@@ -90,3 +91,20 @@ class CoordinateOperationController:
                         return_data.append((headers.index(header), int(column_index)))
 
         return return_data
+
+    def arrange(self):
+        data_for_execution = self.data_for_execution[self.root_key]
+
+        for i, node in enumerate(data_for_execution):
+            operator = list(node.keys())[0]
+            node_value = node[operator]
+
+            if operator == "multiply" or operator == "divide" and i != 0:
+                last_node = data_for_execution[i - 1]
+                last_node_key = list(last_node.keys())[0]
+                last_value = last_node[last_node_key][1] if type(last_node[last_node_key]) == list else last_node[
+                    last_node_key]
+                first_index_value = last_node[last_node_key][0] if type(last_node[last_node_key]) == list else \
+                last_node[last_node_key]
+                data_for_execution[i] = {operator: [last_value, node_value]}
+                data_for_execution[i - 1] = {last_node_key: first_index_value}

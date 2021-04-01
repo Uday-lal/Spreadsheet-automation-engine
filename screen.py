@@ -257,8 +257,9 @@ class EditorScreen(Base):
         if command != "":
             if self.validate_commands:
                 headers = self.manager.render_data[self.manager.current_sheet]["rows"][0]
-                data_for_execution = CoordinateOperationController(headers=headers, commands=command).execute()
-                print(data_for_execution)
+                self.data_for_execution = CoordinateOperationController(headers=headers, commands=command).execute()
+                print(self.data_for_execution)
+                self.executor()
             else:
                 snack_bar = ErrorSnackBar(
                     text="Invalid command! System refuse to accept this command",
@@ -269,7 +270,7 @@ class EditorScreen(Base):
                 snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
                 snack_bar.open()
 
-    def execute(self):
+    def executor(self):
         """
         Execute the ins instructions coming from
         coc engine

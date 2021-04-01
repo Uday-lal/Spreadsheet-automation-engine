@@ -57,6 +57,7 @@ class ApplySelection:
         :return: None
         """
         cell.is_selected = True
+        return cell.text
 
     def master_column_selection(self):
         self.data = self.data[self.row_index]

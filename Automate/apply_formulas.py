@@ -22,16 +22,16 @@ class ApplyFormulas:
         :param next_value: The next value that user wants to add with
         :return: numpy array
         """
-        return self.data + next_value
+        return self.data + numpy.array(next_value)
 
-    def division(self, divisor):
+    def division(self, next_value):
         """
         Defining the way to apply division
         to the row or column data
-        :param divisor: A int or object from which that user want to divide with
+        :param next_value: A int or object from which that user want to divide with
         :return: numpy array
         """
-        return self.data / divisor
+        return self.data / numpy.array(next_value)
 
     def multiplication(self, next_value):
         """
@@ -40,7 +40,7 @@ class ApplyFormulas:
         :param next_value: The next value that user wants to multiply with
         :return: numpy array
         """
-        return self.data * next_value
+        return self.data * numpy.array(next_value)
 
     def subtraction(self, next_value):
         """
@@ -49,4 +49,4 @@ class ApplyFormulas:
         :param next_value: The next value that user wants to subtract with
         :return: numpy array
         """
-        return self.data - next_value
+        return self.data - numpy.array(next_value)
