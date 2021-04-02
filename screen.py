@@ -257,7 +257,10 @@ class EditorScreen(Base):
         if command != "":
             if self.validate_commands:
                 headers = self.manager.render_data[self.manager.current_sheet]["rows"][0]
-                self.data_for_execution = CoordinateOperationController(headers=headers, commands=command).execute()
+                self.data_for_execution = CoordinateOperationController(
+                    headers=headers,
+                    commands=command
+                ).provide_data_for_execution()
                 print(self.data_for_execution)
                 self.executor()
             else:

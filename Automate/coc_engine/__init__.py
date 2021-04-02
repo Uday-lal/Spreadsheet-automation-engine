@@ -27,7 +27,7 @@ class CoordinateOperationController:
             "=": "equal_to"
         }
 
-    def execute(self):
+    def provide_data_for_execution(self):
         """
         Execute the command that are
         given.

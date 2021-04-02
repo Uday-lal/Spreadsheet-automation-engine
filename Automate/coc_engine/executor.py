@@ -33,3 +33,18 @@ class Executor:
         :return: list
         """
         pass
+
+    def get_selected_data(self, coordinates):
+        """
+        Defining the rules of selection
+        :param coordinates: cells coordinates
+        :return: list
+        """
+        if type(coordinates) is tuple:
+            first_index_value, next_index_value = coordinates
+            if first_index_value != "isdigit":
+                return self.selection(coordinates=(first_index_value, next_index_value))
+            else:
+                return next_index_value
+        else:
+            return self.selection(coordinates=[coordinates])
