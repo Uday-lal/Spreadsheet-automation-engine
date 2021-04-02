@@ -105,6 +105,6 @@ class CoordinateOperationController:
                 last_value = last_node[last_node_key][1] if type(last_node[last_node_key]) == list else last_node[
                     last_node_key]
                 first_index_value = last_node[last_node_key][0] if type(last_node[last_node_key]) == list else \
-                last_node[last_node_key]
+                    last_node[last_node_key]
                 data_for_execution[i] = {operator: [last_value, node_value]}
                 data_for_execution[i - 1] = {last_node_key: first_index_value}
