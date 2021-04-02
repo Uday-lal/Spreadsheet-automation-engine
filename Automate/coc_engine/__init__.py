@@ -99,12 +99,13 @@ class CoordinateOperationController:
             operator = list(node.keys())[0]
             node_value = node[operator]
 
-            if operator == "multiply" or operator == "divide" and i != 0:
-                last_node = data_for_execution[i - 1]
-                last_node_key = list(last_node.keys())[0]
-                last_value = last_node[last_node_key][1] if type(last_node[last_node_key]) == list else last_node[
-                    last_node_key]
-                first_index_value = last_node[last_node_key][0] if type(last_node[last_node_key]) == list else \
-                    last_node[last_node_key]
-                data_for_execution[i] = {operator: [last_value, node_value]}
-                data_for_execution[i - 1] = {last_node_key: first_index_value, "is_universal": True}
+            if operator == "multiply" or operator == "divide":
+                if i != 0:
+                    last_node = data_for_execution[i - 1]
+                    last_node_key = list(last_node.keys())[0]
+                    last_value = last_node[last_node_key][1] if type(last_node[last_node_key]) == list else last_node[
+                        last_node_key]
+                    first_index_value = last_node[last_node_key][0] if type(last_node[last_node_key]) == list else \
+                        last_node[last_node_key]
+                    data_for_execution[i] = {operator: [last_value, node_value]}
+                    data_for_execution[i - 1] = {last_node_key: first_index_value, "is_universal": True}

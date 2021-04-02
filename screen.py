@@ -21,6 +21,7 @@ from Automate.coc_engine import CoordinateOperationController
 from Automate.coc_engine.validate import Validator
 from kivymd.uix.snackbar import BaseSnackbar
 from kivy.core.window import Window
+from Automate.coc_engine.executor import Executor
 
 
 class ErrorSnackBar(BaseSnackbar):
@@ -279,4 +280,7 @@ class EditorScreen(Base):
         coc engine
         :return: None
         """
-        pass
+        executor = Executor(
+            sheet_data=self.manager.render_data[self.manager.current_sheet]["rows"],
+            data_for_execution=self.data_for_execution
+        )
