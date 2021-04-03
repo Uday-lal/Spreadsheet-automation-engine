@@ -262,7 +262,7 @@ class EditorScreen(Base):
                     headers=headers,
                     commands=command
                 ).provide_data_for_execution()
-                print(self.data_for_execution)
+                # print(self.data_for_execution)
                 self.executor()
             else:
                 snack_bar = ErrorSnackBar(
@@ -284,3 +284,4 @@ class EditorScreen(Base):
             sheet_data=self.manager.render_data[self.manager.current_sheet]["rows"],
             data_for_execution=self.data_for_execution
         )
+        print(executor.execute())
