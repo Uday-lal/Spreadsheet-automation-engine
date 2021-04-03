@@ -57,7 +57,7 @@ class CoordinateOperationController:
                     next_value = self.data_index(command=[shape_input[i + 1]])[0] if not shape_input[
                         i + 1].isdigit() else \
                         ("isdigit", int(shape_input[i + 1]))
-                    node[operator] = next_value
+                    node[operator] = [next_value]
                     self.data_for_execution[self.root_key].append(node)
 
         self.arrange()
@@ -94,18 +94,23 @@ class CoordinateOperationController:
 
     def arrange(self):
         data_for_execution = self.data_for_execution[self.root_key]
-
-        for i, node in enumerate(data_for_execution):
+        i = 0
+        while True:
+            i += 1
+            try:
+                node = data_for_execution[i]
+            except IndexError:
+                break
             operator = list(node.keys())[0]
             node_value = node[operator]
 
             if operator == "multiply" or operator == "divide":
                 if i != 0:
                     last_node = data_for_execution[i - 1]
-                    last_node_key = list(last_node.keys())[0]
-                    last_value = last_node[last_node_key][1] if type(last_node[last_node_key]) == list else last_node[
-                        last_node_key]
-                    first_index_value = last_node[last_node_key][0] if type(last_node[last_node_key]) == list else \
-                        last_node[last_node_key]
-                    data_for_execution[i] = {operator: [last_value, node_value]}
-                    data_for_execution[i - 1] = {last_node_key: first_index_value, "is_universal": True}
+                    last_node_operator = list(last_node.keys())[0]
+                    if last_node_operator != "multiply" or last_node_operator != "divide":
+                        last_node_value = last_node[last_node_operator]
+                        last_node_value = last_node_value[1] if len(last_node_value) == 2 else last_node_value[0]
+                        data_for_execution[i] = {operator: [last_node_value, node_value[0]]}
+                        data_for_execution.insert(i, {last_node_operator: last_node_value, "is_universal": True})
+                        i += 1
