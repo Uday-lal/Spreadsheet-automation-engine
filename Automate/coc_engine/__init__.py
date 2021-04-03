@@ -104,13 +104,12 @@ class CoordinateOperationController:
             operator = list(node.keys())[0]
             node_value = node[operator]
 
-            if operator == "multiply" or operator == "divide":
-                if i != 0:
-                    last_node = data_for_execution[i - 1]
-                    last_node_operator = list(last_node.keys())[0]
-                    if last_node_operator != "multiply" or last_node_operator != "divide":
-                        last_node_value = last_node[last_node_operator]
-                        last_node_value = last_node_value[1] if len(last_node_value) == 2 else last_node_value[0]
-                        data_for_execution[i] = {operator: [last_node_value, node_value[0]]}
-                        data_for_execution.insert(i, {last_node_operator: last_node_value, "is_universal": True})
-                        i += 1
+            if operator == "multiply" and operator == "divide":
+                last_node = data_for_execution[i - 1]
+                last_node_operator = list(last_node.keys())[0]
+                if last_node_operator != "multiply" or last_node_operator != "divide":
+                    last_node_value = last_node[last_node_operator]
+                    last_node_value = last_node_value[1] if len(last_node_value) == 2 else last_node_value[0]
+                    data_for_execution[i] = {operator: [last_node_value, node_value[0]]}
+                    data_for_execution.insert(i, {last_node_operator: last_node_value, "is_universal": True})
+                    i += 1
