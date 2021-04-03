@@ -17,7 +17,6 @@ class Executor:
         self.data_for_execution = data_for_execution
         self.root_key = list(self.data_for_execution.keys())[0]
         self.total = 0
-        print(self.data_for_execution)
 
     def selection(self, coordinates):
         """
