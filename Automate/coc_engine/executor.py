@@ -36,6 +36,10 @@ class Executor:
         return selected_data
 
     def execute(self):
+        """
+        Execute the given command
+        :return: None
+        """
         data_for_operation = []
         for i, node in enumerate(self.data_for_execution[self.root_key]):
             operator = list(node.keys())[0]
@@ -58,8 +62,6 @@ class Executor:
                 self.next_node = self.data_for_execution[self.root_key][self.next_node_index]
                 self.perform_universal_operation()
             data_for_operation.clear()
-
-        return self.total
 
     def get_selected_data(self, coordinates):
         """
@@ -132,3 +134,42 @@ class Executor:
         """
         last_node_data = self.get_selected_data(coordinates=self.node_value)
         self.total = subtraction(first_value=self.total, next_value=last_node_data)
+
+    def marge(self):
+        """
+        Marge a the total sum on to the
+        main sheet
+        :return: list
+        """
+        total = self.total.tolist()
+        try:
+            root_len = len(self.root_key)
+        except TypeError:
+            root_len = 1
+
+        if root_len == 2:
+            row_index, column_index = self.root_key
+            cell_data = self.sheet_data[column_index][row_index]
+            cell_data[0] = total[0] if len(self.total.tolist()) == 1 else total
+            self.sheet_data[column_index][row_index] = cell_data
+        else:
+            i = 0
+            _data = self.get_data()
+            while True:
+                try:
+                    column_data = next(_data)
+                    column_data[self.root_key][0] = total[i]
+                    i += 1
+                except StopIteration:
+                    break
+
+        return self.sheet_data
+
+    def get_data(self):
+        """
+        Yielding the data to save
+        application from memory overflow
+        :return: yield list
+        """
+        for i in range(1, len(self.sheet_data)):
+            yield self.sheet_data[i]
