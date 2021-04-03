@@ -17,6 +17,7 @@ class Executor:
         self.data_for_execution = data_for_execution
         self.root_key = list(self.data_for_execution.keys())[0]
         self.total = 0
+        print(self.data_for_execution)
 
     def selection(self, coordinates):
         """
@@ -86,11 +87,11 @@ class Executor:
         """
         if operation_type == "add":
             self.total = add(first_value, next_value)
-        if operation_type == "sub":
+        elif operation_type == "sub":
             self.total = subtraction(first_value, next_value)
-        if operation_type == "divide":
+        elif operation_type == "divide":
             self.total = division(first_value, next_value)
-        if operation_type == "multiply":
+        elif operation_type == "multiply":
             self.total = multiplication(first_value, next_value)
 
     def perform_universal_operation(self):
