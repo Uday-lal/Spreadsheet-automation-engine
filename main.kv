@@ -250,6 +250,13 @@
         shorten_from: 'right'
         pos_hint: {'center_y': .5}
 
+<Item>:
+    text: root.text
+    on_release:
+        app.root.editor_screen.list_item_callback(selected_math_operation=root.text)
+    IconLeftWidget:
+        icon: "math-integral"
+
 <EditorScreen>:
     id: editor_screen
     drop_down_tool_bar_height: 50
@@ -264,7 +271,6 @@
             left_action_items: [["arrow-left", lambda x: editor_screen.back_to_home()]]
 
         MDBoxLayout:
-            id: container
             MDNavigationRail:
                 id: rail
                 md_bg_color: get_color_from_hex("#9962d1")
@@ -322,7 +328,7 @@
                         text: "Save"
                         theme_text_color: "Custom"
                         text_color: 0, 0, 0, 1
-                        line_color: 1, 0, 1, 1
+                        line_color: 0, 0, 0, 0
                         icon_color: 0, 0, 0, 1
 
             Widget:

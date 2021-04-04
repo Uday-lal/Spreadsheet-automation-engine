@@ -13,9 +13,14 @@ from kivy.properties import (
     StringProperty,
     NumericProperty
 )
+from kivymd.uix.list import OneLineAvatarIconListItem
 
 
 class ErrorSnackBar(Snackbar):
     """Shows the command on the screen"""
     text = StringProperty(None)
     font_size = NumericProperty("15sp")
+
+
+class Item(OneLineAvatarIconListItem):
+    text = StringProperty()

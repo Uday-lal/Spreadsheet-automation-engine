@@ -20,8 +20,10 @@ from Automate.coc_engine import CoordinateOperationController
 from Automate.coc_engine.validate import Validator
 from kivy.core.window import Window
 from Automate.coc_engine.executor import Executor
-from components import ErrorSnackBar
+from components import ErrorSnackBar, Item
 from kivymd.uix.bottomsheet import MDGridBottomSheet
+from kivy.utils import get_color_from_hex
+from kivymd.uix.dialog import MDDialog
 
 
 class Base(Screen):
@@ -144,6 +146,7 @@ class EditorScreen(Base):
                 icon_src=tool[1]
             )
         self.bottom_sheet.radius = 30
+        self.bottom_sheet.icon_size = "35sp"
         self.bottom_sheet.radius_from = "top"
         self.bottom_sheet.open()
 
@@ -153,7 +156,35 @@ class EditorScreen(Base):
         :param instance: The instance of button which is clicked
         :return: None
         """
-        print(instance.caption)
+        self.ids.rail.md_bg_color = get_color_from_hex("#702ab8")
+        self.ids.tool_bar.title = f"Selected {instance.caption}"
+        if instance.caption == "Apply formulas":
+            apply_formula_operation = ["Addition", "Subtraction", "Multiplication", "Division"]
+            self.dialog = MDDialog(
+                title="Select mathematical operation",
+                type="simple",
+                items=[
+                    Item(text=operation)
+                    for operation in apply_formula_operation
+                ]
+            )
+            self.dialog.open()
+        elif instance.caption == "Sort":
+            pass
+        elif instance.caption == "Reverse":
+            pass
+        elif instance.caption == "Delete":
+            pass
+
+    def list_item_callback(self, selected_math_operation):
+        """
+        Defining the callback to the
+        dialog item object
+        :param selected_math_operation: Text of list item
+        :return: None
+        """
+        self.dialog.dismiss()
+        print(selected_math_operation)
 
     def drop_down_menu_callback(self, instance_menu, instance_menu_item):
         """
