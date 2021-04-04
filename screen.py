@@ -13,17 +13,19 @@ from Automate import Automate
 from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import (
     NumericProperty,
-    BooleanProperty
+    BooleanProperty,
+    StringProperty
 )
 from apply_selection import ApplySelection
 from Automate.coc_engine import CoordinateOperationController
 from Automate.coc_engine.validate import Validator
 from kivy.core.window import Window
 from Automate.coc_engine.executor import Executor
-from components import ErrorSnackBar, Item
+from components import MsgSnackBar, Item, CancelButton
 from kivymd.uix.bottomsheet import MDGridBottomSheet
 from kivy.utils import get_color_from_hex
 from kivymd.uix.dialog import MDDialog
+from selection_mode import SelectionMode
 
 
 class Base(Screen):
@@ -96,6 +98,8 @@ class TutorialScreen(Base):
 class EditorScreen(Base):
     drop_down_tool_bar_height = NumericProperty()
     validate_commands = BooleanProperty()  # Commands inserted in the command palette
+    selection_mode = BooleanProperty(False)
+    operation_type = StringProperty()
 
     def back_to_home(self):
         """
@@ -170,11 +174,11 @@ class EditorScreen(Base):
             )
             self.dialog.open()
         elif instance.caption == "Sort":
-            pass
+            self.operation_type = "Sort"
         elif instance.caption == "Reverse":
-            pass
+            self.operation_type = "Reverse"
         elif instance.caption == "Delete":
-            pass
+            self.operation_type = "Delete"
 
     def list_item_callback(self, selected_math_operation):
         """
@@ -184,7 +188,24 @@ class EditorScreen(Base):
         :return: None
         """
         self.dialog.dismiss()
-        print(selected_math_operation)
+        self.selection_mode = True
+        snack_bar = MsgSnackBar(
+            text=f"Select at least two column the apply {selected_math_operation} operation",
+            snackbar_x="10dp",
+            snackbar_y="10dp"
+        )
+        self.ids.command_palette.text = "new"
+        self.ids.tool_bar.title = f"Apply formulas/{selected_math_operation}"
+        self.ids.main_tool_bar.add_widget(CancelButton())
+        snack_bar.open()
+        if selected_math_operation == "Addition":
+            self.operation_type = "Apply formulas/add"
+        elif selected_math_operation == "Multiplication":
+            self.operation_type = "Apply formulas/multiply"
+        elif selected_math_operation == "Division":
+            self.operation_type = "Apply formulas/divide"
+        elif selected_math_operation == "Subtraction":
+            self.operation_type = "Apply formulas/sub"
 
     def drop_down_menu_callback(self, instance_menu, instance_menu_item):
         """
@@ -230,7 +251,7 @@ class EditorScreen(Base):
         """
         data = self.manager.render_data
         apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
-        apply_selection.master_selection(cell=cell)
+        self.master_selected_data = apply_selection.master_selection(cell=cell)
         self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
 
     def unselect_master_selections(self):
@@ -251,16 +272,17 @@ class EditorScreen(Base):
         :param command: Inserted command
         :return: None
         """
-        headers = self.manager.render_data[self.manager.current_sheet]["rows"][0]
-        self.validate_commands = Validator(
-            headers=headers,
-            max_rows=self.manager.render_data[self.manager.current_sheet]["max_row"],
-            command=command
-        ).validate()
-        if self.validate_commands:
-            self.ids.command_palette._primary_color = (0, 1, 0, 1)
-        else:
-            self.ids.command_palette._primary_color = (1, 0, 0, 1)
+        if not self.selection_mode:
+            headers = self.manager.render_data[self.manager.current_sheet]["rows"][0]
+            self.validate_commands = Validator(
+                headers=headers,
+                max_rows=self.manager.render_data[self.manager.current_sheet]["max_row"],
+                command=command
+            ).validate()
+            if self.validate_commands:
+                self.ids.command_palette._primary_color = (0, 1, 0, 1)
+            else:
+                self.ids.command_palette._primary_color = (1, 0, 0, 1)
 
     def execute_command(self, command):
         """
@@ -270,21 +292,34 @@ class EditorScreen(Base):
         :return: None
         """
         if command != "":
-            if self.validate_commands:
-                headers = self.manager.render_data[self.manager.current_sheet]["rows"][0]
-                self.data_for_execution = CoordinateOperationController(
-                    headers=headers,
-                    commands=command
-                ).provide_data_for_execution()
-                self.executor()
+            if not self.selection_mode:
+                if self.validate_commands:
+                    headers = self.manager.render_data[self.manager.current_sheet]["rows"][0]
+                    self.data_for_execution = CoordinateOperationController(
+                        headers=headers,
+                        commands=command
+                    ).provide_data_for_execution()
+                    self.executor()
+                else:
+                    snack_bar = MsgSnackBar(
+                        text="Invalid command! System refuse to accept this command",
+                        snackbar_x="10dp",
+                        snackbar_y="10dp"
+                    )
+                    snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
+                    snack_bar.open()
             else:
-                snack_bar = ErrorSnackBar(
-                    text="Invalid command! System refuse to accept this command",
-                    snackbar_x="10dp",
-                    snackbar_y="10dp"
+                selection_mode = SelectionMode(
+                    wb_data=self.manager.render_data[self.manager.current_sheet]["rows"],
+                    selected_data=self.master_selected_data,
+                    equal_to=command,
+                    operation_type=self.operation_type,
+                    max_rc=(
+                        self.manager.render_data[self.manager.current_sheet][self.current_sheet]["max_row"],
+                        self.manager.render_data[self.manager.current_sheet][self.current_sheet]["max_cols"]
+                    )
                 )
-                snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
-                snack_bar.open()
+
 
     def executor(self):
         """

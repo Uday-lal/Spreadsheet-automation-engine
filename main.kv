@@ -257,6 +257,15 @@
     IconLeftWidget:
         icon: "math-integral"
 
+<NewColumnIndicator>:
+    id: new_column_indicator
+    text: root.text
+    size_hint: None, None
+    height: "30dp"
+    width: "40dp"
+    background_color: (0, 0, 0, 0)
+    multiline: False
+
 <EditorScreen>:
     id: editor_screen
     drop_down_tool_bar_height: 50
@@ -291,7 +300,6 @@
                         editor_screen.toolbar_menu_tools()
 
             Widget:
-                id: main_tool_bar
                 canvas.before:
                     Color:
                         rgba: get_color_from_hex("#bca3d6")
@@ -300,6 +308,7 @@
                         size: tool_bar.width, editor_screen.drop_down_tool_bar_height
 
                 MDBoxLayout:
+                    id: main_tool_bar
                     pos: rail.width, ((window.Window.height - tool_bar.height) - 50)
                     size: 1000, editor_screen.drop_down_tool_bar_height
 
@@ -321,7 +330,11 @@
                         text: "Execute"
                         theme_text_color: "Custom"
                         text_color: 0, 0, 0, 1
-                        on_release: editor_screen.execute_command(command=command_palette.text); command_palette.text = ""
+                        on_release:
+                            if not editor_screen.selection_mode;
+                            editor_screen.execute_command(command=command_palette.text); command_palette.text = ""
+                            else;
+                            editor_screen.execute_command(command=command_palette.text); command_palette.text = ""
 
                     MDRectangleFlatIconButton:
                         icon: "content-save"

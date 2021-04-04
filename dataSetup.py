@@ -12,10 +12,10 @@ import string
 
 
 class DataSetup:
-    def __init__(self, data):
+    def __init__(self, data, max_cols):
         self.sheet_data = data
         self.data = self.sheet_data["rows"]
-        self.max_cols = self.sheet_data["max_cols"]
+        self.max_cols = max_cols
         try:
             self.is_cleaned = self.sheet_data["is_cleaned"]
         except KeyError:
