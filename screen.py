@@ -13,22 +13,15 @@ from Automate import Automate
 from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import (
     NumericProperty,
-    BooleanProperty,
-    StringProperty
+    BooleanProperty
 )
 from apply_selection import ApplySelection
 from Automate.coc_engine import CoordinateOperationController
 from Automate.coc_engine.validate import Validator
-from kivymd.uix.snackbar import BaseSnackbar
 from kivy.core.window import Window
 from Automate.coc_engine.executor import Executor
-
-
-class ErrorSnackBar(BaseSnackbar):
-    """Shows the command on the screen"""
-    text = StringProperty(None)
-    icon = StringProperty(None)
-    font_size = NumericProperty("15sp")
+from components import ErrorSnackBar
+from kivymd.uix.bottomsheet import MDGridBottomSheet
 
 
 class Base(Screen):
@@ -137,23 +130,30 @@ class EditorScreen(Base):
         (Which give the information about the tools).
         :return: None
         """
-        automation_tool = ["Apply formulas", "Sort", "Reverse", "Delete", "Merge sheet"]
-        self.drop_down_menu_tool = MDDropdownMenu(
-            caller=self.ids.drop_item_tools,
-            items=[
-                {
-                    "text": str(automation_tool[i]),
-                    "font_name": "assets/fonts/Heebo-Regular.ttf"
-                }
-                for i in range(len(automation_tool))
-            ],
-            width_mult=4
-        )
-        self.drop_down_menu_tool.bind(on_release=self.drop_down_menu_callback)
-        self.drop_down_menu_tool.open()
+        automation_tool = [  # Defining tool and icon respectively (tool, icon)
+            ("Apply formulas", "math-integral-box"),
+            ("Sort", "sort"),
+            ("Reverse", "sort-reverse-variant"),
+            ("Delete", "delete")
+        ]
+        self.bottom_sheet = MDGridBottomSheet()
+        for tool in automation_tool:
+            self.bottom_sheet.add_item(
+                text=tool[0],
+                callback=lambda tool=tool[0]: self.bottom_sheet_callback(instance=tool),
+                icon_src=tool[1]
+            )
+        self.bottom_sheet.radius = 30
+        self.bottom_sheet.radius_from = "top"
+        self.bottom_sheet.open()
 
-    def toolbar_menu_add_column_row(self):
-        pass
+    def bottom_sheet_callback(self, instance):
+        """
+        Callback to the toolbar_menu_tools ↑
+        :param instance: The instance of button which is clicked
+        :return: None
+        """
+        print(instance.caption)
 
     def drop_down_menu_callback(self, instance_menu, instance_menu_item):
         """
@@ -164,26 +164,9 @@ class EditorScreen(Base):
         """
         dropdown_menu = instance_menu.caller
         selected_item = instance_menu_item.text
-
-        if dropdown_menu.text == "Sheets":
-            dropdown_menu.set_item(f"Sheets/{selected_item}")
-            self.manager.update_dashboard(selected_sheet=selected_item)
-            self.drop_down_menu_sheets.dismiss()
-        else:
-            dropdown_menu.set_item(f"Tools/{selected_item}")
-            processing_data = self.dash_board_connection()
-            print(processing_data)
-            if selected_item == "Apply formulas":
-                pass
-            elif selected_item == "Sort":
-                pass
-            elif selected_item == "Reverse":
-                pass
-            elif selected_item == "Delete":
-                pass
-            elif selected_item == "Marge sheet":
-                pass
-            self.drop_down_menu_tool.dismiss()
+        dropdown_menu.set_item(f"Sheets/{selected_item}")
+        self.manager.update_dashboard(selected_sheet=selected_item)
+        self.drop_down_menu_sheets.dismiss()
 
     def dash_board_connection(self):
         """
@@ -266,7 +249,6 @@ class EditorScreen(Base):
             else:
                 snack_bar = ErrorSnackBar(
                     text="Invalid command! System refuse to accept this command",
-                    icon="alert",
                     snackbar_x="10dp",
                     snackbar_y="10dp"
                 )

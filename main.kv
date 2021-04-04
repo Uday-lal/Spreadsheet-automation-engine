@@ -238,11 +238,6 @@
                 on_release: app.root.editor_screen.update_cell(text_field_data=update_text_field.text, cell=popup_content.clicked_cell); popup_content._popup.dismiss()
 
 <MySnackBar>
-    MDIconButton:
-        pos_hint: {'center_y': .5}
-        icon: root.icon
-        opposite_colors: True
-
     MDLabel:
         id: text_bar
         size_hint_y: None
@@ -284,8 +279,10 @@
                     text: "Select"
 
                 MDNavigationRailItem:
-                    icon: "google-spreadsheet"
-                    text: "Marge data"
+                    icon: "tools"
+                    text: "Tools"
+                    on_release:
+                        editor_screen.toolbar_menu_tools()
 
             Widget:
                 id: main_tool_bar
@@ -306,18 +303,6 @@
                         font_name: "assets/fonts/Heebo-Regular.ttf"
                         on_release: editor_screen.toolbar_menu_sheets()
 
-                    MDDropDownItem:
-                        id: drop_item_tools
-                        text: "Tools"
-                        font_name: "assets/fonts/Heebo-Regular.ttf"
-                        on_release: editor_screen.toolbar_menu_tools()
-
-                    MDDropDownItem:
-                        id: drop_item_add_button
-                        text: "Add"
-                        font_name: "assets/fonts/Heebo-Regular.ttf"
-                        # on_release: editor_screen.toolbar_menu_add_column_row()
-
                     MDTextFieldRect:
                         id: command_palette
                         size_hint: 1, None
@@ -329,8 +314,16 @@
                     MDFlatButton:
                         text: "Execute"
                         theme_text_color: "Custom"
-                        text_color: 0, 0, 1, 1
+                        text_color: 0, 0, 0, 1
                         on_release: editor_screen.execute_command(command=command_palette.text); command_palette.text = ""
+
+                    MDRectangleFlatIconButton:
+                        icon: "content-save"
+                        text: "Save"
+                        theme_text_color: "Custom"
+                        text_color: 0, 0, 0, 1
+                        line_color: 1, 0, 1, 1
+                        icon_color: 0, 0, 0, 1
 
             Widget:
                 id: container

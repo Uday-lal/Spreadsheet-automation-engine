@@ -141,29 +141,33 @@ class Executor:
         main sheet
         :return: list
         """
-        total = self.total.tolist()
         try:
-            root_len = len(self.root_key)
-        except TypeError:
-            root_len = 1
+            total = self.total.tolist()
+        except AttributeError:
+            total = self.total
+        if self.root_key != "new":
+            try:
+                root_len = len(self.root_key)
+            except TypeError:
+                root_len = 1
 
-        if root_len == 2:
-            row_index, column_index = self.root_key
-            cell_data = self.sheet_data[column_index][row_index]
-            cell_data[0] = total[0] if len(self.total.tolist()) == 1 else total
-            self.sheet_data[column_index][row_index] = cell_data
-        else:
-            i = 0
-            _data = self.get_data()
-            while True:
-                try:
-                    column_data = next(_data)
-                    column_data[self.root_key][0] = total[i]
-                    i += 1
-                except StopIteration:
-                    break
+            if root_len == 2:
+                row_index, column_index = self.root_key
+                cell_data = self.sheet_data[column_index][row_index]
+                cell_data[0] = str(total) if type(total) is not list else str(total[0])
+                self.sheet_data[column_index][row_index] = cell_data
+            else:
+                i = 0
+                _data = self.get_data()
+                while True:
+                    try:
+                        column_data = next(_data)
+                        column_data[self.root_key][0] = total[i] if type(total) is list else total
+                        i += 1
+                    except StopIteration:
+                        break
 
-        return self.sheet_data
+            return self.sheet_data
 
     def get_data(self):
         """
