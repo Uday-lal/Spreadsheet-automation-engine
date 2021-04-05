@@ -16,7 +16,8 @@ import re
 class SelectionMode:
     def __init__(self, max_rc, selected_data, operation_type, equal_to, wb_data):
         self.selected_data = selected_data
-        self.max_cols, self.rows = max_rc
+        self.max_cols = max_rc[0] + 1
+        self.max_rows = max_rc[1] + 1
         self.clean_selected_data = []
         self.total = 0
         self.equal_to = equal_to
@@ -104,16 +105,18 @@ class SelectionMode:
         selected_column_data = []
         while iter_time != max_iter_time:
             iter_time += 1
-            for data in self.selected_data:
-                selected_column_data.append(data[0])
-            self.clean_selected_data.append(selected_column_data)
+            for i in range(1, self.max_cols):
+                selected_column_data.append(self.selected_data[i][0])
+            self.clean_selected_data.append(selected_column_data.copy())
+            del self.selected_data[0:self.max_cols]
+            selected_column_data.clear()
 
     def marge(self):
         total = self.total.tolist()
         if self.equal_to == "new":
             generate_new_rc = GenerateNewRowsColumns(wb_data=self.wb_data)
             generate_new_rc.generate()
-            equal_to_index = self.get_data_index(equal_to_value=self.equal_to)[0]
+            equal_to_index = len(self.wb_data[0]) - 1
             _data = self.get_data()
             i = 0
             while True:
@@ -160,5 +163,5 @@ class SelectionMode:
         return return_data
 
     def get_data(self):
-        for row_data in self.wb_data:
-            yield row_data
+        for i in range(1, len(self.wb_data)):
+            yield self.wb_data[i]

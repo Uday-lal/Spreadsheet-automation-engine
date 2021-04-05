@@ -126,5 +126,6 @@ class DashBoard(MDBoxLayout):
         :return: None
         """
         self.data = data
+        self.max_cols = len(self.data[0])
         recycle_view_dash_board = RecyclerDashBoardLayout(render_data=self.data, max_cols=self.max_cols)
         self.add_widget(recycle_view_dash_board)

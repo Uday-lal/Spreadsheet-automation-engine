@@ -315,11 +315,13 @@ class EditorScreen(Base):
                     equal_to=command,
                     operation_type=self.operation_type,
                     max_rc=(
-                        self.manager.render_data[self.manager.current_sheet][self.current_sheet]["max_row"],
-                        self.manager.render_data[self.manager.current_sheet][self.current_sheet]["max_cols"]
+                        self.manager.render_data[self.manager.current_sheet]["max_row"],
+                        self.manager.render_data[self.manager.current_sheet]["max_cols"]
                     )
                 )
-
+                selection_mode.execute()
+                updated_data = selection_mode.marge()
+                self.manager.reload_dashboard(data=updated_data)
 
     def executor(self):
         """

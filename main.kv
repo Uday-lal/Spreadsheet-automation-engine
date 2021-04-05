@@ -331,9 +331,9 @@
                         theme_text_color: "Custom"
                         text_color: 0, 0, 0, 1
                         on_release:
-                            if not editor_screen.selection_mode;
+                            if not editor_screen.selection_mode:\
                             editor_screen.execute_command(command=command_palette.text); command_palette.text = ""
-                            else;
+                            else:\
                             editor_screen.execute_command(command=command_palette.text); command_palette.text = ""
 
                     MDRectangleFlatIconButton:
