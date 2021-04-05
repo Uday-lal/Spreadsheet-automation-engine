@@ -159,3 +159,17 @@ class Automate:
         sorted_data = self.sort(data)
         sorted_data.reverse()
         return sorted_data  # Return reverse sorted data
+
+    def delete(self, wb_data, selected_index):
+        self.wb_data = wb_data
+        _data = self.get_data()
+        while True:
+            try:
+                row_data = next(_data)
+                del row_data[selected_index]
+            except StopIteration:
+                break
+
+    def get_data(self):
+        for row_data in self.wb_data:
+            yield row_data

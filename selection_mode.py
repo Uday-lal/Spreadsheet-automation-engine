@@ -100,7 +100,12 @@ class SelectionMode:
         self.sort_or_reverse_data = self.automate.reverse(data=self.clean_selected_data[0])
 
     def delete(self):
-        pass
+        shape_input = CleanCommand(commands=self.equal_to).shape_input()
+        equal_to_index = self.get_data_index(equal_to_value=shape_input)
+        self.automate.delete(
+            wb_data=self.wb_data,
+            selected_index=equal_to_index[0]
+        )
 
     def clean_data(self):
         max_iter_time = len(self.selected_data) // self.max_cols
@@ -145,9 +150,9 @@ class SelectionMode:
                     row_index, column_index = equal_to_index
                     self.wb_data[column_index][row_index][0] = total
         else:
-            shape_input = CleanCommand(commands=self.equal_to).shape_input()
-            equal_to_index = self.get_data_index(equal_to_value=shape_input)[0]
             if self.operation_type != "Delete":
+                shape_input = CleanCommand(commands=self.equal_to).shape_input()
+                equal_to_index = self.get_data_index(equal_to_value=shape_input)[0]
                 while True:
                     try:
                         row_data = next(_data)
@@ -155,8 +160,7 @@ class SelectionMode:
                         i += 1
                     except StopIteration:
                         break
-            else:
-                pass
+
         return self.wb_data
 
     def get_data_index(self, equal_to_value):
