@@ -325,8 +325,8 @@ class EditorScreen(Base):
                 )
                 selection_mode.execute()
                 updated_data = selection_mode.marge()
-                self.manager.reload_dashboard(data=updated_data)
                 self.remove_selection_mode()
+                self.manager.reload_dashboard(data=updated_data)
 
     def executor(self):
         """
@@ -352,3 +352,4 @@ class EditorScreen(Base):
         self.ids.tool_bar.title = "Edit workbook"
         self.ids.main_tool_bar.remove_widget(self.cancel_button)
         self.ids.rail.md_bg_color = get_color_from_hex("#9962d1")
+        self.unselect_master_selections()
