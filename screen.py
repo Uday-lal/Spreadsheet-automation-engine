@@ -101,6 +101,10 @@ class EditorScreen(Base):
     selection_mode = BooleanProperty(False)
     operation_type = StringProperty()
 
+    def __init__(self, **kwargs):
+        super(EditorScreen, self).__init__(**kwargs)
+        self.cancel_button = CancelButton()
+
     def back_to_home(self):
         """
         Define back to home screen functionality
@@ -196,7 +200,7 @@ class EditorScreen(Base):
         )
         self.ids.command_palette.text = "new"
         self.ids.tool_bar.title = f"Apply formulas/{selected_math_operation}"
-        self.ids.main_tool_bar.add_widget(CancelButton())
+        self.ids.main_tool_bar.add_widget(self.cancel_button)
         snack_bar.open()
         if selected_math_operation == "Addition":
             self.operation_type = "Apply formulas/add"
@@ -322,6 +326,7 @@ class EditorScreen(Base):
                 selection_mode.execute()
                 updated_data = selection_mode.marge()
                 self.manager.reload_dashboard(data=updated_data)
+                self.remove_selection_mode()
 
     def executor(self):
         """
@@ -336,3 +341,14 @@ class EditorScreen(Base):
         executor.execute()
         updated_data = executor.marge()
         self.manager.reload_dashboard(data=updated_data)
+
+    def remove_selection_mode(self):
+        """
+        Reset everything thing after
+        selection mode
+        :return: None
+        """
+        self.selection_mode = False
+        self.ids.tool_bar.title = "Edit workbook"
+        self.ids.main_tool_bar.remove_widget(self.cancel_button)
+        self.ids.rail.md_bg_color = get_color_from_hex("#9962d1")
