@@ -11,6 +11,7 @@ Defining the rules of selection mode
 from Automate.apply_formulas import add, multiplication, division, subtraction
 from generate_new_rc import GenerateNewRowsColumns
 from Automate.coc_engine.clean_command import CleanCommand
+from Automate import Automate
 import re
 
 
@@ -23,6 +24,7 @@ class SelectionMode:
         self.total = 0
         self.equal_to = equal_to
         self.wb_data = wb_data
+        self.automate = Automate()
         self.operation_type = operation_type
         self.headers = self.wb_data[0]
         self.clean_data()
@@ -92,10 +94,10 @@ class SelectionMode:
         return self.total
 
     def sort(self):
-        pass
+        self.sort_or_reverse_data = self.automate.sort(data=self.clean_selected_data[0])
 
     def reverse(self):
-        pass
+        self.sort_or_reverse_data = self.automate.reverse(data=self.clean_selected_data[0])
 
     def delete(self):
         pass
@@ -113,26 +115,14 @@ class SelectionMode:
             selected_column_data.clear()
 
     def marge(self):
-        total = self.total.tolist()
-        if self.equal_to == "new":
-            generate_new_rc = GenerateNewRowsColumns(wb_data=self.wb_data)
-            generate_new_rc.generate()
-            equal_to_index = len(self.wb_data[0]) - 1
-            _data = self.get_data()
-            i = 0
-            while True:
-                try:
-                    row_data = next(_data)
-                    row_data[equal_to_index][0] = total[i] if type(total) is list else total
-                    i += 1
-                except StopIteration:
-                    break
-        else:
-            shape_input = CleanCommand(commands=self.equal_to).shape_input()
-            equal_to_index = self.get_data_index(equal_to_value=shape_input)[0]
-            if type(equal_to_index) is int:
-                _data = self.get_data()
-                i = 0
+        _data = self.get_data()
+        i = 0
+        if "Apply formulas" in self.operation_type:
+            total = self.total.tolist()
+            if self.equal_to == "new":
+                generate_new_rc = GenerateNewRowsColumns(wb_data=self.wb_data)
+                generate_new_rc.generate()
+                equal_to_index = len(self.wb_data[0]) - 1
                 while True:
                     try:
                         row_data = next(_data)
@@ -141,8 +131,32 @@ class SelectionMode:
                     except StopIteration:
                         break
             else:
-                row_index, column_index = equal_to_index
-                self.wb_data[column_index][row_index][0] = total
+                shape_input = CleanCommand(commands=self.equal_to).shape_input()
+                equal_to_index = self.get_data_index(equal_to_value=shape_input)[0]
+                if type(equal_to_index) is int:
+                    while True:
+                        try:
+                            row_data = next(_data)
+                            row_data[equal_to_index][0] = total[i] if type(total) is list else total
+                            i += 1
+                        except StopIteration:
+                            break
+                else:
+                    row_index, column_index = equal_to_index
+                    self.wb_data[column_index][row_index][0] = total
+        else:
+            shape_input = CleanCommand(commands=self.equal_to).shape_input()
+            equal_to_index = self.get_data_index(equal_to_value=shape_input)[0]
+            if self.operation_type != "Delete":
+                while True:
+                    try:
+                        row_data = next(_data)
+                        row_data[equal_to_index][0] = self.sort_or_reverse_data[i]
+                        i += 1
+                    except StopIteration:
+                        break
+            else:
+                pass
         return self.wb_data
 
     def get_data_index(self, equal_to_value):

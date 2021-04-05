@@ -164,8 +164,14 @@ class EditorScreen(Base):
         :param instance: The instance of button which is clicked
         :return: None
         """
+        self.selection_mode = True
         self.ids.rail.md_bg_color = get_color_from_hex("#702ab8")
         self.ids.tool_bar.title = f"Selected {instance.caption}"
+        snack_bar = MsgSnackBar(
+            text=f"Select at least two column the apply {instance.caption} operation",
+            snackbar_x="10dp",
+            snackbar_y="10dp"
+        )
         if instance.caption == "Apply formulas":
             apply_formula_operation = ["Addition", "Subtraction", "Multiplication", "Division"]
             self.dialog = MDDialog(
@@ -179,10 +185,13 @@ class EditorScreen(Base):
             self.dialog.open()
         elif instance.caption == "Sort":
             self.operation_type = "Sort"
+            snack_bar.open()
         elif instance.caption == "Reverse":
             self.operation_type = "Reverse"
+            snack_bar.open()
         elif instance.caption == "Delete":
             self.operation_type = "Delete"
+            snack_bar.open()
 
     def list_item_callback(self, selected_math_operation):
         """
@@ -192,7 +201,6 @@ class EditorScreen(Base):
         :return: None
         """
         self.dialog.dismiss()
-        self.selection_mode = True
         snack_bar = MsgSnackBar(
             text=f"Select at least two column the apply {selected_math_operation} operation",
             snackbar_x="10dp",
@@ -253,10 +261,19 @@ class EditorScreen(Base):
         :param cell: Cell object
         :return: None
         """
-        data = self.manager.render_data
-        apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
-        self.master_selected_data = apply_selection.master_selection(cell=cell)
-        self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
+        if not self.selection_mode:
+            data = self.manager.render_data
+            apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
+            self.master_selected_data = apply_selection.master_selection(cell=cell)
+            self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
+        else:
+            master_cell = cell
+            if "Apply formulas" not in self.operation_type and not master_cell.text.isdigit():
+                data = self.manager.render_data
+                apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
+                self.master_selected_data = apply_selection.master_selection(cell=cell)
+                self.ids.command_palette.text = master_cell.text
+                self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
 
     def unselect_master_selections(self):
         """

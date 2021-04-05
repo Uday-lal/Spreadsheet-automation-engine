@@ -109,9 +109,9 @@ class Validation:
 
 
 class Automate:
-    def __init__(self, filename):
+    def __init__(self, filename=None):
         self.filename = str(filename)
-        if not self.filename.endswith(".xlsx"):
+        if not self.filename.endswith(".xlsx") and filename is not None:
             raise FileTypeException(
                 f"Excepting .xlsx file got {self.filename[self.filename.index('.'):len(self.filename)]}")
 
@@ -151,18 +151,11 @@ class Automate:
 
         return wb_data
 
-    def apply_formula(self, data):
-        """
-        Execute instruction given by the
-        user to modifying the columns and
-        the rows ->
+    @staticmethod
+    def sort(data):
+        return sorted(list(data))
 
-        ------------------------------------
-        This instruction is for applying
-        mathematical  terms to the rows and
-        columns.
-        ------------------------------------
-        :param data: Data on which we need to apply mathematical logic
-        :return: list
-        """
-        pass
+    def reverse(self, data):
+        sorted_data = self.sort(data)
+        sorted_data.reverse()
+        return sorted_data  # Return reverse sorted data
