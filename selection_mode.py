@@ -10,6 +10,7 @@ Defining the rules of selection mode
 """
 from Automate.apply_formulas import add, multiplication, division, subtraction
 from generate_new_rc import GenerateNewRowsColumns
+from Automate.coc_engine.clean_command import CleanCommand
 import re
 
 
@@ -127,7 +128,8 @@ class SelectionMode:
                 except StopIteration:
                     break
         else:
-            equal_to_index = self.get_data_index(equal_to_value=self.equal_to)[0]
+            shape_input = CleanCommand(commands=self.equal_to).shape_input()
+            equal_to_index = self.get_data_index(equal_to_value=shape_input)[0]
             if type(equal_to_index) is int:
                 _data = self.get_data()
                 i = 0
@@ -163,5 +165,10 @@ class SelectionMode:
         return return_data
 
     def get_data(self):
+        """
+        Yielding the data to save
+        application from memory overflow
+        :return: yield list
+        """
         for i in range(1, len(self.wb_data)):
             yield self.wb_data[i]
