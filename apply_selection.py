@@ -38,7 +38,7 @@ class ApplySelection:
                     except StopIteration:
                         return processing_data
             else:
-                self.master_column_selection()
+                return self.master_column_selection()
 
     def get_data(self):
         """

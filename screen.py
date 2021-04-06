@@ -14,7 +14,8 @@ from kivymd.uix.menu import MDDropdownMenu
 from kivy.properties import (
     NumericProperty,
     BooleanProperty,
-    StringProperty
+    StringProperty,
+    ListProperty
 )
 from apply_selection import ApplySelection
 from Automate.coc_engine import CoordinateOperationController
@@ -100,6 +101,7 @@ class EditorScreen(Base):
     validate_commands = BooleanProperty()  # Commands inserted in the command palette
     selection_mode = BooleanProperty(False)
     operation_type = StringProperty()
+    master_selected_data = ListProperty()
 
     def __init__(self, **kwargs):
         super(EditorScreen, self).__init__(**kwargs)
@@ -269,18 +271,36 @@ class EditorScreen(Base):
         :return: None
         """
         if not self.selection_mode or "Apply formulas" in self.operation_type:
-            data = self.manager.render_data
-            apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
-            self.master_selected_data = apply_selection.master_selection(cell=cell)
-            self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
-        else:
-            master_cell = cell
-            if "Apply formulas" not in self.operation_type and not master_cell.text.isdigit():
+            if not cell.text.isdigit() or not self.selection_mode:
                 data = self.manager.render_data
                 apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
                 self.master_selected_data = apply_selection.master_selection(cell=cell)
-                self.ids.command_palette.text = master_cell.text
                 self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
+            else:
+                snack_bar = MsgSnackBar(
+                    text="Sorry! This version of Propoint dose not support any operation on rows",
+                    snackbar_x="10dp",
+                    snackbar_y="10dp"
+                )
+                snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
+                snack_bar.open()
+        else:
+            master_cell = cell
+            if "Apply formulas" not in self.operation_type:
+                if not master_cell.text.isdigit():
+                    data = self.manager.render_data
+                    apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
+                    self.master_selected_data = apply_selection.master_selection(cell=cell)
+                    self.ids.command_palette.text = master_cell.text
+                    self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
+                else:
+                    snack_bar = MsgSnackBar(
+                        text="Sorry! This version of Propoint dose not support any operation on rows",
+                        snackbar_x="10dp",
+                        snackbar_y="10dp"
+                    )
+                    snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
+                    snack_bar.open()
 
     def unselect_master_selections(self):
         """
@@ -337,20 +357,29 @@ class EditorScreen(Base):
                     snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
                     snack_bar.open()
             else:
-                selection_mode = SelectionMode(
-                    wb_data=self.manager.render_data[self.manager.current_sheet]["rows"],
-                    selected_data=self.master_selected_data,
-                    equal_to=command,
-                    operation_type=self.operation_type,
-                    max_rc=(
-                        self.manager.render_data[self.manager.current_sheet]["max_row"],
-                        self.manager.render_data[self.manager.current_sheet]["max_cols"]
+                if self.master_selected_data:
+                    selection_mode = SelectionMode(
+                        wb_data=self.manager.render_data[self.manager.current_sheet]["rows"],
+                        selected_data=self.master_selected_data,
+                        equal_to=command,
+                        operation_type=self.operation_type,
+                        max_rc=(
+                            self.manager.render_data[self.manager.current_sheet]["max_row"],
+                            self.manager.render_data[self.manager.current_sheet]["max_cols"]
+                        )
                     )
-                )
-                selection_mode.execute()
-                updated_data = selection_mode.marge()
-                self.remove_selection_mode()
-                self.manager.reload_dashboard(data=updated_data)
+                    selection_mode.execute()
+                    updated_data = selection_mode.marge()
+                    self.remove_selection_mode()
+                    self.manager.reload_dashboard(data=updated_data)
+                else:
+                    snack_bar = MsgSnackBar(
+                        text="Please select some column",
+                        snackbar_x="10dp",
+                        snackbar_y="10dp"
+                    )
+                    snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
+                    snack_bar.open()
 
     def executor(self):
         """
