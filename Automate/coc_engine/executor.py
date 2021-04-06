@@ -144,7 +144,8 @@ class Executor:
         try:
             total = self.total.tolist()
         except AttributeError:
-            total = self.total
+            raise Exception("System dose not accept this input")
+
         if self.root_key != "new":
             try:
                 root_len = len(self.root_key)

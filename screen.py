@@ -167,7 +167,13 @@ class EditorScreen(Base):
         self.selection_mode = True
         self.ids.rail.md_bg_color = get_color_from_hex("#702ab8")
         self.ids.tool_bar.title = f"Selected {instance.caption}"
-        self.ids.main_tool_bar.add_widget(self.cancel_button)
+
+        try:
+            self.ids.main_tool_bar.add_widget(self.cancel_button)
+        except Exception:
+            self.ids.main_tool_bar.remove_widget(self.cancel_button)
+            self.ids.main_tool_bar.add_widget(self.cancel_button)
+
         self.cancel_button.bind(on_release=lambda instance: self.remove_selection_mode())
         snack_bar = MsgSnackBar(
             text=f"Select at least two column the apply {instance.caption} operation",
@@ -262,7 +268,7 @@ class EditorScreen(Base):
         :param cell: Cell object
         :return: None
         """
-        if not self.selection_mode:
+        if not self.selection_mode or "Apply formulas" in self.operation_type:
             data = self.manager.render_data
             apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
             self.master_selected_data = apply_selection.master_selection(cell=cell)
@@ -352,13 +358,22 @@ class EditorScreen(Base):
         coc engine
         :return: None
         """
-        executor = Executor(
-            sheet_data=self.manager.render_data[self.manager.current_sheet]["rows"],
-            data_for_execution=self.data_for_execution
-        )
-        executor.execute()
-        updated_data = executor.marge()
-        self.manager.reload_dashboard(data=updated_data)
+        try:
+            executor = Executor(
+                sheet_data=self.manager.render_data[self.manager.current_sheet]["rows"],
+                data_for_execution=self.data_for_execution
+            )
+            executor.execute()
+            updated_data = executor.marge()
+            self.manager.reload_dashboard(data=updated_data)
+        except Exception as e:
+            snack_bar = MsgSnackBar(
+                text=str(e),
+                snackbar_x="10dp",
+                snackbar_y="10dp"
+            )
+            snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
+            snack_bar.open()
 
     def remove_selection_mode(self):
         """
