@@ -167,6 +167,8 @@ class EditorScreen(Base):
         self.selection_mode = True
         self.ids.rail.md_bg_color = get_color_from_hex("#702ab8")
         self.ids.tool_bar.title = f"Selected {instance.caption}"
+        self.ids.main_tool_bar.add_widget(self.cancel_button)
+        self.cancel_button.bind(on_release=lambda instance: self.remove_selection_mode())
         snack_bar = MsgSnackBar(
             text=f"Select at least two column the apply {instance.caption} operation",
             snackbar_x="10dp",
@@ -208,7 +210,6 @@ class EditorScreen(Base):
         )
         self.ids.command_palette.text = "new"
         self.ids.tool_bar.title = f"Apply formulas/{selected_math_operation}"
-        self.ids.main_tool_bar.add_widget(self.cancel_button)
         snack_bar.open()
         if selected_math_operation == "Addition":
             self.operation_type = "Apply formulas/add"
@@ -367,6 +368,7 @@ class EditorScreen(Base):
         """
         self.selection_mode = False
         self.ids.tool_bar.title = "Edit workbook"
+        self.ids.command_palette.text = ""
         self.ids.main_tool_bar.remove_widget(self.cancel_button)
         self.ids.rail.md_bg_color = get_color_from_hex("#9962d1")
         self.unselect_master_selections()

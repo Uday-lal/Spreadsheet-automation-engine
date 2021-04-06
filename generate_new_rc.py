@@ -15,6 +15,7 @@ class GenerateNewRowsColumns:
     def __init__(self, wb_data):
         self.wb_data = wb_data
         self.headers = self.wb_data[0]
+        self.max_cols = len(self.headers)
 
     def generate(self):
         for row_data in self.wb_data:

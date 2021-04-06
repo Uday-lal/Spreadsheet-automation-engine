@@ -160,6 +160,10 @@ class SelectionMode:
                         i += 1
                     except StopIteration:
                         break
+            else:
+                generate_new_rc = GenerateNewRowsColumns(wb_data=self.wb_data)
+                headers = generate_new_rc.get_headers()
+                self.wb_data[0] = headers
 
         return self.wb_data
 
