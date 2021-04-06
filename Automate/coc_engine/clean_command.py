@@ -77,7 +77,7 @@ class CleanCommand:
         :return: list
         """
         clean_data = []
-
+        # insert_float = lambda current_value, last_value, next_value: last_value + current_value + next_value
         for i, data in enumerate(unclean_data):
             if data.isalpha():
                 current_index = i
@@ -92,11 +92,25 @@ class CleanCommand:
                 except IndexError:
                     pass
 
+            if data == ".":
+                pass
+
             if data.isdigit() and i != 0:
+                current_index = i
+                while True:
+                    current_index += 1
+                    next_value = unclean_data[current_index]
+                    if next_value.isdigit() or next_value == ".":
+                        data += next_value
+                    else:
+                        break
                 if not unclean_data[i - 1] in self.operators.keys():
                     data = None
             clean_data.append(data)
 
         clean_data = list(filter(None, clean_data))
+        if "." in clean_data:
+            dot_index = clean_data.index(".")
+            clean_data.pop(dot_index)
 
         return clean_data
