@@ -79,16 +79,20 @@ class CoordinateOperationController:
         return_data = []
 
         for value in command:
-            if value.isdigit():
-                return_data.append(("isdigit", int(value)))
+            if value.isdigit() or "." in value:
+                _value = int(value) if "." not in value else float(value)
+                return_data.append(("isdigit", _value))
+                break
             for header in headers:
                 if len(value) == 1:
                     if value in header:
                         return_data.append(headers.index(header))
+                        break
                 else:
                     row_index, column_index = re.match(r"([a-z]+)([0-9]+)", value, re.I).groups()
                     if row_index in header:
                         return_data.append((headers.index(header), int(column_index)))
+                        break
 
         return return_data
 

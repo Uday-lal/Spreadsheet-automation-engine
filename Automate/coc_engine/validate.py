@@ -18,7 +18,7 @@ class Validator:
         self.headers = headers
         self.max_rows = max_rows
         self.not_excepted_special_char = ["!", "@", "#", "$", "%", "^", "&", "(", ")", "_", "'", "[", "]", "{",
-                                          "}", ":", ";", "<", ">", ",", ".", "?", "|", "\\", "\""]
+                                          "}", ":", ";", "<", ">", ",", "?", "|", "\\", "\""]
         self.operators = {
             "+": "add",
             "-": "sub",
@@ -78,6 +78,8 @@ class Validator:
                     if command in self.not_excepted_special_char:
                         return False
                     next_value = self.command[i + 1]
+                    if next_value == ".":
+                        return True
                     if next_value not in self.operators.keys():
                         return False
                 except IndexError:
@@ -98,9 +100,12 @@ class Validator:
                         if command not in headers:
                             return False
             else:
-                column_index, row_index = re.match(r"([a-z]+)([0-9]+)", command, re.I).groups()
-                if int(row_index) <= 0 or int(row_index) > self.max_rows or column_index not in headers:
-                    return False
+                try:
+                    column_index, row_index = re.match(r"([a-z]+)([0-9]+)", command, re.I).groups()
+                    if int(row_index) <= 0 or int(row_index) > self.max_rows or column_index not in headers:
+                        return False
+                except AttributeError:
+                    pass
         return True
 
     def count_index(self, selected_item):

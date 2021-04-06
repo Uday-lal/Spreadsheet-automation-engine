@@ -97,13 +97,16 @@ class CleanCommand:
 
             if data.isdigit() and i != 0:
                 current_index = i
-                while True:
-                    current_index += 1
-                    next_value = unclean_data[current_index]
-                    if next_value.isdigit() or next_value == ".":
-                        data += next_value
-                    else:
-                        break
+                try:
+                    while True:
+                        current_index += 1
+                        next_value = unclean_data[current_index]
+                        if next_value.isdigit() or next_value == ".":
+                            data += next_value
+                        else:
+                            break
+                except IndexError:
+                    pass
                 if not unclean_data[i - 1] in self.operators.keys():
                     data = None
             clean_data.append(data)
