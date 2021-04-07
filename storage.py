@@ -10,7 +10,6 @@ Making the storage object to make wb data
 some where at the center
 """
 from kivy.storage.jsonstore import JsonStore
-from datetime import datetime
 import os
 import json
 
@@ -19,37 +18,29 @@ class Storage(JsonStore):
     def __init__(self, **kwargs):
         super(Storage, self).__init__(**kwargs, filename="Propoint.json")
         self.filename = "Propoint.json"
-        self.current_date = datetime.today().strftime("%d-%m-%Y")
-        save_path = os.path.join(os.path.expanduser("~"), "AppData\\Roaming\\Propoint")
+        save_path = os.path.join(os.path.expanduser("~"), "AppData\\Roaming")
+        if "Propoint" in os.listdir(save_path):
+            self.is_first_store = False
+        else:
+            self.is_first_store = True
 
+        save_path = os.path.join(save_path, "Propoint")
         try:
             os.mkdir(save_path)
         except FileExistsError:
             pass
-
         os.chdir(save_path)
 
-    def save(self, wb_data):
-        """
-        Saving the given data
-        :param max_cols: Maximum number of column presented in the sheet
-        :return: None
-        """
-        self.put(key="", date_of_modify=self.current_date, data=wb_data)
+    def save(self, data):
+        file = open(self.filename, "w")
+        json.dump(data, file)
+        file.close()
 
-    def read_data(self):
-        """
-        Read the stored data
-        :return: list
-        """
-        self.file = open(self.filename)
-        data = json.load(self.file)
-        for key in data:
-            return data[key]["data"]
+    def read(self, filename):
+        file = open(self.filename, "r")
+        data = json.load(file)
+        return data[filename]
 
-    def close_file(self):
-        """
-        Close the json file to pervert  ResourceWarning
-        :return: None
-        """
-        self.file.close()
+    def read_all(self):
+        file = open(self.filename, "r")
+        return json.load(file)

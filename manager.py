@@ -15,6 +15,7 @@ from dataSetup import DataSetup
 from kivy.properties import StringProperty
 from Automate import Automate
 from storage import Storage
+from datetime import datetime
 import os
 
 
@@ -26,6 +27,7 @@ class Manager(ScreenManager):
         self.home_screen = HomeScreen(name="home_screen")
         self.tutorial_screen = TutorialScreen(name="tutorial_screen")
         self.editor_screen = EditorScreen(name="editor_screen")
+        self.current_date = datetime.today().strftime("%d-%m-%Y")
         self.add_widget(self.home_screen)
         self.add_widget(self.tutorial_screen)
         self.add_widget(self.editor_screen)
@@ -130,9 +132,13 @@ class Manager(ScreenManager):
         )
         storage = Storage()
         if storage.is_first_store:
-            storage.save(data=self.render_data)
+            path, filename = os.path.split(self.render_data["file_path"])
+            root = {filename: self.render_data}
+            root[filename]["date_of_modify"] = self.current_date
+            storage.save(data=root)
         else:
             old_data = storage.read_all()
             filename = os.path.split(self.render_data["file_path"])[1]
             old_data[filename] = self.render_data
+            old_data[filename]["date_of_modify"] = self.current_date
             storage.save(data=old_data)
