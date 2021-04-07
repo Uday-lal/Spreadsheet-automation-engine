@@ -13,6 +13,9 @@ from screen import HomeScreen, TutorialScreen, EditorScreen
 from dashboard import DashBoard
 from dataSetup import DataSetup
 from kivy.properties import StringProperty
+from Automate import Automate
+from storage import Storage
+import os
 
 
 class Manager(ScreenManager):
@@ -117,3 +120,19 @@ class Manager(ScreenManager):
         """
         self.dash_board.clear_widgets()  # Removing the old child widgets.
         self.dash_board.render_data(data=data)
+
+    def save(self, is_overwrite=False):
+        automate = Automate()
+        automate.save_wb(
+            file_path=self.render_data["file_path"],
+            is_overwrite=is_overwrite,
+            data=self.render_data
+        )
+        storage = Storage()
+        if storage.is_first_store:
+            storage.save(data=self.render_data)
+        else:
+            old_data = storage.read_all()
+            filename = os.path.split(self.render_data["file_path"])[1]
+            old_data[filename] = self.render_data
+            storage.save(data=old_data)
