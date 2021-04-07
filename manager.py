@@ -9,7 +9,7 @@ from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.image import Image
 from kivy.uix.screenmanager import ScreenManager
 
-from screen import HomeScreen, SettingScreen, TutorialScreen, EditorScreen
+from screen import HomeScreen, TutorialScreen, EditorScreen
 from dashboard import DashBoard
 from dataSetup import DataSetup
 from kivy.properties import StringProperty
@@ -21,11 +21,9 @@ class Manager(ScreenManager):
     def __init__(self, **kwargs):
         super(Manager, self).__init__(**kwargs)
         self.home_screen = HomeScreen(name="home_screen")
-        self.setting_screen = SettingScreen(name="setting_screen")
         self.tutorial_screen = TutorialScreen(name="tutorial_screen")
         self.editor_screen = EditorScreen(name="editor_screen")
         self.add_widget(self.home_screen)
-        self.add_widget(self.setting_screen)
         self.add_widget(self.tutorial_screen)
         self.add_widget(self.editor_screen)
 
@@ -37,19 +35,6 @@ class Manager(ScreenManager):
         if self.current_screen.name != "home_screen":
             self.transition.direction = "down"
             self.current = "home_screen"
-
-    def screen_transition_setting(self):
-        """
-        Define screen transition setting
-        :return: None
-        """
-        if self.current_screen != "setting_screen":
-            if self.current_screen.name == "home_screen":
-                self.transition.direction = "up"
-                self.current = "setting_screen"
-            else:
-                self.transition.direction = "down"
-                self.current = "setting_screen"
 
     def screen_transition_tutorial(self):
         """

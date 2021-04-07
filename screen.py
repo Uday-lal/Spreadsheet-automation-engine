@@ -88,10 +88,6 @@ class HomeScreen(Base):
     pass
 
 
-class SettingScreen(Base):
-    pass
-
-
 class TutorialScreen(Base):
     pass
 

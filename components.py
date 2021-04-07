@@ -27,6 +27,7 @@ class MsgSnackBar(Snackbar):
 class Item(OneLineAvatarIconListItem):
     text = StringProperty()
 
+
 class CancelButton(MDRectangleFlatIconButton):
     icon = "cancel"
     text = "Cancel"
