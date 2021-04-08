@@ -27,6 +27,7 @@ from kivymd.uix.bottomsheet import MDGridBottomSheet
 from kivy.utils import get_color_from_hex
 from kivymd.uix.dialog import MDDialog
 from selection_mode import SelectionMode
+from kivymd.uix.button import MDRectangleFlatButton
 
 
 class Base(Screen):
@@ -80,19 +81,46 @@ class Base(Screen):
 
 class HomeScreen(Base):
     def present_users_history(self, history_data):
-        history_card = HistoryCard()
-        history_card.spacing = 10
+        self.history_card = HistoryCard()
+        self.history_card.spacing = 10
         key_list = history_data.keys()
-        self.ids.main_container.cols = round(Window.width / history_card.width)
+        self.ids.main_container.cols = round(Window.width / self.history_card.width)
         self.ids.main_container.size = (
             self.ids.main_container.width - (self.ids.rail.width + 50),
             self.ids.main_container.height
         )
-        history_card.bind(on_release=lambda instance: self.manager.history_card_callback(instance=instance))
+        self.history_card.bind(on_release=lambda x: self.open_dialog())
         for key in key_list:
-            history_card.title = key
-            history_card.date_of_modify = history_data[key]["date_of_modify"]
-            self.ids.main_container.add_widget(history_card)
+            self.history_card.title = key
+            self.history_card.date_of_modify = history_data[key]["date_of_modify"]
+            self.ids.main_container.add_widget(self.history_card)
+
+    def open_dialog(self):
+        self.dialog =  MDDialog(
+            text="Do you want to delete it or view it?",
+            buttons=[
+                MDRectangleFlatButton(
+                    text="View",
+                    text_color=get_color_from_hex("#0074d4"),
+                    line_color=get_color_from_hex("#219bff")
+                ),
+                MDRectangleFlatButton(
+                    text="Delete",
+                    text_color=(1, 0, 0, 1),
+                    line_color=(1, 0, 0, 1)
+                )
+            ]
+        )
+        self.dialog.buttons[0].bind(on_release=lambda instance: self.dialog_callback(instance=instance))
+        self.dialog.buttons[1].bind(on_release=lambda instance: self.dialog_callback(instance=instance))
+        self.dialog.open()
+
+    def dialog_callback(self, instance):
+        if instance.text == "View":
+            self.manager.view_button_callback(instance=self.history_card)
+        else:
+            self.manager.delete(instance=self.history_card)
+        self.dialog.dismiss()
 
 
 class TutorialScreen(Base):

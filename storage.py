@@ -44,3 +44,8 @@ class Storage(JsonStore):
     def read_all(self):
         file = open(self.filename, "r")
         return json.load(file)
+
+    def _delete(self, filename):
+        save_data = self.read_all()
+        del save_data[filename]
+        self.save(data=save_data)
