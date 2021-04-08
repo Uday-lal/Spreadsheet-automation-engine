@@ -16,6 +16,7 @@ from kivy.properties import (
 )
 from kivymd.uix.list import OneLineAvatarIconListItem
 from kivymd.uix.button import MDRectangleFlatIconButton
+from kivymd.uix.card import MDCard
 
 
 class MsgSnackBar(Snackbar):
@@ -34,3 +35,8 @@ class CancelButton(MDRectangleFlatIconButton):
     text_color = ColorProperty((1, 0, 0, 1))
     line_color = ColorProperty((1, 0, 0, 1))
     icon_color = ColorProperty((0, 0, 0, 1))
+
+
+class HistoryCard(MDCard):
+    title = StringProperty()
+    date_of_modify = StringProperty()

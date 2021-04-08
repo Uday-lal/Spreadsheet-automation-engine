@@ -27,10 +27,10 @@ class Manager(ScreenManager):
         self.home_screen = HomeScreen(name="home_screen")
         self.tutorial_screen = TutorialScreen(name="tutorial_screen")
         self.editor_screen = EditorScreen(name="editor_screen")
-        self.current_date = datetime.today().strftime("%d-%m-%Y")
         self.add_widget(self.home_screen)
         self.add_widget(self.tutorial_screen)
         self.add_widget(self.editor_screen)
+        self.render_empty_home_screen()
 
     def screen_transition_home(self):
         """
@@ -124,6 +124,7 @@ class Manager(ScreenManager):
         self.dash_board.render_data(data=data)
 
     def save(self, is_overwrite=False):
+        self.current_date = datetime.today().strftime("%d-%m-%Y")
         automate = Automate()
         automate.save_wb(
             file_path=self.render_data["file_path"],
@@ -142,3 +143,27 @@ class Manager(ScreenManager):
             old_data[filename] = self.render_data
             old_data[filename]["date_of_modify"] = self.current_date
             storage.save(data=old_data)
+
+    def render_empty_home_screen(self):
+        save_path = os.path.join(os.path.expanduser("~"), "AppData\\Roaming")
+        if "Propoint" not in os.listdir(save_path):
+            self.empty_home_screen()
+        else:
+            self.storage = Storage()
+            try:
+                all_data = self.storage.read_all()
+            except FileNotFoundError:
+                all_data = {}
+
+            if all_data == {}:
+                self.empty_home_screen()
+            else:
+                history_data = self.storage.read_all()
+                self.home_screen.present_users_history(history_data=history_data)
+
+    def history_card_callback(self, instance):
+        filename = instance.title
+        file_data = self.storage.read(filename=filename)
+        self.render_wb_data(render_data=file_data)
+        self.transition.direction = "left"
+        self.current = "editor_screen"

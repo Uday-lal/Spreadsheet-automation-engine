@@ -22,7 +22,7 @@ from Automate.coc_engine import CoordinateOperationController
 from Automate.coc_engine.validate import Validator
 from kivy.core.window import Window
 from Automate.coc_engine.executor import Executor
-from components import MsgSnackBar, Item, CancelButton
+from components import MsgSnackBar, Item, CancelButton, HistoryCard
 from kivymd.uix.bottomsheet import MDGridBottomSheet
 from kivy.utils import get_color_from_hex
 from kivymd.uix.dialog import MDDialog
@@ -30,10 +30,6 @@ from selection_mode import SelectionMode
 
 
 class Base(Screen):
-    flat_icon_button_data = {
-        "assets/images/add.png": "Add workbook"
-    }
-
     def rail_open(self):
         """
         Control the state of the MDNavigationRail
@@ -44,20 +40,18 @@ class Base(Screen):
         else:
             self.ids.rail.rail_state = "open"
 
-    def open_file_manager(self, instance):
+    def open_file_manager(self):
         """
         Open the file manager
-        :param instance: Determine where the click happen on the (MDFloatingActionButtonSpeedDial)
         :return: None
         """
-        if instance.icon == "assets/images/add.png":
-            tk_root = Tk()
-            tk_root.eval(f"tk::PlaceWindow {tk_root.winfo_toplevel()} center")
-            tk_root.withdraw()
-            file_manager = filedialog.askopenfile(title="Open workbook", filetypes=((".xlsx", "*.xlsx"),))
-            if file_manager is not None:
-                self.filename = file_manager.name
-                self.open_workbook()
+        tk_root = Tk()
+        tk_root.eval(f"tk::PlaceWindow {tk_root.winfo_toplevel()} center")
+        tk_root.withdraw()
+        file_manager = filedialog.askopenfile(title="Open workbook", filetypes=((".xlsx", "*.xlsx"),))
+        if file_manager is not None:
+            self.filename = file_manager.name
+            self.open_workbook()
 
     def get_wb_data(self):
         """
@@ -85,7 +79,20 @@ class Base(Screen):
 
 
 class HomeScreen(Base):
-    pass
+    def present_users_history(self, history_data):
+        history_card = HistoryCard()
+        history_card.spacing = 10
+        key_list = history_data.keys()
+        self.ids.main_container.cols = round(Window.width / history_card.width)
+        self.ids.main_container.size = (
+            self.ids.main_container.width - (self.ids.rail.width + 50),
+            self.ids.main_container.height
+        )
+        history_card.bind(on_release=lambda instance: self.manager.history_card_callback(instance=instance))
+        for key in key_list:
+            history_card.title = key
+            history_card.date_of_modify = history_data[key]["date_of_modify"]
+            self.ids.main_container.add_widget(history_card)
 
 
 class TutorialScreen(Base):

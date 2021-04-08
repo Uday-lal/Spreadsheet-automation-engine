@@ -10,61 +10,6 @@
 #:import window kivy.core.window
 
 
-<HomeScreen>:
-    id: home_screen
-
-    MDBoxLayout:
-        orientation: "vertical"
-
-        MDToolbar:
-            title: "Propoint"
-            md_bg_color: rail.md_bg_color
-            left_action_items: [["menu", lambda x: home_screen.rail_open()]]
-
-        MDBoxLayout:
-
-            MDNavigationRail:
-                id: rail
-                md_bg_color: get_color_from_hex("#9962d1")
-                color_normal: get_color_from_hex("#ecd9ff")
-                color_active: None
-                use_hover_behavior: True
-                hover_bg: 0, 0, 0, .2
-                use_resizeable: True
-
-                MDNavigationRailItem:
-                    icon: "home"
-                    text: "Home"
-
-                    on_release:
-                        app.root.screen_transition_home()
-
-                MDNavigationRailItem:
-                    icon: "teach"
-                    text: "Tutorial"
-
-                    on_release:
-                        app.root.screen_transition_tutorial()
-
-    MDFloatingActionButtonSpeedDial:
-        data: home_screen.flat_icon_button_data
-        root_button_anim: True
-        hint_animation: True
-        callback: home_screen.open_file_manager
-
-
-    AnchorLayout:
-        Image:
-            source: "assets/images/empty.png"
-            size_hint_x: None
-            size_hint_y: None
-            width: 300
-            height: 300
-
-<ListItemWithCheckbox>:
-    RightCheckbox:
-
-
 <TutorialScreen>:
     id: tutorial_screen
 
@@ -101,11 +46,12 @@
                     on_release:
                         app.root.screen_transition_tutorial()
 
-    MDFloatingActionButtonSpeedDial:
-        data: tutorial_screen.flat_icon_button_data
-        root_button_anim: True
-        hint_animation: True
-        callback: tutorial_screen.open_file_manager
+                MDNavigationRailItem:
+                    icon: "plus-circle"
+                    text: "Create Project"
+
+                    on_release:
+                        tutorial_screen.open_file_manager()
 
 <Cell>:
     id: cell
@@ -196,7 +142,8 @@
     on_release:
         app.root.editor_screen.list_item_callback(selected_math_operation=root.text)
     IconLeftWidget:
-        icon: "math-integral"
+        icon: "plus-minus-variant"
+
 
 <NewColumnIndicator>:
     id: new_column_indicator
@@ -206,6 +153,92 @@
     width: "40dp"
     background_color: (0, 0, 0, 0)
     multiline: False
+
+<HistoryCard>:
+    id: history_card
+    orientation: "vertical"
+    size_hint: None, None
+    size: 200, 200
+    spacing: "10dp"
+    focus_behavior: True
+    ripple_behavior: True
+
+    MDBoxLayout:
+        Widget:
+            size_hint: None, None
+            size: 10, root.height
+            canvas.before:
+                Color:
+                    rgba: get_color_from_hex("#9962d1")
+                Rectangle:
+                    pos: self.pos
+                    size: self.width, root.height
+
+        MDGridLayout:
+            cols: 1
+
+            MDLabel:
+                text: root.title
+                font_style: "H5"
+                font_name: "assets/fonts/Heebo-Bold.ttf"
+                bold: True
+                size_hint_y: None
+                height: self.texture_size[1]
+
+            MDSeparator:
+
+            MDLabel:
+                text: "Date of modify: " + root.date_of_modify
+                size_hint_y: None
+                font_name: "assets/fonts/Heebo-Regular.ttf"
+                height: self.texture_size[1]
+
+<HomeScreen>:
+    id: home_screen
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDToolbar:
+            title: "Welcome to Propoint"
+            md_bg_color: rail.md_bg_color
+            left_action_items: [["menu", lambda x: home_screen.rail_open()]]
+
+        MDBoxLayout:
+
+            MDNavigationRail:
+                id: rail
+                md_bg_color: get_color_from_hex("#9962d1")
+                color_normal: get_color_from_hex("#ecd9ff")
+                color_active: None
+                use_hover_behavior: True
+                hover_bg: 0, 0, 0, .2
+                use_resizeable: True
+
+                MDNavigationRailItem:
+                    icon: "home"
+                    text: "Home"
+
+                    on_release:
+                        app.root.screen_transition_home()
+
+                MDNavigationRailItem:
+                    icon: "teach"
+                    text: "Tutorial"
+
+                    on_release:
+                        app.root.screen_transition_tutorial()
+
+                MDNavigationRailItem:
+                    icon: "plus-circle"
+                    text: "Create Project"
+
+                    on_release:
+                        home_screen.open_file_manager()
+
+            MDGridLayout:
+                id: main_container
+                pos: rail.width + 50, ((-1 * (Window.height / 2)) + 200)
 
 <EditorScreen>:
     id: editor_screen
