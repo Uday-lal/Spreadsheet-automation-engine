@@ -9,6 +9,7 @@ company: UR's tech.ltd
 Defining the main executor object
 """
 from ..apply_formulas import add, division, subtraction, multiplication
+from generate_new_rc import GenerateNewRowsColumns
 
 
 class Executor:
@@ -145,7 +146,8 @@ class Executor:
             total = self.total.tolist()
         except AttributeError:
             raise Exception("System dose not accept this input")
-
+        i = 0
+        _data = self.get_data()
         if self.root_key != "new":
             try:
                 root_len = len(self.root_key)
@@ -158,8 +160,6 @@ class Executor:
                 cell_data[0] = str(total) if type(total) is not list else str(total[0])
                 self.sheet_data[column_index][row_index] = cell_data
             else:
-                i = 0
-                _data = self.get_data()
                 while True:
                     try:
                         column_data = next(_data)
@@ -167,8 +167,19 @@ class Executor:
                         i += 1
                     except StopIteration:
                         break
+        else:
+            generate_new_rc = GenerateNewRowsColumns(wb_data=self.sheet_data)
+            generate_new_rc.generate()
+            equal_to_index = len(self.sheet_data[0]) - 1
+            while True:
+                try:
+                    row_data = next(_data)
+                    row_data[equal_to_index][0] = total[i] if type(total) is list else total
+                    i += 1
+                except StopIteration:
+                    break
 
-            return self.sheet_data
+        return self.sheet_data
 
     def get_data(self):
         """

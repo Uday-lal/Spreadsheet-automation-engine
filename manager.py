@@ -170,6 +170,6 @@ class Manager(ScreenManager):
 
     def delete(self, instance):
         filename = instance.title
-        self.storage._delete(filename=filename)
+        self.storage.delete_history(filename=filename)
         self.home_screen.ids.main_container.clear_widgets()
         self.render_home_screen_content()

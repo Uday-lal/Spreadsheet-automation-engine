@@ -96,7 +96,7 @@ class HomeScreen(Base):
             self.ids.main_container.add_widget(self.history_card)
 
     def open_dialog(self):
-        self.dialog =  MDDialog(
+        self.dialog = MDDialog(
             text="Do you want to delete it or view it?",
             buttons=[
                 MDRectangleFlatButton(
