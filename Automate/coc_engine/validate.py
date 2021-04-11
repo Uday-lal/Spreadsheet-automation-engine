@@ -17,7 +17,7 @@ class Validator:
         self.command = CleanCommand(commands=command).shape_input()
         self.headers = headers
         self.max_rows = max_rows
-        self.not_excepted_special_char = ["!", "@", "#", "$", "%", "^", "&", "(", ")", "_", "'", "[", "]", "{",
+        self.not_excepted_special_char = ["!", "@", "#", "$", "%", "^", "&", "_", "'", "[", "]", "{",
                                           "}", ":", ";", "<", ">", ",", "?", "|", "\\", "\""]
         self.operators = {
             "+": "add",
@@ -36,7 +36,8 @@ class Validator:
         coc_order_ok = self.coc_order()
         check_coordinate_ok = self.check_coordinate()
         assign_error_ok = self.assign_error()
-        if coc_order_ok and count_equal_to_ok and check_coordinate_ok and assign_error_ok:
+        parentheses_validate_ok = self.validate_parentheses()
+        if coc_order_ok and count_equal_to_ok and check_coordinate_ok and assign_error_ok and parentheses_validate_ok:
             return True
         else:
             return False
@@ -64,6 +65,8 @@ class Validator:
         :return: bool
         """
         for i, command in enumerate(self.command):
+            if command == "(" or command == ")":
+                return True
             if i == 0 and command in self.operators.keys():
                 return False
             if command in self.operators.keys():
@@ -95,6 +98,8 @@ class Validator:
 
         for command in self.command:
             if len(command) == 1:
+                if command == "(":
+                    return True
                 if not command.isdigit():
                     if command not in self.operators.keys():
                         if command not in headers:
@@ -141,3 +146,13 @@ class Validator:
                 return True
         except IndexError:
             return True
+
+    def validate_parentheses(self):
+        """
+        Validating parentheses it should
+        be in pair
+        :return: bool
+        """
+        if "(" in self.command and ")" not in self.command:
+            return False
+        return True
