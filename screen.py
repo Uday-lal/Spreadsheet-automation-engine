@@ -28,6 +28,7 @@ from kivy.utils import get_color_from_hex
 from kivymd.uix.dialog import MDDialog
 from selection_mode import SelectionMode
 from kivymd.uix.button import MDRectangleFlatButton
+from kivy.uix.widget import Widget as KivyWidget
 
 
 class Base(Screen):
@@ -81,23 +82,30 @@ class Base(Screen):
 
 class HomeScreen(Base):
     def present_users_history(self, history_data):
-        self.history_card = HistoryCard()
-        self.history_card.spacing = 10
         key_list = history_data.keys()
-        self.ids.main_container.cols = round(Window.width / self.history_card.width)
-        self.ids.main_container.size = (
-            self.ids.main_container.width - (self.ids.rail.width + 50),
-            self.ids.main_container.height
-        )
-        self.history_card.bind(on_release=lambda x: self.open_dialog())
         for key in key_list:
+            self.history_card = HistoryCard()
+            spacing_widget = KivyWidget(
+                size=(30, 200),
+                size_hint=(None, None),
+                pos_hint=(None, None),
+                pos=(self.history_card.pos[0] + 200, self.history_card.pos[1])
+            )
+            self.ids.main_container.cols = round(Window.width / self.history_card.width)
+            self.ids.main_container.size = (
+                self.ids.main_container.width - (self.ids.rail.width + 50),
+                self.ids.main_container.height
+            )
+            self.history_card.bind(
+                on_release=lambda history_card_instance: self.open_dialog(card_instance=history_card_instance))
             self.history_card.title = key
             self.history_card.date_of_modify = history_data[key]["date_of_modify"]
             self.ids.main_container.add_widget(self.history_card)
+            self.ids.main_container.add_widget(spacing_widget)
 
-    def open_dialog(self):
+    def open_dialog(self, card_instance):
         self.dialog = MDDialog(
-            text="Do you want to delete it or view it?",
+            text=f"Do you want to view {card_instance.title} or delete {card_instance.title}?",
             buttons=[
                 MDRectangleFlatButton(
                     text="View",
