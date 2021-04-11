@@ -447,3 +447,37 @@ class EditorScreen(Base):
         self.ids.main_tool_bar.remove_widget(self.cancel_button)
         self.ids.rail.md_bg_color = get_color_from_hex("#9962d1")
         self.unselect_master_selections()
+
+    def save_dialog(self):
+        self._save_dialog = MDDialog(
+            text="Do you want to save it?",
+            buttons=[
+                MDRectangleFlatButton(
+                    text="Save",
+                    theme_text_color="Custom",
+                    text_color=get_color_from_hex("#9962d1"),
+                    line_color=get_color_from_hex("#702ab8")
+                ),
+                MDRectangleFlatButton(
+                    text="Cancel",
+                    theme_text_color="Custom",
+                    text_color=get_color_from_hex("#9962d1"),
+                    line_color=get_color_from_hex("#702ab8")
+                ),
+            ]
+        )
+        self._save_dialog.buttons[0].bind(on_release=lambda instance: self.save_dialog_callback(instance=instance))
+        self._save_dialog.buttons[1].bind(on_release=lambda instance: self.save_dialog_callback(instance=instance))
+        self._save_dialog.open()
+
+    def save_dialog_callback(self, instance):
+        """
+        Defining the callback of save dialog
+        :param instance: Dialog button instance
+        :return: None
+        """
+        if instance.text == "Save":
+            self.manager.save()
+            self.manager.transition.direction = "right"
+            self.manager.current = "home_screen"
+        self._save_dialog.dismiss()
