@@ -161,6 +161,8 @@
     size: 200, 200
     focus_behavior: True
     ripple_behavior: True
+    on_release:
+        app.root.home_screen.open_dialog(card_instance=root)
 
     MDBoxLayout:
         Widget:
@@ -192,6 +194,11 @@
                 font_name: "assets/fonts/Heebo-Regular.ttf"
                 height: self.texture_size[1]
 
+<HistoryCardContainer>:
+    size_hint: None, None
+    size: window.Window.width - (root.rail_width + 50), window.Window.height
+    cols: root.number_of_widget * root.width // root.width
+
 <HomeScreen>:
     id: home_screen
 
@@ -199,18 +206,20 @@
         orientation: "vertical"
 
         MDToolbar:
+            id: tool_bar
             title: "Welcome to Propoint"
             md_bg_color: rail.md_bg_color
             left_action_items: [["menu", lambda x: home_screen.rail_open()]]
 
         MDBoxLayout:
-
+            id: main_box_layout
             MDNavigationRail:
                 id: rail
                 md_bg_color: get_color_from_hex("#9962d1")
                 color_normal: get_color_from_hex("#ecd9ff")
                 color_active: None
                 use_hover_behavior: True
+                spacing: "10dp"
                 hover_bg: 0, 0, 0, .2
                 use_resizeable: True
 
@@ -234,10 +243,6 @@
 
                     on_release:
                         home_screen.open_file_manager()
-
-            MDGridLayout:
-                id: main_container
-                pos: rail.width + 50, ((-1 * (Window.height / 2)) + 200)
 
 <EditorScreen>:
     id: editor_screen

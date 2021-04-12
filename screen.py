@@ -22,13 +22,14 @@ from Automate.coc_engine import CoordinateOperationController
 from Automate.coc_engine.validate import Validator
 from kivy.core.window import Window
 from Automate.coc_engine.executor import Executor
-from components import MsgSnackBar, Item, CancelButton, HistoryCard
+from components import MsgSnackBar, Item, CancelButton, HistoryCard, HistoryCardContainer
 from kivymd.uix.bottomsheet import MDGridBottomSheet
 from kivy.utils import get_color_from_hex
 from kivymd.uix.dialog import MDDialog
 from selection_mode import SelectionMode
 from kivymd.uix.button import MDRectangleFlatButton
 from kivy.uix.widget import Widget as KivyWidget
+from kivy.uix.scrollview import ScrollView
 
 
 class Base(Screen):
@@ -81,8 +82,14 @@ class Base(Screen):
 
 
 class HomeScreen(Base):
+    number_of_widget = NumericProperty()
+
     def present_users_history(self, history_data):
         key_list = history_data.keys()
+        scroll_view = ScrollView(bar_width='2dp', smooth_scroll_end=10)
+        history_card_container = HistoryCardContainer()
+        history_card_container.rail_width = self.ids.rail.width
+        history_card_container.clear_widgets()
         for key in key_list:
             self.history_card = HistoryCard()
             spacing_widget = KivyWidget(
@@ -91,19 +98,17 @@ class HomeScreen(Base):
                 pos_hint=(None, None),
                 pos=(self.history_card.pos[0] + 200, self.history_card.pos[1])
             )
-            self.ids.main_container.cols = round(Window.width / self.history_card.width)
-            self.ids.main_container.size = (
-                self.ids.main_container.width - (self.ids.rail.width + 50),
-                self.ids.main_container.height
-            )
-            self.history_card.bind(
-                on_release=lambda history_card_instance: self.open_dialog(card_instance=history_card_instance))
             self.history_card.title = key
             self.history_card.date_of_modify = history_data[key]["date_of_modify"]
-            self.ids.main_container.add_widget(self.history_card)
-            self.ids.main_container.add_widget(spacing_widget)
+            history_card_container.add_widget(self.history_card)
+            history_card_container.add_widget(spacing_widget)
+
+        history_card_container.number_of_widget = len(history_card_container.children)
+        scroll_view.add_widget(history_card_container)
+        self.ids.main_box_layout.add_widget(scroll_view)
 
     def open_dialog(self, card_instance):
+        self.clicked_card = card_instance
         self.dialog = MDDialog(
             text=f"Do you want to view {card_instance.title} or delete {card_instance.title}?",
             buttons=[
@@ -125,9 +130,9 @@ class HomeScreen(Base):
 
     def dialog_callback(self, instance):
         if instance.text == "View":
-            self.manager.view_button_callback(instance=self.history_card)
+            self.manager.view_button_callback(instance=self.clicked_card)
         else:
-            self.manager.delete(instance=self.history_card)
+            self.manager.delete(instance=self.clicked_card)
         self.dialog.dismiss()
 
 
@@ -153,6 +158,7 @@ class EditorScreen(Base):
         """
         self.manager.transition.direction = "right"
         self.manager.current = "home_screen"
+        self.manager.clear_dashboard()
 
     def toolbar_menu_sheets(self):
         """
@@ -488,4 +494,5 @@ class EditorScreen(Base):
             self.manager.save()
             self.manager.transition.direction = "right"
             self.manager.current = "home_screen"
+            self.manager.render_home_screen_content()
         self._save_dialog.dismiss()

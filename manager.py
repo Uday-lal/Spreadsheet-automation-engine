@@ -173,3 +173,10 @@ class Manager(ScreenManager):
         self.storage.delete_history(filename=filename)
         self.home_screen.ids.main_container.clear_widgets()
         self.render_home_screen_content()
+
+    def clear_dashboard(self):
+        """
+        Clear the dashboard
+        :return: None
+        """
+        self.dash_board.clear_widgets()

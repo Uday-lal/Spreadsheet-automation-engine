@@ -17,6 +17,7 @@ from kivy.properties import (
 from kivymd.uix.list import OneLineAvatarIconListItem
 from kivymd.uix.button import MDRectangleFlatIconButton
 from kivymd.uix.card import MDCard
+from kivymd.uix.gridlayout import MDGridLayout
 
 
 class MsgSnackBar(Snackbar):
@@ -40,3 +41,8 @@ class CancelButton(MDRectangleFlatIconButton):
 class HistoryCard(MDCard):
     title = StringProperty()
     date_of_modify = StringProperty()
+
+
+class HistoryCardContainer(MDGridLayout):
+    number_of_widget = NumericProperty()
+    rail_width = NumericProperty()
