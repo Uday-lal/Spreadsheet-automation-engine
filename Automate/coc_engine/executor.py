@@ -157,7 +157,7 @@ class Executor:
             if root_len == 2:
                 row_index, column_index = self.root_key
                 cell_data = self.sheet_data[column_index][row_index]
-                cell_data[0] = str(total) if type(total) is not list else str(total[0])
+                cell_data[0] = total if type(total) is not list else total[0]
                 self.sheet_data[column_index][row_index] = cell_data
             else:
                 while True:
