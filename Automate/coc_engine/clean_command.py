@@ -77,7 +77,6 @@ class CleanCommand:
         :return: list
         """
         clean_data = []
-        # insert_float = lambda current_value, last_value, next_value: last_value + current_value + next_value
         for i, data in enumerate(unclean_data):
             if data.isalpha():
                 current_index = i
