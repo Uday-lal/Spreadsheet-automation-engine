@@ -90,6 +90,7 @@ class HomeScreen(Base):
         history_card_container = HistoryCardContainer()
         history_card_container.rail_width = self.ids.rail.width
         history_card_container.clear_widgets()
+        self.ids["history_card_scroll_view"] = scroll_view
         for key in key_list:
             self.history_card = HistoryCard()
             spacing_widget = KivyWidget(
@@ -319,7 +320,10 @@ class EditorScreen(Base):
             if not cell.text.isdigit() or not self.selection_mode:
                 data = self.manager.render_data
                 apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
-                self.master_selected_data = apply_selection.master_selection(cell=cell)
+                try:
+                    self.master_selected_data = apply_selection.master_selection(cell=cell)
+                except ValueError:
+                    pass
                 self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
             else:
                 snack_bar = MsgSnackBar(
@@ -494,5 +498,6 @@ class EditorScreen(Base):
             self.manager.save()
             self.manager.transition.direction = "right"
             self.manager.current = "home_screen"
+            self.manager.clear_home_screen()
             self.manager.render_home_screen_content()
         self._save_dialog.dismiss()

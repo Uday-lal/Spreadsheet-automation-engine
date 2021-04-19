@@ -50,7 +50,7 @@ class Manager(ScreenManager):
             self.transition.direction = "up"
             self.current = "tutorial_screen"
 
-    def empty_home_screen(self):
+    def render_empty_home_screen(self):
         """
         Define home screen if user history is empty
         :return: None
@@ -124,6 +124,12 @@ class Manager(ScreenManager):
         self.dash_board.render_data(data=data)
 
     def save(self, is_overwrite=False):
+        """
+        Saving the workbook data to the
+        as the history
+        :param is_overwrite: Checking if user want to overwrite the workbook
+        :return: None
+        """
         self.current_date = datetime.today().strftime("%d-%m-%Y")
         automate = Automate()
         automate.save_wb(
@@ -145,9 +151,13 @@ class Manager(ScreenManager):
             storage.save(data=old_data)
 
     def render_home_screen_content(self):
+        """
+        Surface users history
+        :return: None
+        """
         save_path = os.path.join(os.path.expanduser("~"), "AppData\\Roaming")
         if "Propoint" not in os.listdir(save_path):
-            self.empty_home_screen()
+            self.render_empty_home_screen()
         else:
             self.storage = Storage()
             try:
@@ -156,12 +166,18 @@ class Manager(ScreenManager):
                 all_data = {}
 
             if all_data == {}:
-                self.empty_home_screen()
+                self.render_empty_home_screen()
             else:
                 history_data = self.storage.read_all()
                 self.home_screen.present_users_history(history_data=history_data)
 
     def view_button_callback(self, instance):
+        """
+        View the wb from history_data
+        :param instance: history_car instance
+        :return: None
+        """
+        self.editor_screen.ids.container.clear_widgets()
         filename = instance.title
         file_data = self.storage.read(filename=filename)
         self.render_wb_data(render_data=file_data)
@@ -169,9 +185,14 @@ class Manager(ScreenManager):
         self.current = "editor_screen"
 
     def delete(self, instance):
+        """
+        Delete wb history_data
+        :param instance: history_card instance
+        :return: None
+        """
         filename = instance.title
         self.storage.delete_history(filename=filename)
-        self.home_screen.ids.main_container.clear_widgets()
+        self.clear_home_screen()
         self.render_home_screen_content()
 
     def clear_dashboard(self):
@@ -180,3 +201,11 @@ class Manager(ScreenManager):
         :return: None
         """
         self.dash_board.clear_widgets()
+
+    def clear_home_screen(self):
+        """
+        Clearing home screen
+        to render updated data
+        :return: None
+        """
+        self.home_screen.ids.main_box_layout.remove_widget(widget=self.home_screen.ids.history_card_scroll_view)
