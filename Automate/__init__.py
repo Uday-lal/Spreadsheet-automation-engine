@@ -9,6 +9,7 @@ company: UR's tech.ltd
 Starting the main automation class.
 """
 from openpyxl import load_workbook
+from mof_library.get_workbook_data import GetWbData
 import os
 
 
@@ -122,34 +123,8 @@ class Automate:
         :return: dict
         """
         wb = load_workbook(self.filename)
-        sheets = wb.sheetnames
-        wb_data = {"file_path": self.filename, "sheets": sheets}
-
-        for sheet in sheets:
-            current_sheet = wb[sheet]
-            max_cols = current_sheet.max_column
-            max_rows = current_sheet.max_row
-            rows_data = []
-            sheet_data = {}
-            rows = []
-
-            for row in range(1, max_rows + 1):
-                for col in range(1, max_cols + 1):
-                    cell_data = current_sheet.cell(row, col).value
-                    if cell_data is None:
-                        cell_data = ""
-
-                    rows_data.append(cell_data)
-
-                cols_data_copy = rows_data.copy()
-                rows.append(cols_data_copy)
-                sheet_data["rows"] = rows
-                sheet_data["max_cols"] = max_cols + 1
-                sheet_data["max_row"] = max_rows
-                rows_data.clear()
-
-            wb_data[sheet] = sheet_data
-
+        gwd = GetWbData(wb_obj=wb, filename=self.filename)
+        wb_data = gwd.get_data()
         return wb_data
 
     @staticmethod
