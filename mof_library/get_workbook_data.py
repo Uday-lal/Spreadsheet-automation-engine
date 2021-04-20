@@ -48,7 +48,6 @@ class GetWbData:
             :return: None
             """
             x, y = slice_index
-            print((x, y))
             for row in range(x, y + 1):
                 for col in range(1, max_cols + 1):
                     cell_data = current_sheet.cell(row, col).value
@@ -64,8 +63,8 @@ class GetWbData:
         start_index = 1
         next_index = index_slices
 
-        for _ in range(self.pointer_count + 1):
-            index_pair = (start_index, next_index)
+        for i in range(self.pointer_count):
+            index_pair = (start_index, next_index) if i != (self.pointer_count - 1) else (start_index, next_index + 1)
             thread = threading.Thread(target=start, args=(index_pair,))
             thread.start()
             start_index += index_slices

@@ -114,9 +114,8 @@ class DataSetup:
         start_index = 0
         next_index = index_slices
 
-        for _ in range(pointer_count + 1):
-            data_slice = data[start_index:next_index]
-            # print(data_slice)
+        for _ in range(pointer_count):
+            data_slice = data[start_index:next_index + 1]
             self.start_mof(target_func, data_slice)
             start_index += index_slices
             next_index += index_slices
