@@ -9,6 +9,7 @@ company: UR's tech.ltd
 Cleaning the wb data and make it in correct shape.
 """
 import string
+import threading
 
 
 class DataSetup:
@@ -30,13 +31,12 @@ class DataSetup:
             self.insert_row_master()
             headers = self.get_headers()
             self.data.insert(0, headers)
-            self.add_master_id()
+            self.implement_mof(target_func=self.add_master_id, data=self.data)
             clean_data = self.data
             self.max_cols = len(clean_data[0])
             self.sheet_data["rows"] = clean_data
             self.sheet_data["max_cols"] = self.max_cols
             self.sheet_data["is_cleaned"] = True
-            print(self.sheet_data)
         return self.sheet_data
 
     def get_headers(self):
@@ -75,7 +75,8 @@ class DataSetup:
 
         return self.data
 
-    def add_master_id(self):
+    @staticmethod
+    def add_master_id(data):
         """
         Defining a way to identify the index number and column header
         by constructing a data obj which is a list of three values such as ->
@@ -89,9 +90,33 @@ class DataSetup:
         ---------------------------------------
         :return: list
         """
-        for i, row_data in enumerate(self.data):
+        for i, row_data in enumerate(data):
             for j, _data in enumerate(row_data):
                 master_header = [_data, False, False]  # As documented above ↑
                 if j == 0 or i == 0:
                     master_header[1] = True
                 row_data[j] = master_header
+
+    @staticmethod
+    def start_mof(target_func, *args):
+        """
+        Start mof algorithm for this object
+        :param target_func: The target function for which we want to
+        start mof
+        :return: None
+        """
+        thread = threading.Thread(target=target_func, args=args)
+        thread.start()
+
+    def implement_mof(self, target_func, data, pointer_count=5):
+        max_rows = len(data)
+        index_slices = max_rows // pointer_count
+        start_index = 0
+        next_index = index_slices
+
+        for _ in range(pointer_count + 1):
+            data_slice = data[start_index:next_index]
+            # print(data_slice)
+            self.start_mof(target_func, data_slice)
+            start_index += index_slices
+            next_index += index_slices

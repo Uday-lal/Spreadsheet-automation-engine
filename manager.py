@@ -102,8 +102,7 @@ class Manager(ScreenManager):
         :param data: Sheet data that needs to be clean.
         :return: dict
         """
-        max_cols = data["max_cols"]
-        data_setup = DataSetup(data=data, max_cols=max_cols)
+        data_setup = DataSetup(data=data)
         return data_setup.get_clean_data()
 
     def get_selected_data(self):
