@@ -17,6 +17,8 @@ class DataSetup:
         self.sheet_data = data
         self.data = self.sheet_data["rows"]
         self.max_cols = self.sheet_data["max_cols"]
+        self.current_row_data = []
+        self.row_data_collection = {}
         try:
             self.is_cleaned = self.sheet_data["is_cleaned"]
         except KeyError:
@@ -32,6 +34,7 @@ class DataSetup:
             headers = self.get_headers()
             self.data.insert(0, headers)
             self.implement_mof(target_func=self.add_master_id, data=self.data)
+            self.data = self.merge_data()
             clean_data = self.data
             self.max_cols = len(clean_data[0])
             self.sheet_data["rows"] = clean_data
@@ -75,8 +78,7 @@ class DataSetup:
 
         return self.data
 
-    @staticmethod
-    def add_master_id(data):
+    def add_master_id(self, data, thread_id):
         """
         Defining a way to identify the index number and column header
         by constructing a data obj which is a list of three values such as ->
@@ -90,12 +92,20 @@ class DataSetup:
         ---------------------------------------
         :return: list
         """
+        _row_data = []
         for i, row_data in enumerate(data):
+            current_row_data = []
+            if self.row_data_collection:
+                i = 1
             for j, _data in enumerate(row_data):
                 master_header = [_data, False, False]  # As documented above ↑
                 if j == 0 or i == 0:
                     master_header[1] = True
-                row_data[j] = master_header
+                current_row_data.append(master_header)
+            current_row_data_copy = current_row_data.copy()
+            _row_data.append(current_row_data_copy)
+            current_row_data.clear()
+        self.row_data_collection[thread_id] = _row_data
 
     @staticmethod
     def start_mof(target_func, *args):
@@ -113,9 +123,24 @@ class DataSetup:
         index_slices = max_rows // pointer_count
         start_index = 0
         next_index = index_slices
+        thread_id = 0
 
         for _ in range(pointer_count):
-            data_slice = data[start_index:next_index + 1]
-            self.start_mof(target_func, data_slice)
+            data_slice = data[start_index + 2:next_index + 2] if thread_id != 0 else data[start_index:next_index + 2]
+            self.start_mof(target_func, data_slice, thread_id)
             start_index += index_slices
             next_index += index_slices
+            thread_id += 1
+
+    def merge_data(self):
+        """
+        Merge the self.row_data_collection
+        because it may be not in right
+        order
+        :return: list
+        """
+        thread_ids = sorted(list(self.row_data_collection.keys()))
+        merged_data = []
+        for thread_id in thread_ids:
+            merged_data += self.row_data_collection[thread_id]
+        return merged_data

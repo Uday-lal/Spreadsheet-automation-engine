@@ -11,7 +11,7 @@ from kivy.uix.screenmanager import ScreenManager
 
 from screen import HomeScreen, TutorialScreen, EditorScreen
 from dashboard import DashBoard
-from dataSetup import DataSetup
+from mof_library.dataSetup_mof import DataSetup
 from kivy.properties import StringProperty
 from Automate import Automate
 from storage import Storage
@@ -103,7 +103,9 @@ class Manager(ScreenManager):
         :return: dict
         """
         data_setup = DataSetup(data=data)
-        return data_setup.get_clean_data()
+        clean_data = data_setup.get_clean_data()
+        # print(clean_data)
+        return clean_data
 
     def get_selected_data(self):
         """
