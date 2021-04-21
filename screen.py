@@ -17,7 +17,7 @@ from kivy.properties import (
     StringProperty,
     ListProperty
 )
-from apply_selection import ApplySelection
+from mof_library.apply_selection_mof import ApplySelection
 from Automate.coc_engine import CoordinateOperationController
 from Automate.coc_engine.validate import Validator
 from kivy.core.window import Window
@@ -316,12 +316,16 @@ class EditorScreen(Base):
         :param cell: Cell object
         :return: None
         """
+        is_row_merging = True if cell.text.isdigit() else False
+        self.master_cell = cell
         if not self.selection_mode or "Apply formulas" in self.operation_type:
-            if not cell.text.isdigit() or not self.selection_mode:
+            if not self.master_cell.text.isdigit() or not self.selection_mode:
                 data = self.manager.render_data
                 apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
                 try:
-                    self.master_selected_data = apply_selection.master_selection(cell=cell)
+                    apply_selection.implement_mof(cell=self.master_cell)
+                    self.master_selected_data = apply_selection.merge(is_row_merging=is_row_merging)
+                    data[self.manager.current_sheet]["rows"] = self.master_selected_data
                 except ValueError:
                     pass
                 self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
@@ -334,13 +338,14 @@ class EditorScreen(Base):
                 snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
                 snack_bar.open()
         else:
-            master_cell = cell
             if "Apply formulas" not in self.operation_type:
-                if not master_cell.text.isdigit():
+                if not self.master_cell.text.isdigit():
                     data = self.manager.render_data
                     apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
-                    self.master_selected_data = apply_selection.master_selection(cell=cell)
-                    self.ids.command_palette.text = master_cell.text
+                    apply_selection.implement_mof(cell=self.master_cell)
+                    self.master_selected_data = apply_selection.merge(is_row_merging=is_row_merging)
+                    data[self.manager.current_sheet]["rows"] = self.master_selected_data
+                    self.ids.command_palette.text = self.master_cell.text
                     self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
                 else:
                     snack_bar = MsgSnackBar(
@@ -360,7 +365,8 @@ class EditorScreen(Base):
         """
         data = self.manager.render_data
         apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
-        apply_selection.unselect()
+        apply_selection.implement_mof_for_unselect()
+        data[self.manager.current_sheet]["rows"] = apply_selection.merge(is_row_merging=False)
         self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
 
     def validate(self, command):
