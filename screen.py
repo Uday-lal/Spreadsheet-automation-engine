@@ -442,13 +442,22 @@ class EditorScreen(Base):
         coc engine
         :return: None
         """
-        executor = Executor(
-            sheet_data=self.manager.render_data[self.manager.current_sheet]["rows"],
-            data_for_execution=self.data_for_execution
-        )
-        executor.execute()
-        updated_data = executor.marge()
-        self.manager.reload_dashboard(data=updated_data)
+        try:
+            executor = Executor(
+                sheet_data=self.manager.render_data[self.manager.current_sheet]["rows"],
+                data_for_execution=self.data_for_execution
+            )
+            executor.execute()
+            updated_data = executor.marge()
+            self.manager.reload_dashboard(data=updated_data)
+        except Exception:
+            snack_bar = MsgSnackBar(
+                text="Oops :(, something went wrong please try again!",
+                snackbar_x="10dp",
+                snackbar_y="10dp"
+            )
+            snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
+            snack_bar.open()
 
     def remove_selection_mode(self):
         """
