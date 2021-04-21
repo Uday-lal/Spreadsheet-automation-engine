@@ -127,10 +127,11 @@ class ApplySelection:
         thread_ids = sorted(list(self.row_data_collection.keys()))
         merged_data = []
         for thread_id in thread_ids:
+            _row_data = self.row_data_collection[thread_id]
             if not is_row_merging or self.unselect_mode:
-                merged_data += self.row_data_collection[thread_id]
+                merged_data += _row_data
             else:
-                merged_data += self.row_data_collection[thread_id]
+                merged_data += _row_data
                 self.data[self.row_index] = merged_data
         return self.data
 

@@ -10,6 +10,7 @@ Defining the main executor object
 """
 from ..apply_formulas import add, division, subtraction, multiplication
 from generate_new_rc import GenerateNewRowsColumns
+import threading
 
 
 class Executor:
@@ -19,17 +20,43 @@ class Executor:
         self.root_key = list(self.data_for_execution.keys())[0]
         self.total = 0
 
-    def selection(self, coordinates):
+    def selection(self, coordinates, pointer_count=5):
         """
         Return selected data from sheet data.
         :param coordinates: Cell coordinate
+        :param pointer_count:
         :return: list
         """
         selected_data = []
+        self.max_rows = len(self.sheet_data)
+        row_data_collection = {}
+        self.pointer_count = pointer_count
         if len(coordinates) == 1:
-            for i in range(1, len(self.sheet_data)):
-                column_index = coordinates[0]
-                selected_data.append(self.sheet_data[i][column_index][0])
+            def implement_mof(data, thread_id):
+                row_data_slice = []
+                iteration_pair = (0, len(data)) if thread_id != 0 else (1, len(data))
+                p1, p2 = iteration_pair
+                for i in range(p1, p2):
+                    column_index = coordinates[0]
+                    row_data_slice.append(data[i][column_index][0])
+                row_data_collection[thread_id] = row_data_slice
+
+            index_slices = self.max_rows // self.pointer_count
+            start_index = 0
+            next_index = index_slices
+            thread_id = 0
+            for _ in range(self.pointer_count):
+                data_slice = self.sheet_data[start_index + 2:next_index + 2] if thread_id != 0 \
+                    else self.sheet_data[start_index:next_index + 2]
+                thread = threading.Thread(target=implement_mof, args=(data_slice, thread_id))
+                thread.start()
+                start_index += index_slices
+                next_index += index_slices
+                thread_id += 1
+            thread_ids = sorted(list(row_data_collection.keys()))
+            for thread_id in thread_ids:
+                _row_data = row_data_collection[thread_id]
+                selected_data += _row_data
         else:
             column_index, row_index = coordinates
             selected_data.append(self.sheet_data[row_index][column_index][0])
