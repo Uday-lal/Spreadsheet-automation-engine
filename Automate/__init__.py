@@ -10,7 +10,8 @@ Starting the main automation class.
 """
 from openpyxl import load_workbook
 from mof_library.get_workbook_data import GetWbData
-import os
+from mof_library.save_workbook_data import SaveWorkbookData
+# import os
 
 
 def splitting_algorithm(wb_data):
@@ -153,22 +154,5 @@ class Automate:
     @staticmethod
     def save_wb(file_path, data, is_overwrite):
         wb = load_workbook(file_path)
-        sheets = wb.sheetnames
-
-        for sheet in sheets:
-            current_sheet = wb[sheet]
-            sheet_data = data[sheet]["rows"]
-            for ri in range(1, len(sheet_data)):
-                for ci in range(1, len(sheet_data[ri])):
-                    cell = current_sheet.cell(ri, ci)
-                    cell.value = sheet_data[ri][ci][0]
-
-        if is_overwrite:
-            wb.save(file_path)
-        else:
-            file_path_split = os.path.split(file_path)
-            name, ext = str(file_path_split[1]).split(".")
-            name += "2"
-            filename = name + "." + ext
-            updated_file_path = os.path.join(file_path_split[0], filename)
-            wb.save(updated_file_path)
+        save_wb = SaveWorkbookData(wb_obj=wb, wb_data=data)
+        save_wb.save_data()

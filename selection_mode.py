@@ -108,16 +108,17 @@ class SelectionMode:
         )
 
     def clean_data(self):
-        max_iter_time = len(self.selected_data) // self.max_cols
-        iter_time = 0
-        selected_column_data = []
-        while iter_time != max_iter_time:
-            iter_time += 1
-            for i in range(1, self.max_cols):
-                selected_column_data.append(self.selected_data[i][0])
-            self.clean_selected_data.append(selected_column_data.copy())
-            del self.selected_data[0:self.max_cols]
-            selected_column_data.clear()
+        if self.operation_type != "Delete":
+            max_iter_time = len(self.selected_data) // self.max_cols
+            iter_time = 0
+            selected_column_data = []
+            while iter_time != max_iter_time:
+                iter_time += 1
+                for i in range(1, self.max_cols):
+                    selected_column_data.append(self.selected_data[i][0])
+                self.clean_selected_data.append(selected_column_data.copy())
+                del self.selected_data[0:self.max_cols]
+                selected_column_data.clear()
 
     def marge(self):
         _data = self.get_data()

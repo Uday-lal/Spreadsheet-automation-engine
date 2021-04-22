@@ -19,7 +19,6 @@ def add(first_value, next_value):
     :param next_value: The next value that user wants to add with
     :return: numpy array
     """
-    print(first_value, next_value)
     return numpy.array(first_value) + numpy.array(next_value)
 
 
