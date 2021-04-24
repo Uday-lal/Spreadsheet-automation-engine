@@ -450,14 +450,23 @@ class EditorScreen(Base):
             executor.execute()
             updated_data = executor.marge()
             self.manager.reload_dashboard(data=updated_data)
-        except Exception:
-            snack_bar = MsgSnackBar(
-                text="Oops :(, something went wrong please try again!",
-                snackbar_x="10dp",
-                snackbar_y="10dp"
-            )
-            snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
-            snack_bar.open()
+        except Exception as e:
+            if str(e) == "We can't perform arithmetic on strings or words" or str(e) == "System dose not accept this input":
+                snack_bar = MsgSnackBar(
+                    text=str(e),
+                    snackbar_x="10dp",
+                    snackbar_y="10dp"
+                )
+                snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
+                snack_bar.open()
+            else:
+                snack_bar = MsgSnackBar(
+                    text="Oops :(, something went wrong please try again!",
+                    snackbar_x="10dp",
+                    snackbar_y="10dp"
+                )
+                snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
+                snack_bar.open()
 
     def remove_selection_mode(self):
         """

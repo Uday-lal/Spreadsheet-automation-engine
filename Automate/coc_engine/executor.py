@@ -17,28 +17,45 @@ class Executor:
     def __init__(self, sheet_data, data_for_execution):
         self.sheet_data = sheet_data
         self.data_for_execution = data_for_execution
+        self.str_data_index = []
         self.root_key = list(self.data_for_execution.keys())[0]
+        self.max_tolerance_point = 10
         self.total = 0
 
     def selection(self, coordinates, pointer_count=5):
         """
         Return selected data from sheet data.
         :param coordinates: Cell coordinate
-        :param pointer_count:
+        :param pointer_count: The number of threads is determine using that
         :return: list
         """
         selected_data = []
         self.max_rows = len(self.sheet_data)
         row_data_collection = {}
+        root_key_index = self.root_key
+        max_tolerance_point = self.max_tolerance_point
         self.pointer_count = pointer_count
+        str_data_index = self.str_data_index
         if len(coordinates) == 1:
-            def implement_mof(data, thread_id):
+            def implement_mof(data, thread_id, index_pair):
                 row_data_slice = []
                 iteration_pair = (0, len(data)) if thread_id != 0 else (1, len(data))
                 p1, p2 = iteration_pair
+                ip1, ip2 = index_pair
                 for i in range(p1, p2):
+                    ip1 += i
                     column_index = coordinates[0]
-                    row_data_slice.append(data[i][column_index][0])
+                    _selected_data = data[i][column_index][0]
+                    is_master = data[i][column_index][1]
+                    if type(_selected_data) is not str or is_master:
+                        row_data_slice.append(_selected_data)
+                    else:
+                        _selected_data = 0
+                        str_data_index.append((ip1, root_key_index))
+                        if len(str_data_index) > max_tolerance_point:
+                            row_data_slice.append("Exception")
+                            break
+                        row_data_slice.append(_selected_data)
                 row_data_collection[thread_id] = row_data_slice
 
             index_slices = self.max_rows // self.pointer_count
@@ -46,9 +63,10 @@ class Executor:
             next_index = index_slices
             thread_id = 0
             for _ in range(self.pointer_count):
-                data_slice = self.sheet_data[start_index + 2:next_index + 2] if thread_id != 0 \
-                    else self.sheet_data[start_index:next_index + 2]
-                thread = threading.Thread(target=implement_mof, args=(data_slice, thread_id))
+                index_pair = (start_index + 2, next_index + 2) if thread_id != 0 else (start_index, next_index + 2)
+                p1, p2 = index_pair
+                data_slice = self.sheet_data[p1:p2]
+                thread = threading.Thread(target=implement_mof, args=(data_slice, thread_id, index_pair))
                 thread.start()
                 start_index += index_slices
                 next_index += index_slices
@@ -56,6 +74,8 @@ class Executor:
             thread_ids = sorted(list(row_data_collection.keys()))
             for thread_id in thread_ids:
                 _row_data = row_data_collection[thread_id]
+                if "Exception" in _row_data:
+                    raise Exception("We can't perform arithmetic on strings or words")
                 selected_data += _row_data
         else:
             column_index, row_index = coordinates
@@ -194,6 +214,11 @@ class Executor:
                         i += 1
                     except StopIteration:
                         break
+                if self.str_data_index:
+                    for str_data_index in self.str_data_index:
+                        ci, ri = str_data_index
+                        if ri != "new":
+                            self.sheet_data[ci][ri][0] = ""
         else:
             generate_new_rc = GenerateNewRowsColumns(wb_data=self.sheet_data)
             generate_new_rc.generate()
@@ -205,6 +230,11 @@ class Executor:
                     i += 1
                 except StopIteration:
                     break
+            if self.str_data_index:
+                for str_data_index in self.str_data_index:
+                    ci, ri = str_data_index
+                    if ri == "new":
+                        self.sheet_data[ci][equal_to_index][0] = ""
 
         return self.sheet_data
 
