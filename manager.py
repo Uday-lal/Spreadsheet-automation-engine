@@ -12,7 +12,7 @@ from kivy.uix.screenmanager import ScreenManager
 from screen import HomeScreen, TutorialScreen, EditorScreen
 from dashboard import DashBoard
 from mof_library.dataSetup_mof import DataSetup
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty, ListProperty
 from Automate import Automate
 from storage import Storage
 from datetime import datetime
@@ -21,6 +21,8 @@ import os
 
 class Manager(ScreenManager):
     current_sheet = StringProperty()
+    master_selected_data = ListProperty()
+    str_index_data = ListProperty()
 
     def __init__(self, **kwargs):
         super(Manager, self).__init__(**kwargs)
