@@ -75,7 +75,7 @@ class Executor:
             for thread_id in thread_ids:
                 _row_data = row_data_collection[thread_id]
                 if "Exception" in _row_data:
-                    raise Exception("We can't perform arithmetic on strings or words")
+                    raise Exception("Sorry! We can't perform arithmetic on strings or words")
                 selected_data += _row_data
         else:
             column_index, row_index = coordinates

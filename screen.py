@@ -412,6 +412,7 @@ class EditorScreen(Base):
                     snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
                     snack_bar.open()
             else:
+                print(len(self.master_selected_data))
                 if self.master_selected_data:
                     selection_mode = SelectionMode(
                         wb_data=self.manager.render_data[self.manager.current_sheet]["rows"],
@@ -451,7 +452,8 @@ class EditorScreen(Base):
             updated_data = executor.marge()
             self.manager.reload_dashboard(data=updated_data)
         except Exception as e:
-            if str(e) == "We can't perform arithmetic on strings or words" or str(e) == "System dose not accept this input":
+            if str(e) == "Sorry! We can't perform arithmetic on strings or words" or \
+                    str(e) == "System dose not accept this input":
                 snack_bar = MsgSnackBar(
                     text=str(e),
                     snackbar_x="10dp",
