@@ -151,6 +151,7 @@ class EditorScreen(Base):
     def __init__(self, **kwargs):
         super(EditorScreen, self).__init__(**kwargs)
         self.cancel_button = CancelButton()
+        self.str_index_data = None
 
     def back_to_home(self):
         """
@@ -321,11 +322,18 @@ class EditorScreen(Base):
         if not self.selection_mode or "Apply formulas" in self.operation_type:
             if not self.master_cell.text.isdigit() or not self.selection_mode:
                 data = self.manager.render_data
-                apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
+                apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"]) if not \
+                    self.selection_mode else \
+                    ApplySelection(data=data[self.manager.current_sheet]["rows"], is_perform_inspection=True)
                 try:
                     apply_selection.implement_mof(cell=self.master_cell)
-                    self.master_selected_data = apply_selection.merge(is_row_merging=is_row_merging)
-                    data[self.manager.current_sheet]["rows"] = self.master_selected_data
+                    selected_wb_data = apply_selection.merge(is_row_merging=is_row_merging)
+                    self.manager.master_selected_data.append(apply_selection.get_merged_data())
+                    if type(selected_wb_data) is not tuple:
+                        data[self.manager.current_sheet]["rows"] = selected_wb_data
+                    else:
+                        data[self.manager.current_sheet]["rows"], self.str_index_data = selected_wb_data
+                        self.manager.str_index_data.append(self.str_index_data)
                 except ValueError:
                     pass
                 self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
@@ -343,8 +351,10 @@ class EditorScreen(Base):
                     data = self.manager.render_data
                     apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
                     apply_selection.implement_mof(cell=self.master_cell)
-                    self.master_selected_data = apply_selection.merge(is_row_merging=is_row_merging)
-                    data[self.manager.current_sheet]["rows"] = self.master_selected_data
+                    selected_wb_data = apply_selection.merge(is_row_merging=is_row_merging)
+                    self.manager.master_selected_data.append(apply_selection.get_merged_data())
+                    self.master_selected_data = self.manager.master_selected_data
+                    data[self.manager.current_sheet]["rows"] = selected_wb_data
                     self.ids.command_palette.text = self.master_cell.text
                     self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
                 else:
@@ -412,6 +422,7 @@ class EditorScreen(Base):
                     snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
                     snack_bar.open()
             else:
+                self.master_selected_data = self.manager.master_selected_data
                 if self.master_selected_data:
                     selection_mode = SelectionMode(
                         wb_data=self.manager.render_data[self.manager.current_sheet]["rows"],
@@ -424,9 +435,12 @@ class EditorScreen(Base):
                         )
                     )
                     selection_mode.execute()
-                    updated_data = selection_mode.marge()
+                    updated_data = selection_mode.marge() if self.str_index_data is None else \
+                        selection_mode.marge(str_index_data=self.manager.str_index_data)
                     self.remove_selection_mode()
                     self.manager.reload_dashboard(data=updated_data)
+                    self.manager.master_selected_data.clear()
+                    self.manager.str_index_data.clear()
                 else:
                     snack_bar = MsgSnackBar(
                         text="Please select some column",
@@ -451,7 +465,8 @@ class EditorScreen(Base):
             updated_data = executor.marge()
             self.manager.reload_dashboard(data=updated_data)
         except Exception as e:
-            if str(e) == "We can't perform arithmetic on strings or words" or str(e) == "System dose not accept this input":
+            if str(e) == "We can't perform arithmetic on strings or words" \
+                    or str(e) == "System dose not accept this input":
                 snack_bar = MsgSnackBar(
                     text=str(e),
                     snackbar_x="10dp",

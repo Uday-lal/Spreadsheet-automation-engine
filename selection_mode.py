@@ -17,13 +17,13 @@ import re
 
 class SelectionMode:
     def __init__(self, max_rc, selected_data, operation_type, equal_to, wb_data):
-        self.selected_data = selected_data
         self.max_cols = max_rc[0] + 1
         self.max_rows = max_rc[1] + 1
         self.clean_selected_data = []
         self.total = 0
         self.equal_to = equal_to
         self.wb_data = wb_data
+        self.selected_data = selected_data
         self.automate = Automate()
         self.operation_type = operation_type
         self.headers = self.wb_data[0]
@@ -46,51 +46,23 @@ class SelectionMode:
             self.subtraction()
 
     def add(self):
-        for i, data in enumerate(self.clean_selected_data):
-            if i == 0:
-                first_value, next_value = data, self.clean_selected_data[i + 1]
-                self.total = add(first_value=first_value, next_value=next_value)
-                if len(self.clean_selected_data) == 2:
-                    break
-            else:
-                first_value, next_value = self.total, data
-                self.total = add(first_value=first_value, next_value=next_value)
+        first_value, next_value = self.clean_selected_data
+        self.total = add(first_value=first_value, next_value=next_value)
         return self.total
 
     def multiplication(self):
-        for i, data in enumerate(self.clean_selected_data):
-            if i == 0:
-                first_value, next_value = data, self.clean_selected_data[i + 1]
-                self.total = multiplication(first_value=first_value, next_value=next_value)
-                if len(self.clean_selected_data) == 2:
-                    break
-            else:
-                first_value, next_value = self.total, data
-                self.total = multiplication(first_value=first_value, next_value=next_value)
+        first_value, next_value = self.clean_selected_data
+        self.total = multiplication(first_value=first_value, next_value=next_value)
         return self.total
 
     def division(self):
-        for i, data in enumerate(self.clean_selected_data):
-            if i == 0:
-                first_value, next_value = data, self.clean_selected_data[i + 1]
-                self.total = division(first_value=first_value, next_value=next_value)
-                if len(self.clean_selected_data) == 2:
-                    break
-            else:
-                first_value, next_value = self.total, data
-                self.total = division(first_value=first_value, next_value=next_value)
+        first_value, next_value = self.clean_selected_data
+        self.total = division(first_value=first_value, next_value=next_value)
         return self.total
 
     def subtraction(self):
-        for i, data in enumerate(self.clean_selected_data):
-            if i == 0:
-                first_value, next_value = data, self.clean_selected_data[i + 1]
-                self.total = subtraction(first_value=first_value, next_value=next_value)
-                if len(self.clean_selected_data) == 2:
-                    break
-            else:
-                first_value, next_value = self.total, data
-                self.total = subtraction(first_value=first_value, next_value=next_value)
+        first_value, next_value = self.clean_selected_data
+        self.total = subtraction(first_value=first_value, next_value=next_value)
         return self.total
 
     def sort(self):
@@ -109,18 +81,14 @@ class SelectionMode:
 
     def clean_data(self):
         if self.operation_type != "Delete":
-            max_iter_time = len(self.selected_data) // self.max_cols
-            iter_time = 0
             selected_column_data = []
-            while iter_time != max_iter_time:
-                iter_time += 1
+            for _selected_column_data in self.selected_data:
                 for i in range(1, self.max_cols):
-                    selected_column_data.append(self.selected_data[i][0])
+                    selected_column_data.append(_selected_column_data[i][0])
                 self.clean_selected_data.append(selected_column_data.copy())
-                del self.selected_data[0:self.max_cols]
                 selected_column_data.clear()
 
-    def marge(self):
+    def marge(self, str_index_data=None):
         _data = self.get_data()
         i = 0
         if "Apply formulas" in self.operation_type:
@@ -136,6 +104,11 @@ class SelectionMode:
                         i += 1
                     except StopIteration:
                         break
+                if str_index_data is not None:
+                    for index in str_index_data:
+                        ri, ci, cell_value = index[0]
+                        self.wb_data[ri - 1][ci][0] = cell_value
+                        self.wb_data[ri - 1][equal_to_index][0] = ""
             else:
                 shape_input = CleanCommand(commands=self.equal_to).shape_input()
                 equal_to_index = self.get_data_index(equal_to_value=shape_input)[0]
@@ -147,6 +120,10 @@ class SelectionMode:
                             i += 1
                         except StopIteration:
                             break
+                    if str_index_data is not None:
+                        for index in str_index_data:
+                            ri, ci, cell_value = index[0]
+                            self.wb_data[ri - 1][ci][0] = cell_value
                 else:
                     row_index, column_index = equal_to_index
                     self.wb_data[column_index][row_index][0] = total
