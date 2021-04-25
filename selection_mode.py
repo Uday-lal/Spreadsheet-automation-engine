@@ -11,6 +11,7 @@ Defining the rules of selection mode
 from Automate.apply_formulas import add, multiplication, division, subtraction
 from generate_new_rc import GenerateNewRowsColumns
 from Automate.coc_engine.clean_command import CleanCommand
+from str_replacement import StrReplacement
 from Automate import Automate
 import re
 
@@ -88,7 +89,7 @@ class SelectionMode:
                 self.clean_selected_data.append(selected_column_data.copy())
                 selected_column_data.clear()
 
-    def marge(self, str_index_data=None):
+    def marge(self, editor_screen, str_index_data=None):
         _data = self.get_data()
         i = 0
         if "Apply formulas" in self.operation_type:
@@ -100,30 +101,43 @@ class SelectionMode:
                 while True:
                     try:
                         row_data = next(_data)
-                        row_data[equal_to_index][0] = total[i] if type(total) is list else total
+                        row_data[0][equal_to_index][0] = total[i] if type(total) is list else total
                         i += 1
                     except StopIteration:
                         break
                 if str_index_data is not None:
-                    for index in str_index_data:
-                        ri, ci, cell_value = index[0]
-                        self.wb_data[ri - 1][ci][0] = cell_value
-                        self.wb_data[ri - 1][equal_to_index][0] = ""
+                    str_replacement = StrReplacement(
+                        wb_data=self.wb_data,
+                        str_index_data=str_index_data,
+                        equal_to_index=equal_to_index
+                    )
+                    self.wb_data = str_replacement.perform_replacement()
             else:
                 shape_input = CleanCommand(commands=self.equal_to).shape_input()
                 equal_to_index = self.get_data_index(equal_to_value=shape_input)[0]
+                column_actual_values = []
                 if type(equal_to_index) is int:
                     while True:
                         try:
                             row_data = next(_data)
-                            row_data[equal_to_index][0] = total[i] if type(total) is list else total
+                            actual_value = row_data[0][equal_to_index][0]
+                            if type(actual_value) is str:
+                                column_actual_values.append((row_data[1], equal_to_index, actual_value))
+                            row_data[0][equal_to_index][0] = total[i] if type(total) is list else total
                             i += 1
                         except StopIteration:
                             break
                     if str_index_data is not None:
-                        for index in str_index_data:
-                            ri, ci, cell_value = index[0]
-                            self.wb_data[ri - 1][ci][0] = cell_value
+                        str_replacement = StrReplacement(
+                            wb_data=self.wb_data,
+                            str_index_data=str_index_data,
+                            equal_to_index=equal_to_index
+                        )
+                        self.wb_data = str_replacement.perform_equal_to_replacement(
+                            column_actual_values=column_actual_values,
+                            total=total,
+                            editor_screen=editor_screen
+                        )
                 else:
                     row_index, column_index = equal_to_index
                     self.wb_data[column_index][row_index][0] = total
@@ -134,7 +148,7 @@ class SelectionMode:
                 while True:
                     try:
                         row_data = next(_data)
-                        row_data[equal_to_index][0] = self.sort_or_reverse_data[i]
+                        row_data[0][equal_to_index][0] = self.sort_or_reverse_data[i]
                         i += 1
                     except StopIteration:
                         break
@@ -171,4 +185,4 @@ class SelectionMode:
         :return: yield list
         """
         for i in range(1, len(self.wb_data)):
-            yield self.wb_data[i]
+            yield self.wb_data[i], i

@@ -435,8 +435,8 @@ class EditorScreen(Base):
                         )
                     )
                     selection_mode.execute()
-                    updated_data = selection_mode.marge() if self.str_index_data is None else \
-                        selection_mode.marge(str_index_data=self.manager.str_index_data)
+                    updated_data = selection_mode.marge(editor_screen=self) if self.str_index_data is None else \
+                        selection_mode.marge(editor_screen=self, str_index_data=self.manager.str_index_data)
                     self.remove_selection_mode()
                     self.manager.reload_dashboard(data=updated_data)
                     self.manager.master_selected_data.clear()
