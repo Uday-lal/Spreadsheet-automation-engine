@@ -12,6 +12,7 @@ from Automate.apply_formulas import add, multiplication, division, subtraction
 from generate_new_rc import GenerateNewRowsColumns
 from Automate.coc_engine.clean_command import CleanCommand
 from str_replacement import StrReplacement
+from mof_library.merge import Merge
 from Automate import Automate
 import re
 
@@ -84,27 +85,23 @@ class SelectionMode:
         if self.operation_type != "Delete":
             selected_column_data = []
             for _selected_column_data in self.selected_data:
-                for i in range(1, self.max_cols):
-                    selected_column_data.append(_selected_column_data[i][0])
-                self.clean_selected_data.append(selected_column_data.copy())
-                selected_column_data.clear()
+                if _selected_column_data:
+                    for i in range(1, self.max_cols - 1):
+                        selected_column_data.append(_selected_column_data[i][0])
+                    self.clean_selected_data.append(selected_column_data.copy())
+                    selected_column_data.clear()
 
     def marge(self, editor_screen, str_index_data=None):
         _data = self.get_data()
-        i = 0
         if "Apply formulas" in self.operation_type:
             total = self.total.tolist()
             if self.equal_to == "new":
                 generate_new_rc = GenerateNewRowsColumns(wb_data=self.wb_data)
                 generate_new_rc.generate()
                 equal_to_index = len(self.wb_data[0]) - 1
-                while True:
-                    try:
-                        row_data = next(_data)
-                        row_data[0][equal_to_index][0] = total[i] if type(total) is list else total
-                        i += 1
-                    except StopIteration:
-                        break
+                merge = Merge(wb_data=self.wb_data, total=total, root_key=equal_to_index)
+                merge.implement_mof()
+                self.wb_data, column_actual_values = merge.get_merged_data()
                 if str_index_data is not None:
                     str_replacement = StrReplacement(
                         wb_data=self.wb_data,
@@ -115,18 +112,10 @@ class SelectionMode:
             else:
                 shape_input = CleanCommand(commands=self.equal_to).shape_input()
                 equal_to_index = self.get_data_index(equal_to_value=shape_input)[0]
-                column_actual_values = []
                 if type(equal_to_index) is int:
-                    while True:
-                        try:
-                            row_data = next(_data)
-                            actual_value = row_data[0][equal_to_index][0]
-                            if type(actual_value) is str:
-                                column_actual_values.append((row_data[1], equal_to_index, actual_value))
-                            row_data[0][equal_to_index][0] = total[i] if type(total) is list else total
-                            i += 1
-                        except StopIteration:
-                            break
+                    merge = Merge(wb_data=self.wb_data, total=total, root_key=equal_to_index)
+                    merge.implement_mof()
+                    self.wb_data, column_actual_values = merge.get_merged_data()
                     if str_index_data is not None:
                         str_replacement = StrReplacement(
                             wb_data=self.wb_data,
@@ -145,13 +134,9 @@ class SelectionMode:
             if self.operation_type != "Delete":
                 shape_input = CleanCommand(commands=self.equal_to).shape_input()
                 equal_to_index = self.get_data_index(equal_to_value=shape_input)[0]
-                while True:
-                    try:
-                        row_data = next(_data)
-                        row_data[0][equal_to_index][0] = self.sort_or_reverse_data[i]
-                        i += 1
-                    except StopIteration:
-                        break
+                merge = Merge(wb_data=self.wb_data, total=self.sort_or_reverse_data, root_key=equal_to_index)
+                merge.implement_mof()
+                self.wb_data, column_actual_values = merge.get_merged_data()
             else:
                 generate_new_rc = GenerateNewRowsColumns(wb_data=self.wb_data)
                 headers = generate_new_rc.get_headers()

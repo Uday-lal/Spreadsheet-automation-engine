@@ -11,6 +11,7 @@ Defining the main executor object
 from ..apply_formulas import add, division, subtraction, multiplication
 from generate_new_rc import GenerateNewRowsColumns
 from str_replacement import StrReplacement
+from mof_library.merge import Merge
 import threading
 
 
@@ -193,7 +194,6 @@ class Executor:
             total = self.total.tolist()
         except AttributeError:
             raise Exception("System dose not accept this input")
-        i = 0
         _data = self.get_data()
         if self.root_key != "new":
             try:
@@ -207,17 +207,9 @@ class Executor:
                 cell_data[0] = total if type(total) is not list else total[0]
                 self.sheet_data[column_index][row_index] = cell_data
             else:
-                column_actual_values = []
-                while True:
-                    try:
-                        column_data = next(_data)
-                        actual_value = column_data[0][self.root_key][0]
-                        if type(actual_value) is str:
-                            column_actual_values.append((column_data[1], self.root_key, actual_value))
-                        column_data[0][self.root_key][0] = total[i] if type(total) is list else total
-                        i += 1
-                    except StopIteration:
-                        break
+                merge = Merge(wb_data=self.sheet_data, total=total, root_key=self.root_key)
+                merge.implement_mof()
+                self.sheet_data, column_actual_values = merge.get_merged_data()
                 if self.str_data_index:
                     str_replacement = StrReplacement(
                         wb_data=self.sheet_data,
@@ -233,18 +225,12 @@ class Executor:
             generate_new_rc = GenerateNewRowsColumns(wb_data=self.sheet_data)
             generate_new_rc.generate()
             equal_to_index = len(self.sheet_data[0]) - 1
-            while True:
-                try:
-                    row_data = next(_data)
-                    row_data[0][equal_to_index][0] = total[i] if type(total) is list else total
-                    i += 1
-                except StopIteration:
-                    break
+            merge = Merge(wb_data=self.sheet_data, total=total, root_key=equal_to_index)
+            merge.implement_mof()
             if self.str_data_index:
                 for str_data_index in self.str_data_index:
-                    ci, ri = str_data_index
-                    if ri == "new":
-                        self.sheet_data[ci][equal_to_index][0] = ""
+                    ci, ri, cell_value = str_data_index[0]
+                    self.sheet_data[ci - 1][equal_to_index][0] = ""
 
         return self.sheet_data
 
