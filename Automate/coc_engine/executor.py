@@ -10,6 +10,7 @@ Defining the main executor object
 """
 from ..apply_formulas import add, division, subtraction, multiplication
 from generate_new_rc import GenerateNewRowsColumns
+from str_replacement import StrReplacement
 import threading
 
 
@@ -32,7 +33,6 @@ class Executor:
         selected_data = []
         self.max_rows = len(self.sheet_data)
         row_data_collection = {}
-        root_key_index = self.root_key
         max_tolerance_point = self.max_tolerance_point
         self.pointer_count = pointer_count
         str_data_index = self.str_data_index
@@ -50,8 +50,8 @@ class Executor:
                     if type(_selected_data) is not str or is_master:
                         row_data_slice.append(_selected_data)
                     else:
+                        str_data_index.append([(ip1 + 1, column_index, _selected_data)])
                         _selected_data = 0
-                        str_data_index.append((ip1, root_key_index))
                         if len(str_data_index) > max_tolerance_point:
                             row_data_slice.append("Exception")
                             break
@@ -183,7 +183,7 @@ class Executor:
         last_node_data = self.get_selected_data(coordinates=self.node_value)
         self.total = subtraction(first_value=self.total, next_value=last_node_data)
 
-    def marge(self):
+    def marge(self, editor_screen):
         """
         Marge a the total sum on to the
         main sheet
@@ -207,18 +207,28 @@ class Executor:
                 cell_data[0] = total if type(total) is not list else total[0]
                 self.sheet_data[column_index][row_index] = cell_data
             else:
+                column_actual_values = []
                 while True:
                     try:
                         column_data = next(_data)
-                        column_data[self.root_key][0] = total[i] if type(total) is list else total
+                        actual_value = column_data[0][self.root_key][0]
+                        if type(actual_value) is str:
+                            column_actual_values.append((column_data[1], self.root_key, actual_value))
+                        column_data[0][self.root_key][0] = total[i] if type(total) is list else total
                         i += 1
                     except StopIteration:
                         break
                 if self.str_data_index:
-                    for str_data_index in self.str_data_index:
-                        ci, ri = str_data_index
-                        if ri != "new":
-                            self.sheet_data[ci][ri][0] = ""
+                    str_replacement = StrReplacement(
+                        wb_data=self.sheet_data,
+                        str_index_data=self.str_data_index,
+                        equal_to_index=self.root_key
+                    )
+                    self.sheet_data = str_replacement.perform_equal_to_replacement(
+                        column_actual_values=column_actual_values,
+                        total=total,
+                        editor_screen=editor_screen
+                    )
         else:
             generate_new_rc = GenerateNewRowsColumns(wb_data=self.sheet_data)
             generate_new_rc.generate()
@@ -226,7 +236,7 @@ class Executor:
             while True:
                 try:
                     row_data = next(_data)
-                    row_data[equal_to_index][0] = total[i] if type(total) is list else total
+                    row_data[0][equal_to_index][0] = total[i] if type(total) is list else total
                     i += 1
                 except StopIteration:
                     break
@@ -245,4 +255,4 @@ class Executor:
         :return: yield list
         """
         for i in range(1, len(self.sheet_data)):
-            yield self.sheet_data[i]
+            yield self.sheet_data[i], i

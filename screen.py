@@ -482,7 +482,7 @@ class EditorScreen(Base):
                 data_for_execution=self.data_for_execution
             )
             executor.execute()
-            updated_data = executor.marge()
+            updated_data = executor.marge(editor_screen=self)
             self.manager.reload_dashboard(data=updated_data)
         except Exception as e:
             if str(e) == "We can't perform arithmetic on strings or words" \
