@@ -54,7 +54,6 @@ class StrReplacement:
             self.wb_data[ci - 1][ri][0] = cell_value
 
         if column_actual_values:
-            print("column_actual_values: ", column_actual_values)
             for index in column_actual_values:
                 i1, i2, cell_value = index
                 corresponding_total_value_index = self.index_parser(index_pair=(i1, i2))
