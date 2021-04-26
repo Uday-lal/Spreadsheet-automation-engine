@@ -326,7 +326,21 @@ class EditorScreen(Base):
                     self.selection_mode else \
                     ApplySelection(data=data[self.manager.current_sheet]["rows"], is_perform_inspection=True)
                 try:
-                    apply_selection.implement_mof(cell=self.master_cell)
+                    is_data_merged = True
+                    try:
+                        apply_selection.implement_mof(cell=self.master_cell)
+                    except Exception as e:
+                        if str(e) == "We can't perform arithmetic on strings or words":
+                            is_data_merged = False
+                            snack_bar = MsgSnackBar(
+                                text=str(e),
+                                snackbar_x="10dp",
+                                snackbar_y="10dp"
+                            )
+                            snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
+                            snack_bar.open()
+                            self.remove_selection_mode()
+
                     selected_wb_data = apply_selection.merge(is_row_merging=is_row_merging)
                     self.manager.master_selected_data.append(apply_selection.get_merged_data())
                     if type(selected_wb_data) is not tuple:
@@ -334,6 +348,12 @@ class EditorScreen(Base):
                     else:
                         data[self.manager.current_sheet]["rows"], self.str_index_data = selected_wb_data
                         self.manager.str_index_data.append(self.str_index_data)
+                        if not is_data_merged:
+                            for str_index_data in self.str_index_data:
+                                if str_index_data == "Exception":
+                                    break
+                                ci, ri, cell_value = str_index_data
+                                data[self.manager.current_sheet]["rows"][ci - 1][ri][0] = cell_value
                 except ValueError:
                     pass
                 self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
