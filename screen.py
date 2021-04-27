@@ -29,6 +29,7 @@ from kivymd.uix.dialog import MDDialog
 from selection_mode import SelectionMode
 from kivymd.uix.button import MDRectangleFlatButton
 from kivy.uix.widget import Widget as KivyWidget
+from selection_mode_validation import SelectionModeValidation
 from kivy.uix.scrollview import ScrollView
 
 
@@ -405,17 +406,19 @@ class EditorScreen(Base):
         :param command: Inserted command
         :return: None
         """
+        headers = self.manager.render_data[self.manager.current_sheet]["rows"][0]
         if not self.selection_mode:
-            headers = self.manager.render_data[self.manager.current_sheet]["rows"][0]
             self.validate_commands = Validator(
                 headers=headers,
                 max_rows=self.manager.render_data[self.manager.current_sheet]["max_row"],
                 command=command
             ).validate()
-            if self.validate_commands:
-                self.ids.command_palette._primary_color = (0, 1, 0, 1)
-            else:
-                self.ids.command_palette._primary_color = (1, 0, 0, 1)
+        else:
+            self.validate_commands = SelectionModeValidation(command=command, headers=headers).validate()
+        if self.validate_commands:
+            self.ids.command_palette._primary_color = (0, 1, 0, 1)
+        else:
+            self.ids.command_palette._primary_color = (1, 0, 0, 1)
 
     def execute_command(self, command):
         """
@@ -518,10 +521,16 @@ class EditorScreen(Base):
 
     def save_dialog(self):
         self._save_dialog = MDDialog(
-            text="Do you want to save it?",
+            text="Do you want to overwrite this workbook?",
             buttons=[
                 MDRectangleFlatButton(
-                    text="Save",
+                    text="Overwrite",
+                    theme_text_color="Custom",
+                    text_color=get_color_from_hex("#9962d1"),
+                    line_color=get_color_from_hex("#702ab8")
+                ),
+                MDRectangleFlatButton(
+                    text="Don't overwrite",
                     theme_text_color="Custom",
                     text_color=get_color_from_hex("#9962d1"),
                     line_color=get_color_from_hex("#702ab8")
@@ -544,10 +553,12 @@ class EditorScreen(Base):
         :param instance: Dialog button instance
         :return: None
         """
-        if instance.text == "Save":
+        if instance.text == "Overwrite":
             self.manager.save()
             self.manager.transition.direction = "right"
             self.manager.current = "home_screen"
             self.manager.clear_home_screen()
             self.manager.render_home_screen_content()
+        elif instance.text == "Don't overwrite":
+            pass
         self._save_dialog.dismiss()
