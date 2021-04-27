@@ -27,10 +27,12 @@ from kivymd.uix.bottomsheet import MDGridBottomSheet
 from kivy.utils import get_color_from_hex
 from kivymd.uix.dialog import MDDialog
 from selection_mode import SelectionMode
-from kivymd.uix.button import MDRectangleFlatButton
+from kivymd.uix.button import MDRectangleFlatButton, MDFlatButton
 from kivy.uix.widget import Widget as KivyWidget
 from selection_mode_validation import SelectionModeValidation
 from kivy.uix.scrollview import ScrollView
+from components import NotOverwriteDialogContent
+import os
 
 
 class Base(Screen):
@@ -543,22 +545,72 @@ class EditorScreen(Base):
                 ),
             ]
         )
-        self._save_dialog.buttons[0].bind(on_release=lambda instance: self.save_dialog_callback(instance=instance))
-        self._save_dialog.buttons[1].bind(on_release=lambda instance: self.save_dialog_callback(instance=instance))
+        self._save_dialog.buttons[0].bind(
+            on_release=lambda instance: self.save_dialog_callback(button_instance=instance))
+        self._save_dialog.buttons[1].bind(
+            on_release=lambda instance: self.save_dialog_callback(button_instance=instance))
+        self._save_dialog.buttons[2].bind(
+            on_release=lambda instance: self.save_dialog_callback(button_instance=instance))
         self._save_dialog.open()
 
-    def save_dialog_callback(self, instance):
+    def save_dialog_callback(self, button_instance):
         """
         Defining the callback of save dialog
-        :param instance: Dialog button instance
+        :param button_instance: Dialog button instance
         :return: None
         """
-        if instance.text == "Overwrite":
+        if button_instance.text == "Overwrite":
             self.manager.save()
             self.manager.transition.direction = "right"
             self.manager.current = "home_screen"
             self.manager.clear_home_screen()
             self.manager.render_home_screen_content()
-        elif instance.text == "Don't overwrite":
-            pass
+        elif button_instance.text == "Don't overwrite":
+            self._save_dialog.dismiss()
+            self.not_overwrite_dialog = MDDialog(
+                title="Enter workbook name",
+                type="custom",
+                content_cls=NotOverwriteDialogContent(),
+                buttons=[
+                    MDFlatButton(
+                        text="CANCEL", text_color=get_color_from_hex("#525252")
+                    ),
+                    MDFlatButton(
+                        text="Save", text_color=get_color_from_hex("#525252")
+                    ),
+                ],
+            )
+            self.not_overwrite_dialog.buttons[0].bind(
+                on_release=lambda instance: self.not_overwrite_dialog_callback(
+                    instance=instance,
+                    content_cls_instance=self.not_overwrite_dialog.content_cls
+                )
+            )
+            self.not_overwrite_dialog.buttons[1].bind(
+                on_release=lambda instance: self.not_overwrite_dialog_callback(
+                    instance=instance,
+                    content_cls_instance=self.not_overwrite_dialog.content_cls
+                )
+            )
+            self.not_overwrite_dialog.open()
         self._save_dialog.dismiss()
+
+    def not_overwrite_dialog_callback(self, instance, content_cls_instance):
+        """
+        Defining the callback of not_overwrite_dialog
+        :param instance: Not overwrite dialog instance
+        :param content_cls_instance: Content class instance of not overwrite dialog
+        :return: None
+        """
+        if instance.text == "Save":
+            new_filename = str(content_cls_instance.ids.filename_field.text) + ".xlsx"
+            content_cls_instance.ids.filename_field.text = ""
+            file_path = self.manager.render_data["file_path"]
+            path, filename = os.path.split(file_path)
+            updated_path = str(path) + "/" + new_filename
+            self.manager.save(updated_path=updated_path)
+            self.manager.transition.direction = "right"
+            self.manager.current = "home_screen"
+            self.manager.clear_home_screen()
+            self.manager.render_home_screen_content()
+        self.not_overwrite_dialog.dismiss()

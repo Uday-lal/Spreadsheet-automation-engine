@@ -244,6 +244,16 @@
                     on_release:
                         home_screen.open_file_manager()
 
+<NotOverwriteDialogContent>
+    orientation: "vertical"
+    spacing: "6dp"
+    size_hint_y: None
+    height: "60dp"
+
+    MDTextField:
+        id: filename_field
+        hint_text: "Enter workbook name"
+
 <EditorScreen>:
     id: editor_screen
     drop_down_tool_bar_height: 50

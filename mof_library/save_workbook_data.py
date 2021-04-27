@@ -13,10 +13,10 @@ import threading
 
 
 class SaveWorkbookData:
-    def __init__(self, wb_obj, wb_data, filename=None, pointer_count=5):
+    def __init__(self, wb_obj, wb_data, updated_path, pointer_count=5):
         self.wb_data = wb_data
         self.wb_obj = wb_obj
-        self.filename = filename
+        self.updated_path = updated_path
         self.pointer_count = pointer_count
         self.sheets = self.wb_data["sheets"]
 
@@ -26,7 +26,10 @@ class SaveWorkbookData:
             self.current_sheet_data = self.wb_data[self.current_sheet]["rows"]
             self.max_cols = self.wb_data[self.current_sheet]["max_cols"]
             self.implement_mof()
-        self.wb_obj.save(self.wb_data["file_path"]) if self.filename is not None else self.wb_obj.save(self.filename)
+        if self.updated_path is None:
+            self.wb_obj.save(self.wb_data["file_path"])
+        else:
+            self.wb_obj.save(self.updated_path)
 
     def implement_mof(self):
         max_rows = len(self.wb_data[self.current_sheet]["rows"])
@@ -35,8 +38,8 @@ class SaveWorkbookData:
         self.next_index = index_slices
 
         def save(data_to_save, sheet_data):
-            master_cell = data_to_save[0].pop(0)
             for i, column in enumerate(sheet_data):
+                master_cell = data_to_save[i].pop(0)
                 for j, cell in enumerate(column):
                     try:
                         edited_cell_data = data_to_save[i][j]
@@ -44,7 +47,7 @@ class SaveWorkbookData:
                             cell.value = edited_cell_data[0]
                     except IndexError:
                         cell.value = ""
-            data_to_save[0].insert(0, master_cell)
+                data_to_save[i].insert(0, master_cell)
 
         for _ in range(self.pointer_count):
             data_slice = self.current_sheet_data[self.start_index:self.next_index + 1]

@@ -152,7 +152,7 @@ class Automate:
             yield row_data
 
     @staticmethod
-    def save_wb(file_path, data, is_overwrite):
+    def save_wb(file_path, data, updated_path):
         wb = load_workbook(file_path)
-        save_wb = SaveWorkbookData(wb_obj=wb, wb_data=data)
+        save_wb = SaveWorkbookData(wb_obj=wb, wb_data=data, updated_path=updated_path)
         save_wb.save_data()

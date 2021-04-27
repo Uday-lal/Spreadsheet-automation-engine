@@ -18,6 +18,7 @@ from kivymd.uix.list import OneLineAvatarIconListItem
 from kivymd.uix.button import MDRectangleFlatIconButton
 from kivymd.uix.card import MDCard
 from kivymd.uix.gridlayout import MDGridLayout
+from kivy.uix.boxlayout import BoxLayout
 
 
 class MsgSnackBar(Snackbar):
@@ -46,3 +47,7 @@ class HistoryCard(MDCard):
 class HistoryCardContainer(MDGridLayout):
     number_of_widget = NumericProperty()
     rail_width = NumericProperty()
+
+
+class NotOverwriteDialogContent(BoxLayout):
+    pass

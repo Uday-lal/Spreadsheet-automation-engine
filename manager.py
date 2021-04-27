@@ -106,7 +106,6 @@ class Manager(ScreenManager):
         """
         data_setup = DataSetup(data=data)
         clean_data = data_setup.get_clean_data()
-        # print(clean_data)
         return clean_data
 
     def get_selected_data(self):
@@ -126,19 +125,20 @@ class Manager(ScreenManager):
         self.dash_board.clear_widgets()  # Removing the old child widgets.
         self.dash_board.render_data(data=data)
 
-    def save(self, is_overwrite=False):
+    def save(self, updated_path=None):
         """
         Saving the workbook data to the
         as the history
-        :param is_overwrite: Checking if user want to overwrite the workbook
+        :param updated_path: path on which user want
+         to save there workbook if they select don't overwrite
         :return: None
         """
         self.current_date = datetime.today().strftime("%d-%m-%Y")
         automate = Automate()
         automate.save_wb(
             file_path=self.render_data["file_path"],
-            is_overwrite=is_overwrite,
-            data=self.render_data
+            data=self.render_data,
+            updated_path=updated_path
         )
         storage = Storage()
         if storage.is_first_store:
