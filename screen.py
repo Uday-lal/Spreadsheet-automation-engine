@@ -165,7 +165,7 @@ class EditorScreen(Base):
         self.manager.current = "home_screen"
         self.manager.clear_dashboard()
 
-    def toolbar_menu_sheets(self):
+    def toolbar_menu_sheets(self, drop_down_instance):
         """
         Defining the menu bar for the MDDropDownItem/sheets ->
         (Which give the information about the sheets).
@@ -177,7 +177,12 @@ class EditorScreen(Base):
             items=[
                 {
                     "text": str(sheets[i]),
-                    "font_name": "assets/fonts/Heebo-Regular.ttf"
+                    "font_name": "assets/fonts/Heebo-Regular.ttf",
+                    "viewclass": "OneLineListItem",
+                    "on_release": lambda sheet=sheets[i]: self.drop_down_menu_callback(
+                        instance_menu=drop_down_instance,
+                        selected_menu_item=sheet
+                    )
                 }
                 for i in range(len(sheets))
             ],
@@ -278,16 +283,16 @@ class EditorScreen(Base):
         elif selected_math_operation == "Subtraction":
             self.operation_type = "Apply formulas/sub"
 
-    def drop_down_menu_callback(self, instance_menu, instance_menu_item):
+    def drop_down_menu_callback(self, instance_menu, selected_menu_item):
         """
         Receive the input from the mentioned drop_down_menu
         :param instance_menu: Instance of the menu on which users click.
-        :param instance_menu_item: Instance of the menu_item on which users click.
+        :param selected_menu_item: Selected menu item on which users click.
         :return: str
         """
-        dropdown_menu = instance_menu.caller
-        selected_item = instance_menu_item.text
-        dropdown_menu.set_item(f"Sheets/{selected_item}")
+        dropdown_menu = instance_menu
+        selected_item = selected_menu_item
+        dropdown_menu.text = f"Sheets/{selected_item}"
         self.manager.update_dashboard(selected_sheet=selected_item)
         self.drop_down_menu_sheets.dismiss()
 
