@@ -78,16 +78,21 @@
 
 <DashBoard>:
     pos: (app.root.editor_screen.ids.rail.width,  0)
-    size: (window.Window.width, window.Window.height - (app.root.editor_screen.ids.tool_bar.height + app.root.editor_screen.drop_down_tool_bar_height))
+    pos_hint: None, None
+    size: (window.Window.width - app.root.editor_screen.ids.rail.width, window.Window.height - (app.root.editor_screen.ids.tool_bar.height + app.root.editor_screen.drop_down_tool_bar_height))
+    size_hint: None, None
 
 
 <RecyclerDashBoardLayout>:
     id: recycle_view
     viewclass: 'Cell'
-    scroll_type: ['bars']
+    bar_width: 10
+    bar_color: get_color_from_hex("#757575")
+    bar_inactive_color: get_color_from_hex("#918996")
+    effect_cls: "ScrollEffect"
+    scroll_type: ["bars"]
 
     RecycleGridLayout:
-        id: test
         cols_minimum: root.cols_minimum
         default_size: None, dp(56)
         default_size_hint: 1, None
