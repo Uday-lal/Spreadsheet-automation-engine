@@ -163,9 +163,10 @@ class EditorScreen(Base):
         """
         self.manager.transition.direction = "right"
         self.manager.current = "home_screen"
+        self.ids.drop_item_sheets.text = "Sheets"
         self.manager.clear_dashboard()
 
-    def toolbar_menu_sheets(self, drop_down_instance):
+    def toolbar_menu_sheets(self):
         """
         Defining the menu bar for the MDDropDownItem/sheets ->
         (Which give the information about the sheets).
@@ -180,7 +181,7 @@ class EditorScreen(Base):
                     "font_name": "assets/fonts/Heebo-Regular.ttf",
                     "viewclass": "OneLineListItem",
                     "on_release": lambda sheet=sheets[i]: self.drop_down_menu_callback(
-                        instance_menu=drop_down_instance,
+                        instance_menu=self.ids.drop_item_sheets,
                         selected_menu_item=sheet
                     )
                 }
