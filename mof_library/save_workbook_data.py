@@ -24,7 +24,7 @@ class SaveWorkbookData:
         for sheet in self.sheets:
             self.current_sheet = sheet
             self.current_sheet_data = self.wb_data[self.current_sheet]["rows"]
-            self.max_cols = self.wb_data[self.current_sheet]["max_cols"]
+            self.max_cols = len(self.current_sheet_data[0])
             self.implement_mof()
         if self.updated_path is None:
             self.wb_obj.save(self.wb_data["file_path"])
@@ -39,18 +39,28 @@ class SaveWorkbookData:
 
         def save(data_to_save, sheet_data):
             for i, column in enumerate(sheet_data):
-                master_cell = data_to_save[i].pop(0)
-                for j, cell in enumerate(column):
-                    try:
-                        edited_cell_data = data_to_save[i][j]
-                        if not edited_cell_data[1]:
-                            cell.value = edited_cell_data[0]
-                    except IndexError:
-                        cell.value = ""
-                data_to_save[i].insert(0, master_cell)
+                if i != len(sheet_data):
+                    master_cell = data_to_save[i].pop(0)
+                    for j, cell in enumerate(column):
+                        try:
+                            edited_cell_data = data_to_save[i][j]
+                            if not edited_cell_data[1]:  # Not is master
+                                cell.value = edited_cell_data[0]
+                        except IndexError:
+                            cell.value = ""
+                    data_to_save[i].insert(0, master_cell)
 
-        for _ in range(self.pointer_count):
+        for i in range(self.pointer_count):
             data_slice = self.current_sheet_data[self.start_index:self.next_index + 1]
+            if i == self.pointer_count - 1:
+                try:
+                    last_column_master_cell_value = data_slice[len(data_slice) - 1][0][0]
+                    if int(last_column_master_cell_value) < len(self.current_sheet_data):
+                        remaining_part = len(self.current_sheet_data) - int(last_column_master_cell_value)
+                        self.next_index = (self.next_index + 1) + remaining_part
+                        data_slice = self.current_sheet_data[self.start_index:self.next_index]
+                except IndexError:
+                    pass
             sliced_sheet_data = self.slice_sheet_data()
             thread = threading.Thread(target=save, args=(data_slice, sliced_sheet_data))
             thread.start()
@@ -61,10 +71,8 @@ class SaveWorkbookData:
         rows = []
         for row_index in range(self.start_index, self.next_index + 1):
             rows_data = []
-            for column_index in range(1, self.max_cols + 1):
+            for column_index in range(1, self.max_cols):
                 cell_data = self.wb_obj[self.current_sheet].cell(row_index, column_index)
-                if cell_data is None:
-                    cell_data = ""
                 rows_data.append(cell_data)
             rows_data_copy = rows_data.copy()
             rows.append(rows_data_copy)

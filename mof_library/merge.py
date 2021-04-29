@@ -34,12 +34,15 @@ class Merge:
 
         while True:
             try:
-                column_data = next(_data)
-                actual_value = column_data[0][self.root_key][0]
-                if type(actual_value) is str and type(total) is list:
-                    column_actual_values.append((column_data[1], self.root_key, actual_value))
-                column_data[0][self.root_key][0] = total[i] if type(total) is list else total
-                i += 1
+                try:
+                    column_data = next(_data)
+                    actual_value = column_data[0][self.root_key][0]
+                    if type(actual_value) is str and type(total) is list:
+                        column_actual_values.append((column_data[1], self.root_key, actual_value))
+                    column_data[0][self.root_key][0] = total[i] if type(total) is list else total
+                    i += 1
+                except IndexError:
+                    pass
             except StopIteration:
                 self.actual_column_data_collection[thread_id] = column_actual_values
                 break

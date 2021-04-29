@@ -6,33 +6,35 @@ company: UR's tech.ltd
 --------------------------------------------------------->
 """
 
-from kivy.uix.screenmanager import Screen
+import os
 from tkinter import *
 from tkinter import filedialog
-from Automate import Automate
-from kivymd.uix.menu import MDDropdownMenu
+
 from kivy.properties import (
     NumericProperty,
     BooleanProperty,
     StringProperty,
     ListProperty
 )
-from mof_library.apply_selection_mof import ApplySelection
-from Automate.coc_engine import CoordinateOperationController
-from Automate.coc_engine.validate import Validator
-from kivy.core.window import Window
-from Automate.coc_engine.executor import Executor
-from components import MsgSnackBar, Item, CancelButton, HistoryCard, HistoryCardContainer
-from kivymd.uix.bottomsheet import MDGridBottomSheet
-from kivy.utils import get_color_from_hex
-from kivymd.uix.dialog import MDDialog
-from selection_mode import SelectionMode
-from kivymd.uix.button import MDRectangleFlatButton, MDFlatButton
-from kivy.uix.widget import Widget as KivyWidget
-from selection_mode_validation import SelectionModeValidation
+from kivy.uix.screenmanager import Screen
 from kivy.uix.scrollview import ScrollView
+from kivy.uix.widget import Widget as KivyWidget
+from kivy.utils import get_color_from_hex
+
+from Automate import Automate
+from Automate.coc_engine import CoordinateOperationController
+from Automate.coc_engine.executor import Executor
+from Automate.coc_engine.validate import Validator
+from components import Item, CancelButton, HistoryCard, HistoryCardContainer
 from components import NotOverwriteDialogContent
-import os
+from errors import *
+from kivymd.uix.bottomsheet import MDGridBottomSheet
+from kivymd.uix.button import MDRectangleFlatButton, MDFlatButton
+from kivymd.uix.dialog import MDDialog
+from kivymd.uix.menu import MDDropdownMenu
+from mof_library.apply_selection_mof import ApplySelection
+from selection_mode import SelectionMode
+from selection_mode_validation import SelectionModeValidation
 
 
 class Base(Screen):
@@ -274,6 +276,7 @@ class EditorScreen(Base):
         )
         self.ids.command_palette.text = "new"
         self.ids.tool_bar.title = f"Apply formulas/{selected_math_operation}"
+        snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
         snack_bar.open()
         if selected_math_operation == "Addition":
             self.operation_type = "Apply formulas/add"
@@ -328,8 +331,8 @@ class EditorScreen(Base):
         """
         is_row_merging = True if cell.text.isdigit() else False
         self.master_cell = cell
-        if not self.selection_mode or "Apply formulas" in self.operation_type:
-            if not self.master_cell.text.isdigit() or not self.selection_mode:
+        if not self.master_cell.text.isdigit():
+            if not self.selection_mode or "Apply formulas" in self.operation_type:
                 data = self.manager.render_data
                 apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"]) if not \
                     self.selection_mode else \
@@ -367,33 +370,21 @@ class EditorScreen(Base):
                     pass
                 self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
             else:
-                snack_bar = MsgSnackBar(
-                    text="Sorry! This version of Propoint dose not support any operation on rows",
-                    snackbar_x="10dp",
-                    snackbar_y="10dp"
-                )
-                snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
-                snack_bar.open()
+                if "Apply formulas" not in self.operation_type:
+                    if not self.master_cell.text.isdigit():
+                        data = self.manager.render_data
+                        apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
+                        apply_selection.implement_mof(cell=self.master_cell)
+                        selected_wb_data = apply_selection.merge(is_row_merging=is_row_merging)
+                        self.manager.master_selected_data.append(apply_selection.get_merged_data())
+                        self.master_selected_data = self.manager.master_selected_data
+                        data[self.manager.current_sheet]["rows"] = selected_wb_data
+                        self.ids.command_palette.text = self.master_cell.text
+                        self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
+                    else:
+                        rows_selection_error()
         else:
-            if "Apply formulas" not in self.operation_type:
-                if not self.master_cell.text.isdigit():
-                    data = self.manager.render_data
-                    apply_selection = ApplySelection(data=data[self.manager.current_sheet]["rows"])
-                    apply_selection.implement_mof(cell=self.master_cell)
-                    selected_wb_data = apply_selection.merge(is_row_merging=is_row_merging)
-                    self.manager.master_selected_data.append(apply_selection.get_merged_data())
-                    self.master_selected_data = self.manager.master_selected_data
-                    data[self.manager.current_sheet]["rows"] = selected_wb_data
-                    self.ids.command_palette.text = self.master_cell.text
-                    self.manager.reload_dashboard(data=data[self.manager.current_sheet]["rows"])
-                else:
-                    snack_bar = MsgSnackBar(
-                        text="Sorry! This version of Propoint dose not support any operation on rows",
-                        snackbar_x="10dp",
-                        snackbar_y="10dp"
-                    )
-                    snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
-                    snack_bar.open()
+            rows_selection_error()
 
     def unselect_master_selections(self):
         """
@@ -455,23 +446,26 @@ class EditorScreen(Base):
             else:
                 self.master_selected_data = self.manager.master_selected_data
                 if self.master_selected_data:
-                    selection_mode = SelectionMode(
-                        wb_data=self.manager.render_data[self.manager.current_sheet]["rows"],
-                        selected_data=self.master_selected_data,
-                        equal_to=command,
-                        operation_type=self.operation_type,
-                        max_rc=(
-                            self.manager.render_data[self.manager.current_sheet]["max_row"],
-                            self.manager.render_data[self.manager.current_sheet]["max_cols"]
+                    try:
+                        selection_mode = SelectionMode(
+                            wb_data=self.manager.render_data[self.manager.current_sheet]["rows"],
+                            selected_data=self.master_selected_data,
+                            equal_to=command,
+                            operation_type=self.operation_type,
+                            max_rc=(
+                                self.manager.render_data[self.manager.current_sheet]["max_row"],
+                                self.manager.render_data[self.manager.current_sheet]["max_cols"]
+                            )
                         )
-                    )
-                    selection_mode.execute()
-                    updated_data = selection_mode.marge(editor_screen=self) if self.str_index_data is None else \
-                        selection_mode.marge(editor_screen=self, str_index_data=self.manager.str_index_data)
-                    self.remove_selection_mode()
-                    self.manager.reload_dashboard(data=updated_data)
-                    self.manager.master_selected_data.clear()
-                    self.manager.str_index_data.clear()
+                        selection_mode.execute()
+                        updated_data = selection_mode.marge(editor_screen=self) if self.str_index_data == [] else \
+                            selection_mode.marge(editor_screen=self, str_index_data=self.manager.str_index_data)
+                        self.remove_selection_mode()
+                        self.manager.reload_dashboard(data=updated_data)
+                        self.manager.master_selected_data.clear()
+                        self.manager.str_index_data.clear()
+                    except Exception:
+                        something_went_wrong()
                 else:
                     snack_bar = MsgSnackBar(
                         text="Please select some column",
@@ -506,13 +500,7 @@ class EditorScreen(Base):
                 snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
                 snack_bar.open()
             else:
-                snack_bar = MsgSnackBar(
-                    text="Oops :(, something went wrong please try again!",
-                    snackbar_x="10dp",
-                    snackbar_y="10dp"
-                )
-                snack_bar.size_hint_x = (Window.width - (snack_bar.snackbar_x * 2)) / Window.width
-                snack_bar.open()
+                something_went_wrong()
 
     def remove_selection_mode(self):
         """
@@ -521,6 +509,7 @@ class EditorScreen(Base):
         :return: None
         """
         self.selection_mode = False
+        self.manager.master_selected_data.clear()
         self.ids.tool_bar.title = "Edit workbook"
         self.ids.command_palette.text = ""
         self.ids.main_tool_bar.remove_widget(self.cancel_button)

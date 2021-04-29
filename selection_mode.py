@@ -86,8 +86,11 @@ class SelectionMode:
             selected_column_data = []
             for _selected_column_data in self.selected_data:
                 if _selected_column_data:
-                    for i in range(1, self.max_cols - 1):
-                        selected_column_data.append(_selected_column_data[i][0])
+                    for i in range(1, self.max_cols):
+                        try:
+                            selected_column_data.append(_selected_column_data[i][0])
+                        except IndexError:
+                            pass
                     self.clean_selected_data.append(selected_column_data.copy())
                     selected_column_data.clear()
 
