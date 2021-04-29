@@ -45,7 +45,6 @@ class HistoryCard(MDCard):
 
 
 class HistoryCardContainer(MDGridLayout):
-    number_of_widget = NumericProperty()
     rail_width = NumericProperty()
 
 

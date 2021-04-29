@@ -18,7 +18,6 @@ from kivy.properties import (
 )
 from kivy.uix.screenmanager import Screen
 from kivy.uix.scrollview import ScrollView
-from kivy.uix.widget import Widget as KivyWidget
 from kivy.utils import get_color_from_hex
 
 from Automate import Automate
@@ -98,18 +97,15 @@ class HomeScreen(Base):
         self.ids["history_card_scroll_view"] = scroll_view
         for key in key_list:
             self.history_card = HistoryCard()
-            spacing_widget = KivyWidget(
-                size=(30, 200),
-                size_hint=(None, None),
-                pos_hint=(None, None),
-                pos=(self.history_card.pos[0] + 200, self.history_card.pos[1])
-            )
             self.history_card.title = key
             self.history_card.date_of_modify = history_data[key]["date_of_modify"]
+            history_card_container.card_width = self.history_card.width
             history_card_container.add_widget(self.history_card)
-            history_card_container.add_widget(spacing_widget)
 
         history_card_container.number_of_widget = len(history_card_container.children)
+        history_card_container.spacing = 30
+        history_card_container.padding = 15
+        history_card_container.rail_width = self.ids.rail.width
         scroll_view.add_widget(history_card_container)
         self.ids.main_box_layout.add_widget(scroll_view)
 
