@@ -90,7 +90,11 @@ class HomeScreen(Base):
 
     def present_users_history(self, history_data):
         key_list = history_data.keys()
-        scroll_view = ScrollView(bar_width='2dp', smooth_scroll_end=10)
+        scroll_view = ScrollView(
+            scroll_type=['bars'],
+            bar_width='9dp',
+            scroll_wheel_distance=100
+        )
         history_card_container = HistoryCardContainer()
         history_card_container.rail_width = self.ids.rail.width
         history_card_container.clear_widgets()
@@ -102,9 +106,9 @@ class HomeScreen(Base):
             history_card_container.card_width = self.history_card.width
             history_card_container.add_widget(self.history_card)
 
-        history_card_container.number_of_widget = len(history_card_container.children)
         history_card_container.spacing = 30
         history_card_container.padding = 15
+        history_card_container.bind(minimum_height=history_card_container.setter("height"))
         history_card_container.rail_width = self.ids.rail.width
         scroll_view.add_widget(history_card_container)
         self.ids.main_box_layout.add_widget(scroll_view)

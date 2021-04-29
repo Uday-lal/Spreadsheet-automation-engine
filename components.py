@@ -17,7 +17,7 @@ from kivy.properties import (
 from kivymd.uix.list import OneLineAvatarIconListItem
 from kivymd.uix.button import MDRectangleFlatIconButton
 from kivymd.uix.card import MDCard
-from kivymd.uix.gridlayout import MDGridLayout
+from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 
 
@@ -44,7 +44,7 @@ class HistoryCard(MDCard):
     date_of_modify = StringProperty()
 
 
-class HistoryCardContainer(MDGridLayout):
+class HistoryCardContainer(GridLayout):
     rail_width = NumericProperty()
 
 
