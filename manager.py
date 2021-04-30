@@ -9,7 +9,9 @@ from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.image import Image
 from kivy.uix.screenmanager import ScreenManager
 
-from screen import HomeScreen, TutorialScreen, EditorScreen
+from screens.home_screen import HomeScreen
+from screens.editor_screen import EditorScreen
+from screens.tutorial_screen import TutorialScreen
 from dashboard import DashBoard
 from mof_library.dataSetup_mof import DataSetup
 from kivy.properties import StringProperty, ListProperty

@@ -54,15 +54,9 @@
                     on_release:
                         tutorial_screen.open_file_manager()
 
-            MDBoxLayout:
-                orientation: "vertical"
-                MDLabel:
-                    text: "Welcome to propoint documentation"
-                    halign: "auto"
-                    pos_hint_y: 1
-                    font_style: "H4"
-                    font_name: "assets/fonts/Heebo-Regular.ttf"
-                MDSeparator:
+            Widget:
+                id: document_container
+                pos: rail.width, window.Window.height - tool_bar.height
 
 <Cell>:
     id: cell
