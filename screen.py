@@ -317,9 +317,13 @@ class EditorScreen(Base):
         :return: None
         """
         if text_field_data != "":
+            try:
+                _text_field_data = int(text_field_data)
+            except ValueError:
+                _text_field_data = text_field_data
             data = self.manager.render_data
             current_sheet = self.manager.current_sheet
-            data[current_sheet]["rows"][cell.row_index][cell.column_index][0] = text_field_data
+            data[current_sheet]["rows"][cell.row_index][cell.column_index][0] = _text_field_data
             self.manager.reload_dashboard(data=data[current_sheet]["rows"])
 
     def master_selection(self, cell):
@@ -517,27 +521,17 @@ class EditorScreen(Base):
         self.unselect_master_selections()
 
     def save_dialog(self):
+        dialog_button_option = ["Overwrite", "Don't overwrite", "Cancel"]
         self._save_dialog = MDDialog(
             text="Do you want to overwrite this workbook?",
             buttons=[
                 MDRectangleFlatButton(
-                    text="Overwrite",
+                    text=button_option,
                     theme_text_color="Custom",
                     text_color=get_color_from_hex("#9962d1"),
                     line_color=get_color_from_hex("#702ab8")
-                ),
-                MDRectangleFlatButton(
-                    text="Don't overwrite",
-                    theme_text_color="Custom",
-                    text_color=get_color_from_hex("#9962d1"),
-                    line_color=get_color_from_hex("#702ab8")
-                ),
-                MDRectangleFlatButton(
-                    text="Cancel",
-                    theme_text_color="Custom",
-                    text_color=get_color_from_hex("#9962d1"),
-                    line_color=get_color_from_hex("#702ab8")
-                ),
+                )
+                for button_option in dialog_button_option
             ]
         )
         self._save_dialog.buttons[0].bind(

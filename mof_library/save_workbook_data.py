@@ -40,15 +40,18 @@ class SaveWorkbookData:
         def save(data_to_save, sheet_data):
             for i, column in enumerate(sheet_data):
                 if i != len(sheet_data):
-                    master_cell = data_to_save[i].pop(0)
-                    for j, cell in enumerate(column):
-                        try:
-                            edited_cell_data = data_to_save[i][j]
-                            if not edited_cell_data[1]:  # Not is master
-                                cell.value = edited_cell_data[0]
-                        except IndexError:
-                            cell.value = ""
-                    data_to_save[i].insert(0, master_cell)
+                    try:
+                        master_cell = data_to_save[i].pop(0)
+                        for j, cell in enumerate(column):
+                            try:
+                                edited_cell_data = data_to_save[i][j]
+                                if not edited_cell_data[1]:  # Not is master
+                                    cell.value = edited_cell_data[0]
+                            except IndexError:
+                                cell.value = ""
+                        data_to_save[i].insert(0, master_cell)
+                    except IndexError:
+                        pass
 
         for i in range(self.pointer_count):
             data_slice = self.current_sheet_data[self.start_index:self.next_index + 1]

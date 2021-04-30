@@ -17,6 +17,7 @@
         orientation: "vertical"
 
         MDToolbar:
+            id: tool_bar
             title: "Propoint"
             md_bg_color: rail.md_bg_color
             left_action_items: [["menu", lambda x: tutorial_screen.rail_open()]]
@@ -52,6 +53,16 @@
 
                     on_release:
                         tutorial_screen.open_file_manager()
+
+            MDBoxLayout:
+                orientation: "vertical"
+                MDLabel:
+                    text: "Welcome to propoint documentation"
+                    halign: "auto"
+                    pos_hint_y: 1
+                    font_style: "H4"
+                    font_name: "assets/fonts/Heebo-Regular.ttf"
+                MDSeparator:
 
 <Cell>:
     id: cell
@@ -114,6 +125,7 @@
             MDTextField:
                 id: update_text_field
                 hint_text: "Update cell"
+                text: root.cell_text
                 mode: "rectangle"
                 line_color_focus: (0, 0, 0, 1)
                 size_hint: None, None

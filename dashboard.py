@@ -20,7 +20,8 @@ from kivy.properties import (
     DictProperty,
     BooleanProperty,
     ListProperty,
-    ObjectProperty
+    ObjectProperty,
+    StringProperty
 )
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.metrics import dp
@@ -33,6 +34,11 @@ processing_data = []
 class PopupContent(MDGridLayout):
     clicked_cell = ObjectProperty()
     _popup = ObjectProperty()
+    cell_text = StringProperty()
+
+    def __init__(self, cell_text, **kwargs):
+        super(PopupContent, self).__init__(**kwargs)
+        self.cell_text = cell_text
 
 
 class Cell(ButtonBehavior, Label):
@@ -63,7 +69,7 @@ class Cell(ButtonBehavior, Label):
             if not self.is_selected:
                 popup = Popup(
                     title="Update cell",
-                    content=PopupContent(),
+                    content=PopupContent(cell_text=self.text),
                     size_hint=(None, None),
                     size=(400, 200),
                     separator_height=1
@@ -93,7 +99,7 @@ class RecyclerDashBoardLayout(RecycleView):
         self.get_cols_minimum()
         self.data = [
             {
-                "text": str(data[0]),
+                "text": str(data[0]) if len(str(data[0])) < 25 else self.shape_text(text=str(data[0])),
                 "size": (100, 25),
                 "is_selected": data[2],
                 "is_master": data[1],
@@ -111,6 +117,16 @@ class RecyclerDashBoardLayout(RecycleView):
         for i in range(self.max_cols):
             self.cols_minimum[i] = 200
 
+    @staticmethod
+    def shape_text(text):
+        """
+        Avoid text to overflow to the
+        cell boundary
+        :param text: Long text
+        :return: str
+        """
+        shaped_text = text[0:18] + "..."
+        return shaped_text
 
 class DashBoard(MDBoxLayout):
     max_cols = NumericProperty()

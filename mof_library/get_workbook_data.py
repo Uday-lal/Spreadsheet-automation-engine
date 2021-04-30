@@ -54,6 +54,8 @@ class GetWbData:
                     if cell_data is None:
                         cell_data = ""
 
+                    if cell_data != "" and type(cell_data) is not int:
+                        cell_data = self.remove_redundant_spaces(text=cell_data)
                     rows_data.append(cell_data)
 
                 rows_data_copy = rows_data.copy()
@@ -71,3 +73,23 @@ class GetWbData:
             next_index += index_slices
 
         return rows
+
+    @staticmethod
+    def remove_redundant_spaces(text):
+        """
+        Remove lot of empty spaces inside of a
+        string
+        :param text: input text
+        :return: str
+        """
+        _text = list(text)
+        shaped_text = ""
+        for i, word in enumerate(_text):
+            next_value = _text[i + 1] if i != len(_text) - 1 else _text[i]
+            if word != " ":
+                shaped_text += word
+            else:
+                if next_value != " ":
+                    shaped_text += word
+
+        return shaped_text
