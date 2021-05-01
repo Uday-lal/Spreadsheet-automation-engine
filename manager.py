@@ -11,13 +11,13 @@ from kivy.uix.screenmanager import ScreenManager
 
 from screens.home_screen import HomeScreen
 from screens.editor_screen import EditorScreen
-from screens.tutorial_screen import TutorialScreen
 from dashboard import DashBoard
 from mof_library.dataSetup_mof import DataSetup
 from kivy.properties import StringProperty, ListProperty
 from Automate import Automate
 from storage import Storage
 from datetime import datetime
+import webbrowser
 import os
 
 
@@ -29,10 +29,8 @@ class Manager(ScreenManager):
     def __init__(self, **kwargs):
         super(Manager, self).__init__(**kwargs)
         self.home_screen = HomeScreen(name="home_screen")
-        self.tutorial_screen = TutorialScreen(name="tutorial_screen")
         self.editor_screen = EditorScreen(name="editor_screen")
         self.add_widget(self.home_screen)
-        self.add_widget(self.tutorial_screen)
         self.add_widget(self.editor_screen)
         self.render_home_screen_content()
 
@@ -45,14 +43,13 @@ class Manager(ScreenManager):
             self.transition.direction = "down"
             self.current = "home_screen"
 
-    def screen_transition_tutorial(self):
+    @staticmethod
+    def open_web_browser():
         """
         Define screen transition tutorial
         :return: None
         """
-        if self.current_screen.name != "tutorial_screen":
-            self.transition.direction = "up"
-            self.current = "tutorial_screen"
+        webbrowser.open("https://www.google.com")
 
     def render_empty_home_screen(self):
         """

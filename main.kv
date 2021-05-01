@@ -10,53 +10,6 @@
 #:import window kivy.core.window
 
 
-<TutorialScreen>:
-    id: tutorial_screen
-
-    MDBoxLayout:
-        orientation: "vertical"
-
-        MDToolbar:
-            id: tool_bar
-            title: "Propoint"
-            md_bg_color: rail.md_bg_color
-            left_action_items: [["menu", lambda x: tutorial_screen.rail_open()]]
-
-        MDBoxLayout:
-
-            MDNavigationRail:
-                id: rail
-                md_bg_color: get_color_from_hex("#9962d1")
-                color_normal: get_color_from_hex("#ecd9ff")
-                color_active: None
-                use_hover_behavior: True
-                hover_bg: 0, 0, 0, .2
-                use_resizeable: True
-
-                MDNavigationRailItem:
-                    icon: "home"
-                    text: "Home"
-
-                    on_release:
-                        app.root.screen_transition_home()
-
-                MDNavigationRailItem:
-                    icon: "teach"
-                    text: "Tutorial"
-
-                    on_release:
-                        app.root.screen_transition_tutorial()
-
-                MDNavigationRailItem:
-                    icon: "plus-circle"
-                    text: "Create Project"
-
-                    on_release:
-                        tutorial_screen.open_file_manager()
-
-            Widget:
-                id: document_container
-                pos: rail.width, window.Window.height - tool_bar.height
 
 <Cell>:
     id: cell
@@ -245,7 +198,7 @@
                     text: "Tutorial"
 
                     on_release:
-                        app.root.screen_transition_tutorial()
+                        app.root.open_web_browser()
 
                 MDNavigationRailItem:
                     icon: "plus-circle"
