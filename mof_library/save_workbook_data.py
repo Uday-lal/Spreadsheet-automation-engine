@@ -26,14 +26,14 @@ class SaveWorkbookData:
             self.current_sheet_data = self.wb_data[self.current_sheet]["rows"]
             self.max_cols = len(self.current_sheet_data[0])
             self.implement_mof()
-        if self.updated_path is None:
-            self.wb_obj.save(self.wb_data["file_path"])
-        else:
-            self.wb_obj.save(self.updated_path)
+            if self.updated_path is None:
+                self.wb_obj.save(self.wb_data["file_path"])
+            else:
+                self.wb_obj.save(self.updated_path)
 
     def implement_mof(self):
         max_rows = len(self.wb_data[self.current_sheet]["rows"])
-        index_slices = max_rows // self.pointer_count
+        index_slices = max_rows // self.pointer_count if max_rows > self.pointer_count else max_rows
         self.start_index = 1
         self.next_index = index_slices
 

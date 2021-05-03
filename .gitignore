@@ -24,3 +24,12 @@
 
 # screens/__pycache__
 /screens/__pycache__
+
+# /build
+/build
+
+# /dist
+/dist
+
+# /Propoint.spec
+/Propoint.spec
