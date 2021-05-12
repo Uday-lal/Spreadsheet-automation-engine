@@ -49,7 +49,7 @@ class Manager(ScreenManager):
         Define screen transition tutorial
         :return: None
         """
-        webbrowser.open("https://www.google.com")
+        webbrowser.open("https://chrunch-tech.github.io/Propoint-website/")
 
     def render_empty_home_screen(self):
         """
