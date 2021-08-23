@@ -1,9 +1,7 @@
 """
---------------------------------------------------------->
-Copyrights (c) to UR's tech.ltd 2021. All rights reserved
-Author: Uday lal
-company: UR's tech.ltd
---------------------------------------------------------->
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Defining the Manger class that handle the
+data flow in the app.
 """
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.image import Image
