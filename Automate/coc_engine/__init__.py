@@ -1,10 +1,4 @@
 """
---------------------------------------------------------->
-Copyrights (c) to UR's tech.ltd 2021. All rights reserved
-Author: Uday lal
-company: UR's tech.ltd
---------------------------------------------------------->
-
 ~~~~~~~~~~~~~~~~~~~~~~~
 COC(Coordinate Operation Controller) is type engine which is
 responsible for handle all the inputs coming from input box
