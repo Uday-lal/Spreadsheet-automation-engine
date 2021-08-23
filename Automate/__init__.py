@@ -1,17 +1,10 @@
 """
---------------------------------------------------------->
-Copyrights (c) to UR's tech.ltd 2021. All rights reserved
-Author: Uday lal
-company: UR's tech.ltd
---------------------------------------------------------->
-
 ~~~~~~~~~~~~~~~~~~~~~~~
 Starting the main automation class.
 """
 from openpyxl import load_workbook
 from mof_library.get_workbook_data import GetWbData
 from mof_library.save_workbook_data import SaveWorkbookData
-# import os
 
 
 def splitting_algorithm(wb_data):
